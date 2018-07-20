@@ -1,0 +1,12 @@
+.DS_Store
+.dart_tool/
+.idea/*
+.packages
+.pub/
+pubspec.lock
+Pods
+Podfile.lock
+build/
+launch.json
+xcuserdata
+project.xcworkspace

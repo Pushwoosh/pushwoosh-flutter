@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.pushwoosh.pushwoosh">
+    <application>
+        <meta-data
+            android:name="com.pushwoosh.notification_service_extension"
+            android:value="com.pushwoosh.plugin.PushwooshNotificationServiceExtension" />
+    </application>
+</manifest>
