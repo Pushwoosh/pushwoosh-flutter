@@ -25,3 +25,7 @@ Pushwoosh.getInstance.onPushAccepted.listen((event) {
 });
 Pushwoosh.getInstance.registerForPushNotifications();
 ```
+
+## Guide
+
+https://www.pushwoosh.com/docs/flutter-plugin-integration
