@@ -9,4 +9,4 @@ Pushwoosh Flutter Plugin
 
 ### Guide
 
-http://docs.pushwoosh.com/docs/flutter
+https://www.pushwoosh.com/docs/flutter-plugin-integration
