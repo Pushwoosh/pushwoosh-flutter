@@ -7,7 +7,8 @@ homepage: https://www.pushwoosh.com/v1.0/docs/geozones
 dependencies:
   flutter:
     sdk: flutter
-  pushwoosh: '^1.8.0'
+  pushwoosh: 
+    path: ../pushwoosh
 
 environment:
   sdk: ">=1.19.0 <2.0.0"

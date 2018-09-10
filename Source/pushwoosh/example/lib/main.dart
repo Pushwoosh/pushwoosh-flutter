@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pushwoosh/pushwoosh.dart';
 import 'package:pushwoosh_geozones/pushwoosh_geozones.dart';
+import 'package:pushwoosh_inbox/pushwoosh_inbox.dart';
 
 void main() => runApp(new MyApp());
 
@@ -30,7 +31,7 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    Pushwoosh.initialize({"app_id": "YOUR_APP_ID", "sender_id": "YOUR_SENDER_ID"});
+    Pushwoosh.initialize({"app_id": "5927F-D517A", "sender_id": "YOUR_SENDER_ID"});
 
     setState(() {
       _message = "Ready";

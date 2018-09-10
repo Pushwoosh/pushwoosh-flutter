@@ -19,6 +19,9 @@ dev_dependencies:
   pushwoosh_geozones:
     path: ../../pushwoosh_geozones
 
+  pushwoosh_inbox:
+    path: ../../pushwoosh_inbox
+
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
