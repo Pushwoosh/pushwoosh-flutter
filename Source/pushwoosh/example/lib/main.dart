@@ -190,6 +190,12 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _showInbox() {
+    PWInboxStyle style = PWInboxStyle();
+    style.dateFormat = "dd.MM.yyyy";
+    PushwooshInbox.presentInboxUI(style: style);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -226,6 +232,10 @@ class _MyAppState extends State<MyApp> {
                         new CupertinoButton(
                           child: Text('unregisterForPushNotifications'),
                           onPressed: () => _unregisterForPushNotifications(),
+                        ),
+                         new CupertinoButton(
+                          child: Text('showInbox'),
+                          onPressed: () => _showInbox(),
                         ),
                         new CupertinoButton(
                           child: Text('getTags'),
