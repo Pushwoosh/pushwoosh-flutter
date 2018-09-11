@@ -192,7 +192,16 @@ class _MyAppState extends State<MyApp> {
 
   void _showInbox() {
     PWInboxStyle style = PWInboxStyle();
+
     style.dateFormat = "dd.MM.yyyy";
+    style.defaultImageName = "assets/inbox-1.png";
+    style.unreadImage = "assets/bubble-2.png";
+    style.listErrorImage = "assets/alert-2.png";
+    style.listEmptyImage = "assets/inbox-1.png";
+    style.listErrorMessage = "Custom error message";
+    style.listEmptyMessage = "Custom empty message";
+    style.barTitle = "Custom inbox title";
+
     PushwooshInbox.presentInboxUI(style: style);
   }
 

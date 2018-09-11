@@ -4,12 +4,47 @@ import 'package:flutter/services.dart';
 
 class PWInboxStyle {
   String dateFormat;
+  String defaultImageName;
+  String unreadImage;
+  String listErrorImage;
+  String listEmptyImage;
+  String listErrorMessage;
+  String listEmptyMessage;
+  String barTitle;
 
   Map<String, dynamic> dictionaryRepresentation() {
     Map<String, dynamic> params = Map();
 
     if (dateFormat != null) {
       params['dateFormat'] = dateFormat;
+    }
+
+    if (defaultImageName != null) {
+      params['defaultImageName'] = defaultImageName;
+    }
+
+    if (unreadImage != null) {
+      params['unreadImage'] = unreadImage;
+    }
+
+    if (listErrorImage != null) {
+      params['listErrorImage'] = listErrorImage;
+    }
+
+    if (listEmptyImage != null) {
+      params['listEmptyImage'] = listEmptyImage;
+    }
+
+    if (listErrorMessage != null) {
+      params['listErrorMessage'] = listErrorMessage;
+    } 
+
+    if (listEmptyMessage != null) {
+      params['listEmptyMessage'] = listEmptyMessage;
+    } 
+
+    if (barTitle != null) {
+      params['barTitle'] = barTitle;
     }
 
     return params;
