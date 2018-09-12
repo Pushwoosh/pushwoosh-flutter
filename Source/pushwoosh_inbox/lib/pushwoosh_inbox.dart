@@ -3,18 +3,34 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 class PWInboxStyle {
+
+  /// Inbox message date format. For example: "dd.MMMM.yyyy"
   String dateFormat;
-  String defaultImageName;
+
+  /// The default icon in the cell next to the message; if not specified, the app icon is used
+  String defaultImage;
+
+  /// The appearance of the unread messages mark
   String unreadImage;
+
+  /// The image which is displayed if an error occurs and the list of inbox messages is empty
   String listErrorImage;
+
+  /// The text which is displayed if the list of inbox messages is empty; cannot be localized
   String listEmptyImage;
+
+  /// The error text which is displayed when an error occurs; cannot be localized
   String listErrorMessage;
+
+  /// The text which is displayed if the list of inbox messages is empty; cannot be localized
   String listEmptyMessage;
   String barTitle;
 
   String accentColor;
   String backgroundColor;
   String highlightColor;
+
+  String defaultTextColor;
 
   String imageTypeColor;
   String readImageTypeColor;
@@ -35,7 +51,7 @@ class PWInboxStyle {
   String barTextColor;
 
 
-  Map<String, dynamic> dictionaryRepresentation() {
+  Map<String, dynamic> _dictionaryRepresentation() {
     Map<String, dynamic> params = Map();
 
     if (dateFormat != null) {
@@ -43,7 +59,7 @@ class PWInboxStyle {
     }
 
     if (defaultImageName != null) {
-      params['defaultImageName'] = defaultImageName;
+      params['defaultImage'] = defaultImageName;
     }
 
     if (unreadImage != null) {
@@ -70,55 +86,67 @@ class PWInboxStyle {
       params['barTitle'] = barTitle;
     }
 
-    if(accentColor!=null){
+    if (accentColor != null) {
       params['accentColor'] = accentColor;
     }
-    if(backgroundColor!=null){
+
+    if (backgroundColor != null) {
       params['backgroundColor'] = backgroundColor;
     }
-    if(highlightColor!=null){
+
+    if (highlightColor != null) {
       params['highlightColor'] = highlightColor;
     }
 
-    if(imageTypeColor!=null){
+    if (defaultTextColor != null) {
+      params['defaultTextColor'] = defaultTextColor;
+    }
+
+    if (imageTypeColor != null) {
       params['imageTypeColor'] = imageTypeColor;
     }
-    if(readImageTypeColor!=null){
+
+    if (readImageTypeColor != null) {
       params['readImageTypeColor'] = readImageTypeColor;
     }
 
-    if(titleColor!=null){
+    if (titleColor != null) {
       params['titleColor'] = titleColor;
     }
-    if(readTitleColor!=null){
+
+    if (readTitleColor != null) {
       params['readTitleColor'] = readTitleColor;
     }
 
-    if(descriptionColor!=null){
+    if (descriptionColor != null) {
       params['descriptionColor'] = descriptionColor;
     }
-    if(readDescriptionColor!=null){
+
+    if (readDescriptionColor != null) {
       params['readDescriptionColor'] = readDescriptionColor;
     }
 
-    if(dateColor!=null){
+    if (dateColor != null){ 
       params['dateColor'] = dateColor;
     }
-    if(readDateColor!=null){
+
+    if (readDateColor != null) {
       params['readDateColor'] = readDateColor;
     }
 
-    if(dividerColor!=null){
+    if (dividerColor != null) {
       params['dividerColor'] = dividerColor;
     }
 
-    if(barBackgroundColor!=null){
+    if (barBackgroundColor != null) {
       params['barBackgroundColor'] = barBackgroundColor;
     }
-    if(barAccentColor!=null){
+
+    if (barAccentColor != null) {
       params['barAccentColor'] = barAccentColor;
     }
-    if(barTextColor!=null){
+
+    if (barTextColor != null) {
       params['barTextColor'] = barTextColor;
     }
 
@@ -200,7 +228,7 @@ class PushwooshInbox {
   /// Present Inbox UI
   static void presentInboxUI({PWInboxStyle style}) {
     if (style != null) {
-      _channel.invokeMethod("presentInboxUI", style.dictionaryRepresentation());
+      _channel.invokeMethod("presentInboxUI", style._dictionaryRepresentation());
     } else {
       _channel.invokeMethod("presentInboxUI");
     }
