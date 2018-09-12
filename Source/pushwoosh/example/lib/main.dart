@@ -202,6 +202,28 @@ class _MyAppState extends State<MyApp> {
     style.listEmptyMessage = "Custom empty message";
     style.barTitle = "Custom inbox title";
 
+    style.accentColor = "#FF00FF";
+    style.backgroundColor = "#FFFF00";
+    style.highlightColor = "#FF0FFF";
+
+    style.imageTypeColor = "#00F0FF";
+    style.readImageTypeColor = "#FF000F";
+
+    style.titleColor = "#00F0FF";
+    style.readTitleColor = "#00FF0F";
+
+    style.descriptionColor = "#FF000F";
+    style.readDescriptionColor = "#00FF0F";
+
+    style.dateColor = "#00F0FF";
+    style.readDateColor = "#F0FF0F";
+
+    style.dividerColor = "#FF000F";
+
+    style.barBackgroundColor = "#FF000F";
+    style.barAccentColor = "#0000FF";
+    style.barTextColor = "#00FF00";
+
     PushwooshInbox.presentInboxUI(style: style);
   }
 

@@ -12,6 +12,29 @@ class PWInboxStyle {
   String listEmptyMessage;
   String barTitle;
 
+  String accentColor;
+  String backgroundColor;
+  String highlightColor;
+
+  String imageTypeColor;
+  String readImageTypeColor;
+
+  String titleColor;
+  String readTitleColor;
+
+  String descriptionColor;
+  String readDescriptionColor;
+
+  String dateColor;
+  String readDateColor;
+
+  String dividerColor;
+
+  String barBackgroundColor;
+  String barAccentColor;
+  String barTextColor;
+
+
   Map<String, dynamic> dictionaryRepresentation() {
     Map<String, dynamic> params = Map();
 
@@ -45,6 +68,58 @@ class PWInboxStyle {
 
     if (barTitle != null) {
       params['barTitle'] = barTitle;
+    }
+
+    if(accentColor!=null){
+      params['accentColor'] = accentColor;
+    }
+    if(backgroundColor!=null){
+      params['backgroundColor'] = backgroundColor;
+    }
+    if(highlightColor!=null){
+      params['highlightColor'] = highlightColor;
+    }
+
+    if(imageTypeColor!=null){
+      params['imageTypeColor'] = imageTypeColor;
+    }
+    if(readImageTypeColor!=null){
+      params['readImageTypeColor'] = readImageTypeColor;
+    }
+
+    if(titleColor!=null){
+      params['titleColor'] = titleColor;
+    }
+    if(readTitleColor!=null){
+      params['readTitleColor'] = readTitleColor;
+    }
+
+    if(descriptionColor!=null){
+      params['descriptionColor'] = descriptionColor;
+    }
+    if(readDescriptionColor!=null){
+      params['readDescriptionColor'] = readDescriptionColor;
+    }
+
+    if(dateColor!=null){
+      params['dateColor'] = dateColor;
+    }
+    if(readDateColor!=null){
+      params['readDateColor'] = readDateColor;
+    }
+
+    if(dividerColor!=null){
+      params['dividerColor'] = dividerColor;
+    }
+
+    if(barBackgroundColor!=null){
+      params['barBackgroundColor'] = barBackgroundColor;
+    }
+    if(barAccentColor!=null){
+      params['barAccentColor'] = barAccentColor;
+    }
+    if(barTextColor!=null){
+      params['barTextColor'] = barTextColor;
     }
 
     return params;
