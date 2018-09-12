@@ -194,10 +194,12 @@ class _MyAppState extends State<MyApp> {
     PWInboxStyle style = PWInboxStyle();
 
     style.dateFormat = "dd.MM.yyyy";
-    style.defaultImageName = "assets/inbox-1.png";
+
+    style.defaultImage = "assets/inbox-1.png";
     style.unreadImage = "assets/bubble-2.png";
     style.listErrorImage = "assets/alert-2.png";
     style.listEmptyImage = "assets/inbox-1.png";
+    
     style.listErrorMessage = "Custom error message";
     style.listEmptyMessage = "Custom empty message";
     style.barTitle = "Custom inbox title";
@@ -211,6 +213,7 @@ class _MyAppState extends State<MyApp> {
 
     style.titleColor = "#00F0FF";
     style.readTitleColor = "#00FF0F";
+    style.defaultTextColor = "#FF00FF";
 
     style.descriptionColor = "#FF000F";
     style.readDescriptionColor = "#00FF0F";
@@ -223,7 +226,7 @@ class _MyAppState extends State<MyApp> {
     style.barBackgroundColor = "#FF000F";
     style.barAccentColor = "#0000FF";
     style.barTextColor = "#00FF00";
-
+    
     PushwooshInbox.presentInboxUI(style: style);
   }
 
