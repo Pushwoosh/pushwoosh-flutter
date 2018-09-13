@@ -57,8 +57,8 @@ class PushwooshInboxPlugin() : MethodCallHandler {
             if (call.hasArgument("listErrorImage")) {
                 PushwooshInboxStyle.listErrorImageDrawable = toDrawable(call.argument("listErrorImage"))
             }
-            if (call.hasArgument("defaultImageIcon")) {
-                PushwooshInboxStyle.defaultImageIconDrawable = toDrawable(call.argument("defaultImageIcon"))
+            if (call.hasArgument("defaultImage")) {
+                PushwooshInboxStyle.defaultImageIconDrawable = toDrawable(call.argument("defaultImage"))
             }
             if (call.hasArgument("barTitle")) {
                 PushwooshInboxStyle.barTitle = call.argument("barTitle")

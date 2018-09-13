@@ -58,8 +58,8 @@ class PWInboxStyle {
       params['dateFormat'] = dateFormat;
     }
 
-    if (defaultImageName != null) {
-      params['defaultImage'] = defaultImageName;
+    if (defaultImage != null) {
+      params['defaultImage'] = defaultImage;
     }
 
     if (unreadImage != null) {
