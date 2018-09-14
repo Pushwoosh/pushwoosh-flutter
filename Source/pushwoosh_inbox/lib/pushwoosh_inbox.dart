@@ -41,7 +41,10 @@ class PWInboxStyle {
   /// The default text color (iOS only)
   String defaultTextColor;
 
+  /// The color of the unread message action icon (Deep Link, URL, etc.). By default used [accentColor] (Android only)
   String imageTypeColor;
+
+  /// The color of the read message action icon. By default used [readDateColor]
   String readImageTypeColor;
 
   /// The color of message titles
