@@ -43,5 +43,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.android.support:support-compat:27.1.1'
     implementation 'com.google.firebase:firebase-messaging:17.0.0'
-    implementation 'com.pushwoosh:pushwoosh:5.8.11'
+    implementation 'com.pushwoosh:pushwoosh:5.9.0'
 }

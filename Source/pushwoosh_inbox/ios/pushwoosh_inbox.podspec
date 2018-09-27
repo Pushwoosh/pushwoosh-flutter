@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'pushwoosh_inbox'
-  s.version          = '1.0.0'
+  s.version          = '1.9.0'
   s.summary          = 'Pushwoosh Inbox Flutter plugin'
   s.homepage         = 'http://pushwoosh.com'
   s.license          = { :file => '../LICENSE' }
@@ -12,8 +12,8 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'Pushwoosh', '5.8.1'
-  s.dependency 'PushwooshInboxUI', '5.8.1'
+  s.dependency 'Pushwoosh', '5.9.0'
+  s.dependency 'PushwooshInboxUI', '5.8.4'
   
   s.ios.deployment_target = '8.0'
 end

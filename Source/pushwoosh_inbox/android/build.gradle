@@ -42,9 +42,9 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation "com.pushwoosh:pushwoosh-inbox:5.8.11"
-    implementation "com.pushwoosh:pushwoosh-inbox-ui:5.8.11"
-    implementation "com.pushwoosh:pushwoosh:5.8.11"
+    implementation "com.pushwoosh:pushwoosh-inbox:5.9.0"
+    implementation "com.pushwoosh:pushwoosh-inbox-ui:5.9.0"
+    implementation "com.pushwoosh:pushwoosh:5.9.0"
     implementation "com.android.support:appcompat-v7:$support"
     implementation "com.android.support:support-v4:$support"
     implementation "com.android.support:recyclerview-v7:$support"
