@@ -4,7 +4,6 @@ version '1.0-SNAPSHOT'
 buildscript {
     ext.kotlin_version = '1.1.51'
     ext.support = '27.1.1'
-    ext.pushwoosh = '5.8.11'
     repositories {
         google()
         jcenter()
@@ -43,9 +42,9 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation "com.pushwoosh:pushwoosh-inbox:$pushwoosh"
-    implementation "com.pushwoosh:pushwoosh-inbox-ui:$pushwoosh"
-    implementation "com.pushwoosh:pushwoosh:$pushwoosh"
+    implementation "com.pushwoosh:pushwoosh-inbox:5.8.11"
+    implementation "com.pushwoosh:pushwoosh-inbox-ui:5.8.11"
+    implementation "com.pushwoosh:pushwoosh:5.8.11"
     implementation "com.android.support:appcompat-v7:$support"
     implementation "com.android.support:support-v4:$support"
     implementation "com.android.support:recyclerview-v7:$support"
