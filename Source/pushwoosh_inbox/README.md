@@ -1,10 +1,16 @@
-# pushwoosh_inbox
+## Installation
 
-A new flutter plugin project.
+Install the library from pub:
 
-## Getting Started
+```yaml
+dependencies:
+pushwoosh_inbox: '^1.8.0'
+```
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
-
-For help on editing plugin code, view the [documentation](https://flutter.io/platform-plugins/#edit-code).
+## Usage
+```dart
+import 'package:pushwoosh_inbox/pushwoosh_inbox.dart';
+...
+PWInboxStyle style = PWInboxStyle();
+PushwooshInbox.presentInboxUI(style: style);
+```
