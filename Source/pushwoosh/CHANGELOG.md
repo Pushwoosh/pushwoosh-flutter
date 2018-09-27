@@ -7,3 +7,10 @@
 ### Added
 * Message inbox support
  
+## 1.9.1
+### Added
+* pushwoosh_inbox README
+
+### Fixed
+* removed duplicates from changelog
+ 
