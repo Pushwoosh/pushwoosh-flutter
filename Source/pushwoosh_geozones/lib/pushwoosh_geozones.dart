@@ -7,8 +7,8 @@ class PushwooshGeozones {
   static const MethodChannel _channel = const MethodChannel('pushwoosh_geozones');
 
   /// Start location tracking
-  static void startLocationTracking() {
-    _channel.invokeMethod("startLocationTracking");
+  static Future<void> startLocationTracking() async {
+    await _channel.invokeMethod("startLocationTracking");
   }
   
   /// Stop location tracking
