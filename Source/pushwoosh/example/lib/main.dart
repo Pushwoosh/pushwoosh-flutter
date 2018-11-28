@@ -172,8 +172,14 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _startLocationTracking() {
-    PushwooshGeozones.startLocationTracking();
+  void _startLocationTracking() async {
+    try {
+      await PushwooshGeozones.startLocationTracking();
+    } catch(e){
+      _message = e.toString();
+      addLog();
+    }
+
 
     setState(() {
       _message = "Location tracking did start";
