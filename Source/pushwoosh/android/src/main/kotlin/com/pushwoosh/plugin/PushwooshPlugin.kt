@@ -113,7 +113,7 @@ class PushwooshPlugin() : MethodCallHandler {
             "setTags" -> setTags(call, result)
             "getTags" -> getTags(call, result)
             "startListening" -> PushwooshPlugin.listen = true;
-            "setShowForegroundPush" -> PushwooshPlugin.showForegroundPush = call.argument("show_foreground_push")
+            "setShowForegroundPush" -> PushwooshPlugin.showForegroundPush = call.argument("show_foreground_push") ?: false
             "showForegroundAlert" -> showForegroundAlert(call, result)
             "postEvent" -> postEvent(call, result)
             else -> result.notImplemented()
@@ -171,7 +171,9 @@ class PushwooshPlugin() : MethodCallHandler {
     }
 
     private fun setTags(call: MethodCall, result: Result) {
-        val map: Map<String, String> = call.argument("tags")
+        val map: Map<String, String>? = call.argument("tags")
+        if (map == null)
+            return
         val json = JSONObject(map)
         Pushwoosh.getInstance().sendTags(Tags.fromJson(json), { resultRequest ->
             if (resultRequest.isSuccess()) {
@@ -200,11 +202,13 @@ class PushwooshPlugin() : MethodCallHandler {
     }
 
     private fun initialize(call: MethodCall, instance: Pushwoosh) {
-        val appId: String = call.argument("app_id")
-        instance.setAppId(appId)
+        val appId: String? = call.argument("app_id")
+        if (appId != null)
+            instance.setAppId(appId)
 
-        val sendId: String = call.argument("sender_id")
-        instance.setSenderId(sendId)
+        val sendId: String? = call.argument("sender_id")
+        if (sendId != null)
+            instance.setSenderId(sendId)
     }
 }
 

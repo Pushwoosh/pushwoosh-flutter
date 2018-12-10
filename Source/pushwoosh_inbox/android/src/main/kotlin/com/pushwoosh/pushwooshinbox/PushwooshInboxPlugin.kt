@@ -37,7 +37,7 @@ class PushwooshInboxPlugin() : MethodCallHandler {
         }
     }
 
-    class PushwooshDateFormatter(val dataFormat: String) : InboxDateFormatter {
+    class PushwooshDateFormatter(val dataFormat: String?) : InboxDateFormatter {
         override fun transform(date: Date): String {
             return android.text.format.DateFormat.format(dataFormat, date).toString()
         }
@@ -136,7 +136,7 @@ class PushwooshInboxPlugin() : MethodCallHandler {
         return color
     }
 
-    private fun toDrawable(imageString: String): Drawable? {
+    private fun toDrawable(imageString: String?): Drawable? {
         val registrar: Registrar = PushwooshInboxPlugin.registrar
         val assetManager = registrar.context().getAssets()
         val key = registrar.lookupKeyForAsset(imageString)
