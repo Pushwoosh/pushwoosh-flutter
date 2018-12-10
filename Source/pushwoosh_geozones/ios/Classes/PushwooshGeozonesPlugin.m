@@ -1,5 +1,6 @@
 #import "PushwooshGeozonesPlugin.h"
 #import <Pushwoosh/PushNotificationManager.h>
+#import <PushwooshGeozones/PWGeozonesManager.h>
 
 @implementation PushwooshGeozonesPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -12,10 +13,10 @@
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if ([@"startLocationTracking" isEqualToString:call.method]) {
-      [[PushNotificationManager pushManager] startLocationTracking];
+      [[PWGeozonesManager sharedManager] startLocationTracking];
       result(nil);
   } else if ([@"stopLocationTracking" isEqualToString:call.method]) {
-      [[PushNotificationManager pushManager] stopLocationTracking];
+      [[PWGeozonesManager sharedManager] stopLocationTracking];
       result(nil);
   } else {
       result(FlutterMethodNotImplemented);
