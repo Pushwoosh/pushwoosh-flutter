@@ -18,7 +18,7 @@ class Pushwoosh {
   Future<bool> get showForegroundAlert async => await _channel.invokeMethod("showForegroundAlert");
 
   /// Show push notifications alert when push notification is received while the app is running, default is `true`
-  set showForegroundAlert(bool value) {
+  void setShowForegroundAlert(bool value) {
     _channel.invokeMethod("showForegroundAlert", value);
   }
 

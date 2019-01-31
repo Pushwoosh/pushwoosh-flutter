@@ -1,5 +1,5 @@
 #import "PushwooshInboxPlugin.h"
-#import <PushwooshInboxUI/PushwooshInboxUI.h>
+#import "../Library/PushwooshInboxUI.h"
 
 @interface PushwooshInboxPlugin ()
 

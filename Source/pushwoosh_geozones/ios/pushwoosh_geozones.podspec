@@ -12,7 +12,10 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'Pushwoosh/Geozones', '5.11.0'
+  s.static_framework = true
+
+  s.vendored_libraries = 'Library/libPushwooshGeozones.a'
+  s.libraries = "PushwooshGeozones"
   
   s.ios.deployment_target = '8.0'
 end

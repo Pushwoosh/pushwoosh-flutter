@@ -20,7 +20,7 @@ class _MyAppState extends State<MyApp> {
 
   set showAlert(bool value) {
     _showAlert = value;
-    Pushwoosh.getInstance.showForegroundAlert = value;
+    Pushwoosh.getInstance.setShowForegroundAlert(value);
   }
 
   @override

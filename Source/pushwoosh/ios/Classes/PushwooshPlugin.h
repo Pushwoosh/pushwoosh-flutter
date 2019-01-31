@@ -1,5 +1,4 @@
 #import <Flutter/Flutter.h>
-#
 
 @interface PushwooshPlugin : NSObject<FlutterPlugin>
 @end
