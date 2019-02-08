@@ -29,3 +29,7 @@
 * Android SDK version updated to 5.12.1
 * iOS SDK version updated to 5.12.1
  
+## 1.12.1
+### Fixed
+* Crash on iOS 9
+ 
