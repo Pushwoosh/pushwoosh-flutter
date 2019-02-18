@@ -8,7 +8,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import com.pushwoosh.Pushwoosh
 import android.os.Handler
-import android.support.annotation.MainThread
+import androidx.annotation.MainThread
 import com.pushwoosh.exception.PushwooshException
 
 import com.pushwoosh.notification.NotificationServiceExtension
