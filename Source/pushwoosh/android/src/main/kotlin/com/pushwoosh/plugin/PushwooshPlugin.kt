@@ -85,17 +85,17 @@ class PushwooshPlugin() : MethodCallHandler {
 
         @JvmStatic
         fun onMessageReceived(map: Map<String, Any>, fromBackground: Boolean) {
-            receiveHandler?.sendEvent(map, fromBackground)
+            receiveHandler.sendEvent(map, fromBackground)
         }
 
         @JvmStatic
         fun onMessageAccepted(map: Map<String, Any>, fromBackground: Boolean) {
-            acceptHandler?.sendEvent(map, fromBackground)
+            acceptHandler.sendEvent(map, fromBackground)
         }
 
         @JvmStatic
         fun callToFlutter(methode: String, arg: Map<String, Any>) {
-            if (channel != null && listen)
+            if (listen)
                 PushwooshPlugin.channel.invokeMethod(methode, arg)
         }
     }
