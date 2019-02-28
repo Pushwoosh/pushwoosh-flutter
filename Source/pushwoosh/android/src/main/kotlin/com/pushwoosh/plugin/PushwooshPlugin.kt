@@ -1,28 +1,19 @@
 package com.pushwoosh.plugin
 
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.PluginRegistry.Registrar
+import android.util.Log
 import com.pushwoosh.Pushwoosh
-import android.os.Handler
-import android.support.annotation.MainThread
 import com.pushwoosh.exception.PushwooshException
-
-import com.pushwoosh.notification.NotificationServiceExtension
-import com.pushwoosh.notification.PushMessage
 import com.pushwoosh.inapp.PushwooshInApp
 import com.pushwoosh.tags.Tags
-import org.json.JSONObject
-import org.json.JSONArray
-import com.pushwoosh.internal.utils.PWLog
-import com.pushwoosh.internal.network.NetworkException
-import android.util.Log
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.BinaryMessenger.*
+import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import io.flutter.plugin.common.MethodChannel.Result
+import io.flutter.plugin.common.PluginRegistry.Registrar
+import org.json.JSONArray
+import org.json.JSONObject
 
 class PushwooshPlugin() : MethodCallHandler {
 
