@@ -1,7 +1,5 @@
 package com.pushwoosh.pushwooshgeozones;
 
-import android.support.annotation.NonNull;
-
 import com.pushwoosh.function.Callback;
 import com.pushwoosh.location.PushwooshLocation;
 import com.pushwoosh.location.network.exception.LocationNotAvailableException;
@@ -35,7 +33,7 @@ public class PushwooshGeozonesPlugin implements MethodCallHandler {
     private void onStartLocationTracking(final Result result) {
         PushwooshLocation.startLocationTracking(new Callback<Void, LocationNotAvailableException>() {
             @Override
-            public void process(@NonNull com.pushwoosh.function.Result<Void, LocationNotAvailableException> resultRequest) {
+            public void process(com.pushwoosh.function.Result<Void, LocationNotAvailableException> resultRequest) {
                 if (resultRequest.isSuccess()) {
                     result.success(resultRequest.getData());
                 } else {

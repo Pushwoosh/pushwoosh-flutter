@@ -1,6 +1,5 @@
 package com.pushwoosh.plugin;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.pushwoosh.Pushwoosh;
@@ -127,7 +126,7 @@ public class PushwooshPlugin implements MethodCallHandler {
     private void registerForPushNotifications(MethodCall call, final Result result) {
         Pushwoosh.getInstance().registerForPushNotifications(new Callback<String, RegisterForPushNotificationsException>() {
             @Override
-            public void process(@NonNull com.pushwoosh.function.Result<String, RegisterForPushNotificationsException> resultRequest) {
+            public void process(com.pushwoosh.function.Result<String, RegisterForPushNotificationsException> resultRequest) {
                 if (resultRequest.isSuccess()) {
                     result.success(resultRequest.getData());
                 } else {
@@ -148,7 +147,7 @@ public class PushwooshPlugin implements MethodCallHandler {
     private void unregisterForPushNotifications(MethodCall call, final Result result) {
         Pushwoosh.getInstance().unregisterForPushNotifications(new Callback<String, UnregisterForPushNotificationException>() {
             @Override
-            public void process(@NonNull com.pushwoosh.function.Result<String, UnregisterForPushNotificationException> resultRequest) {
+            public void process(com.pushwoosh.function.Result<String, UnregisterForPushNotificationException> resultRequest) {
                 if (resultRequest.isSuccess()) {
                     result.success(resultRequest.getData());
                 } else {
@@ -161,7 +160,7 @@ public class PushwooshPlugin implements MethodCallHandler {
     private void getTags(MethodCall call, final Result result) {
         Pushwoosh.getInstance().getTags(new Callback<TagsBundle, GetTagsException>() {
             @Override
-            public void process(@NonNull com.pushwoosh.function.Result<TagsBundle, GetTagsException> resultRequest) {
+            public void process(com.pushwoosh.function.Result<TagsBundle, GetTagsException> resultRequest) {
                 if (resultRequest.isSuccess()) {
                     TagsBundle data = resultRequest.getData();
                     Map<String, Object> map = data != null ? data.getMap() : null;
@@ -196,7 +195,7 @@ public class PushwooshPlugin implements MethodCallHandler {
         JSONObject json = new JSONObject(map);
         Pushwoosh.getInstance().sendTags(Tags.fromJson(json), new Callback<Void, PushwooshException>() {
             @Override
-            public void process(@NonNull com.pushwoosh.function.Result<Void, PushwooshException> resultRequest) {
+            public void process(com.pushwoosh.function.Result<Void, PushwooshException> resultRequest) {
                 if (resultRequest.isSuccess()) {
                     result.success(null);
                 } else {
