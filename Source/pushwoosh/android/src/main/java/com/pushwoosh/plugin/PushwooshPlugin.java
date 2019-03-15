@@ -141,7 +141,7 @@ public class PushwooshPlugin implements MethodCallHandler {
             return;
         }
         String message = e.getMessage();
-        result.error(e.getClass().getSimpleName(), message, Log.e(e.getClass().getName(), e.getMessage(), e));
+        result.error(e.getClass().getSimpleName(), message, Log.getStackTraceString(e));
     }
 
     private void unregisterForPushNotifications(MethodCall call, final Result result) {
@@ -224,12 +224,13 @@ public class PushwooshPlugin implements MethodCallHandler {
 
     private void initialize(MethodCall call, Pushwoosh pushwooshInstance) {
         String appId = call.argument("app_id");
-        if (appId != null)
+        if (appId != null) {
             pushwooshInstance.setAppId(appId);
-
+        }
         String sendId = call.argument("sender_id");
-        if (sendId != null)
+        if (sendId != null) {
             pushwooshInstance.setSenderId(sendId);
+        }
     }
 
     private void setShowForegroundPush(MethodCall call) {
