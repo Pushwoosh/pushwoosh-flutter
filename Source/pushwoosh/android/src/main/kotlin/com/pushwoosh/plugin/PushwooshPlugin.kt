@@ -24,9 +24,9 @@ class PushwooshPlugin() : MethodCallHandler {
         public lateinit var receiveChannel: EventChannel
         public lateinit var acceptChannel: EventChannel
 
-        public lateinit var receiveHandler: StremaHandler
-        public lateinit var acceptHandler: StremaHandler
 
+        var receiveHandler = StremaHandler()
+        var acceptHandler = StremaHandler()
 
         private lateinit var messenger: BinaryMessenger
 
@@ -38,9 +38,7 @@ class PushwooshPlugin() : MethodCallHandler {
             acceptChannel = EventChannel(messenger, "pushwoosh/accept")
             channel.setMethodCallHandler(PushwooshPlugin())
 
-            receiveHandler = StremaHandler()
             receiveChannel.setStreamHandler(receiveHandler)
-            acceptHandler = StremaHandler()
             acceptChannel.setStreamHandler(acceptHandler)
         }
 
