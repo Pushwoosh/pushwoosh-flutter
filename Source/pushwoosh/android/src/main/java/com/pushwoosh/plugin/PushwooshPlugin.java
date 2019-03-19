@@ -35,8 +35,8 @@ public class PushwooshPlugin implements MethodCallHandler {
     public static MethodChannel channel;
     public static EventChannel receiveChannel;
     public static EventChannel acceptChannel;
-    public static StreamHandler receiveHandler;
-    public static StreamHandler acceptHandler;
+    public static StreamHandler receiveHandler = new StreamHandler();
+    public static StreamHandler acceptHandler = new StreamHandler();
     public static BinaryMessenger messenger;
 
     public static void registerWith(Registrar registrar) {
@@ -46,9 +46,7 @@ public class PushwooshPlugin implements MethodCallHandler {
         PushwooshPlugin.acceptChannel = new EventChannel(messenger, "pushwoosh/accept");
         PushwooshPlugin.channel.setMethodCallHandler(new PushwooshPlugin());
 
-        PushwooshPlugin.receiveHandler = new StreamHandler();
         PushwooshPlugin.receiveChannel.setStreamHandler(receiveHandler);
-        PushwooshPlugin.acceptHandler = new StreamHandler();
         PushwooshPlugin.acceptChannel.setStreamHandler(acceptHandler);
     }
 
