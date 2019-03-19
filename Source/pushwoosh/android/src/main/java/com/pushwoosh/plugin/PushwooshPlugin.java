@@ -35,8 +35,8 @@ public class PushwooshPlugin implements MethodCallHandler {
     public static MethodChannel channel;
     public static EventChannel receiveChannel;
     public static EventChannel acceptChannel;
-    public static StremaHandler receiveHandler;
-    public static StremaHandler acceptHandler;
+    public static StreamHandler receiveHandler;
+    public static StreamHandler acceptHandler;
     public static BinaryMessenger messenger;
 
     public static void registerWith(Registrar registrar) {
@@ -46,21 +46,21 @@ public class PushwooshPlugin implements MethodCallHandler {
         PushwooshPlugin.acceptChannel = new EventChannel(messenger, "pushwoosh/accept");
         PushwooshPlugin.channel.setMethodCallHandler(new PushwooshPlugin());
 
-        PushwooshPlugin.receiveHandler = new StremaHandler();
+        PushwooshPlugin.receiveHandler = new StreamHandler();
         PushwooshPlugin.receiveChannel.setStreamHandler(receiveHandler);
-        PushwooshPlugin.acceptHandler = new StremaHandler();
+        PushwooshPlugin.acceptHandler = new StreamHandler();
         PushwooshPlugin.acceptChannel.setStreamHandler(acceptHandler);
     }
 
     public static void onMessageReceived(Map<String, Object> map, boolean fromBackground) {
-        StremaHandler receiveHandler = PushwooshPlugin.receiveHandler;
+        StreamHandler receiveHandler = PushwooshPlugin.receiveHandler;
         if (receiveHandler != null) {
             receiveHandler.sendEvent(map, fromBackground);
         }
     }
 
     public static void onMessageAccepted(Map<String, Object> map, boolean fromBackground) {
-        StremaHandler acceptHandler = PushwooshPlugin.acceptHandler;
+        StreamHandler acceptHandler = PushwooshPlugin.acceptHandler;
         if (acceptHandler != null) {
             acceptHandler.sendEvent(map, fromBackground);
         }
@@ -242,7 +242,7 @@ public class PushwooshPlugin implements MethodCallHandler {
         }
     }
 
-    private static class StremaHandler implements EventChannel.StreamHandler {
+    private static class StreamHandler implements EventChannel.StreamHandler {
         private EventChannel.EventSink events;
 
         private void sendEvent(Map<String, Object> map, boolean fromBackground) {
