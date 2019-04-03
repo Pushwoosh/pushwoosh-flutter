@@ -1,0 +1,275 @@
+package com.pushwoosh.plugin;
+
+import android.util.Log;
+
+import com.pushwoosh.Pushwoosh;
+import com.pushwoosh.exception.GetTagsException;
+import com.pushwoosh.exception.PushwooshException;
+import com.pushwoosh.exception.RegisterForPushNotificationsException;
+import com.pushwoosh.exception.UnregisterForPushNotificationException;
+import com.pushwoosh.function.Callback;
+import com.pushwoosh.inapp.PushwooshInApp;
+import com.pushwoosh.tags.Tags;
+import com.pushwoosh.tags.TagsBundle;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
+import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry.Registrar;
+
+public class PushwooshPlugin implements MethodCallHandler {
+    public static boolean listen;
+    public static boolean showForegroundPush = true;
+    public static MethodChannel channel;
+    public static EventChannel receiveChannel;
+    public static EventChannel acceptChannel;
+    public static StreamHandler receiveHandler = new StreamHandler();
+    public static StreamHandler acceptHandler = new StreamHandler();
+    public static BinaryMessenger messenger;
+
+    public static void registerWith(Registrar registrar) {
+        PushwooshPlugin.messenger = registrar.messenger();
+        PushwooshPlugin.channel = new MethodChannel(messenger, "pushwoosh");
+        PushwooshPlugin.receiveChannel = new EventChannel(messenger, "pushwoosh/receive");
+        PushwooshPlugin.acceptChannel = new EventChannel(messenger, "pushwoosh/accept");
+        PushwooshPlugin.channel.setMethodCallHandler(new PushwooshPlugin());
+
+        PushwooshPlugin.receiveChannel.setStreamHandler(receiveHandler);
+        PushwooshPlugin.acceptChannel.setStreamHandler(acceptHandler);
+    }
+
+    public static void onMessageReceived(Map<String, Object> map, boolean fromBackground) {
+        StreamHandler receiveHandler = PushwooshPlugin.receiveHandler;
+        if (receiveHandler != null) {
+            receiveHandler.sendEvent(map, fromBackground);
+        }
+    }
+
+    public static void onMessageAccepted(Map<String, Object> map, boolean fromBackground) {
+        StreamHandler acceptHandler = PushwooshPlugin.acceptHandler;
+        if (acceptHandler != null) {
+            acceptHandler.sendEvent(map, fromBackground);
+        }
+    }
+
+    public static void callToFlutter(String methode, Map<String, Object> arg) {
+        MethodChannel channel = PushwooshPlugin.channel;
+        boolean listen = PushwooshPlugin.listen;
+        if (channel != null && listen) {
+            channel.invokeMethod(methode, arg);
+        }
+    }
+
+    @Override
+    public void onMethodCall(MethodCall call, Result result) {
+        Pushwoosh pushwooshInstance = Pushwoosh.getInstance();
+        switch (call.method) {
+            case "getPlatformVersion":
+                result.success("Android " + android.os.Build.VERSION.RELEASE);
+                break;
+            case "initialize":
+                initialize(call, pushwooshInstance);
+                break;
+            case "getInstance":
+                result.success(pushwooshInstance);
+                break;
+            case "registerForPushNotifications":
+                registerForPushNotifications(call, result);
+                break;
+            case "unregisterForPushNotifications":
+                unregisterForPushNotifications(call, result);
+                break;
+            case "getPushToken":
+                result.success(pushwooshInstance.getPushToken());
+                break;
+            case "getHWID":
+                result.success(pushwooshInstance.getHwid());
+                break;
+            case "setTags":
+                setTags(call, result);
+                break;
+            case "getTags":
+                getTags(call, result);
+                break;
+            case "startListening":
+                PushwooshPlugin.listen = true;
+                break;
+            case "setShowForegroundPush":
+                setShowForegroundPush(call);
+                break;
+            case "showForegroundAlert":
+                showForegroundAlert(call, result);
+                break;
+            case "postEvent":
+                postEvent(call, result);
+                break;
+            default:
+                result.notImplemented();
+                break;
+        }
+    }
+
+    private void registerForPushNotifications(MethodCall call, final Result result) {
+        Pushwoosh.getInstance().registerForPushNotifications(new Callback<String, RegisterForPushNotificationsException>() {
+            @Override
+            public void process(com.pushwoosh.function.Result<String, RegisterForPushNotificationsException> resultRequest) {
+                if (resultRequest.isSuccess()) {
+                    result.success(resultRequest.getData());
+                } else {
+                    sendResultException(result, resultRequest.getException());
+                }
+            }
+        });
+    }
+
+    private void sendResultException(Result result, PushwooshException e) {
+        if (e == null) {
+            return;
+        }
+        String message = e.getMessage();
+        result.error(e.getClass().getSimpleName(), message, Log.getStackTraceString(e));
+    }
+
+    private void unregisterForPushNotifications(MethodCall call, final Result result) {
+        Pushwoosh.getInstance().unregisterForPushNotifications(new Callback<String, UnregisterForPushNotificationException>() {
+            @Override
+            public void process(com.pushwoosh.function.Result<String, UnregisterForPushNotificationException> resultRequest) {
+                if (resultRequest.isSuccess()) {
+                    result.success(resultRequest.getData());
+                } else {
+                    sendResultException(result, resultRequest.getException());
+                }
+            }
+        });
+    }
+
+    private void getTags(MethodCall call, final Result result) {
+        Pushwoosh.getInstance().getTags(new Callback<TagsBundle, GetTagsException>() {
+            @Override
+            public void process(com.pushwoosh.function.Result<TagsBundle, GetTagsException> resultRequest) {
+                if (resultRequest.isSuccess()) {
+                    TagsBundle data = resultRequest.getData();
+                    Map<String, Object> map = data != null ? data.getMap() : null;
+                    Map<String, Object> mapParsed = new HashMap<>();
+                    if (map != null) {
+                        Iterator it = map.entrySet().iterator();
+                        while (it.hasNext()) {
+                            Map.Entry pair = (Map.Entry)it.next();
+                            if (pair.getValue() instanceof JSONArray) {
+                                Object value = data.getList((String) pair.getKey());
+                                if (value != null) {
+                                    mapParsed.put((String) pair.getKey(), value);
+                                }
+                            } else {
+                                mapParsed.put((String) pair.getKey(), pair.getValue());
+                            }
+                        }
+                        result.success(mapParsed);
+                    }
+                } else {
+                    sendResultException(result, resultRequest.getException());
+                }
+            }
+        });
+    }
+
+    private void setTags(MethodCall call, final Result result) {
+        Map<String, String> map = call.argument("tags");
+        if (map == null) {
+            return;
+        }
+        JSONObject json = new JSONObject(map);
+        Pushwoosh.getInstance().sendTags(Tags.fromJson(json), new Callback<Void, PushwooshException>() {
+            @Override
+            public void process(com.pushwoosh.function.Result<Void, PushwooshException> resultRequest) {
+                if (resultRequest.isSuccess()) {
+                    result.success(null);
+                } else {
+                    sendResultException(result, resultRequest.getException());
+                }
+            }
+        });
+    }
+
+    private void showForegroundAlert(MethodCall call, Result result) {
+        if (call.arguments == null) {
+            result.success(showForegroundPush);
+        } else {
+            showForegroundPush = (Boolean) call.arguments;
+        }
+    }
+
+    private void postEvent(MethodCall call, Result result) {
+        List<Object> args = (ArrayList<Object>) call.arguments;
+        String method = (String) args.get(0);
+        Map<String, Object> map = (Map<String, Object>) args.get(1);
+        JSONObject jsonObject = new JSONObject(map);
+        PushwooshInApp.getInstance().postEvent(method, Tags.fromJson(jsonObject));
+        result.success(null);
+    }
+
+    private void initialize(MethodCall call, Pushwoosh pushwooshInstance) {
+        String appId = call.argument("app_id");
+        if (appId != null) {
+            pushwooshInstance.setAppId(appId);
+        }
+        String sendId = call.argument("sender_id");
+        if (sendId != null) {
+            pushwooshInstance.setSenderId(sendId);
+        }
+    }
+
+    private void setShowForegroundPush(MethodCall call) {
+        if (call.argument("show_foreground_push") instanceof Boolean) {
+            PushwooshPlugin.showForegroundPush =
+                    call.argument("show_foreground_push");
+        } else {
+            PushwooshPlugin.showForegroundPush = false;
+        }
+    }
+
+    private static class StreamHandler implements EventChannel.StreamHandler {
+        private EventChannel.EventSink events;
+
+        private void sendEvent(Map<String, Object> map, boolean fromBackground) {
+            if (events != null) {
+                events.success(convertMap(map, fromBackground));
+            }
+        }
+
+        private Map<String, Object> convertMap(Map<String, Object> map, boolean fromBackground) {
+            HashMap<String, Object> mapForFlutter = new HashMap<>();
+            Object title = map.get("title");
+            mapForFlutter.put("title", title == null ? "" : title);
+            Object body = map.get("body");
+            mapForFlutter.put("message", body == null ? "" : body);
+            Object customData = map.get("customData");
+            mapForFlutter.put("customData", customData == null ? new HashMap<String, Object>() : customData);
+            mapForFlutter.put("fromBackground", fromBackground);
+            mapForFlutter.put("payload", map);
+            return mapForFlutter;
+        }
+
+        @Override
+        public void onListen(Object o, EventChannel.EventSink events) {
+            this.events = events;
+        }
+
+        @Override
+        public void onCancel(Object o) {
+
+        }
+    }
+}
