@@ -77,7 +77,7 @@ public class PushwooshPlugin implements MethodCallHandler {
         Pushwoosh pushwooshInstance = Pushwoosh.getInstance();
         switch (call.method) {
             case "getPlatformVersion":
-                result.success("Android ${android.os.Build.VERSION.RELEASE}");
+                result.success("Android " + android.os.Build.VERSION.RELEASE);
                 break;
             case "initialize":
                 initialize(call, pushwooshInstance);
