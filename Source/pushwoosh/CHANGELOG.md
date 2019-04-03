@@ -33,3 +33,8 @@
 ### Fixed
 * Crash on iOS 9
  
+## 1.13.0
+### Fixed
+* Fixed an issue with Flutter app crashes on push receiving while the app is terminated
+* Sample upgraded to Android X, gradle plugin version updated to 3.2.1
+ 
