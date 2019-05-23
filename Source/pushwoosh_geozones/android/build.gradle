@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.pushwoosh:pushwoosh-location:5.13.2'
+    implementation 'com.pushwoosh:pushwoosh-location:5.14.3'
     implementation 'com.google.android.gms:play-services-location:15.0.1+'
-    implementation 'com.pushwoosh:pushwoosh:5.13.2'
+    implementation 'com.pushwoosh:pushwoosh:5.14.3'
 }

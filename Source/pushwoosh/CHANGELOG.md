@@ -38,3 +38,11 @@
 * Fixed an issue with Flutter app crashes on push receiving while the app is terminated
 * Sample upgraded to Android X, gradle plugin version updated to 3.2.1
  
+## 1.14.0
+### Fixed
+* Zip Path Traversal Vulnerability
+
+### Updated
+* Android SDK version updated to 5.14.3
+* iOS SDK version updated to 5.13.1
+ 
