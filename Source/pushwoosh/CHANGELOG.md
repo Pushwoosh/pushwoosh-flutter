@@ -46,3 +46,10 @@
 * Android SDK version updated to 5.14.3
 * iOS SDK version updated to 5.13.1
  
+## 1.14.1
+### Fixed
+* An issue with Android app crashes on launch
+
+### Updated
+* Android SDK version updated to 5.14.4
+ 
