@@ -242,10 +242,14 @@ public class PushwooshPlugin implements MethodCallHandler {
 
     private static class StreamHandler implements EventChannel.StreamHandler {
         private EventChannel.EventSink events;
+        private Map<String, Object> startPushNotification;
 
         private void sendEvent(Map<String, Object> map, boolean fromBackground) {
             if (events != null) {
                 events.success(convertMap(map, fromBackground));
+            } else {
+                //flutter app is not initialized yet, so save push notification, we send it to listener later
+                startPushNotification = map;
             }
         }
 
@@ -265,6 +269,11 @@ public class PushwooshPlugin implements MethodCallHandler {
         @Override
         public void onListen(Object o, EventChannel.EventSink events) {
             this.events = events;
+
+            if (startPushNotification != null) {
+                sendEvent(startPushNotification, true);
+                startPushNotification = null;
+            }
         }
 
         @Override

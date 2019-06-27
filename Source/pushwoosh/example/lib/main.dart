@@ -42,6 +42,7 @@ class _MyAppState extends State<MyApp> {
 
     pushwoosh.onPushReceived.listen((PushEvent event) {
       var message = event.pushwooshMessage;
+      print("onPushReceived" + message.payload.toString());
 
       setState(() {
         _message = "Push Received:\n" + message.payload.toString();
@@ -51,12 +52,10 @@ class _MyAppState extends State<MyApp> {
 
     pushwoosh.onPushAccepted.listen((event) {
       var message = event.pushwooshMessage;
+      print("onPushAccepted" + message.payload.toString());
+
       setState(() {
-        _message = 
-        "message: " + message.message
-        + "\ntitle: " + message.title
-        + "\ncustom data: " + message.customData.toString()
-        + "\nfrombackground: " + event.fromBackground.toString();
+        _message = "Push Accepted:\n" + message.payload.toString();
         addLog();
       });
     });

@@ -32,6 +32,8 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     PushwooshPlugin* instance = [[PushwooshPlugin alloc] init];
     
+    [PushNotificationManager pushManager].delegate = instance;
+    
     FlutterMethodChannel* channel = [FlutterMethodChannel methodChannelWithName:@"pushwoosh" binaryMessenger:[registrar messenger]];
     [registrar addMethodCallDelegate:instance channel:channel];
     
@@ -56,7 +58,7 @@
             [UNUserNotificationCenter currentNotificationCenter].delegate = [PushNotificationManager pushManager].notificationCenterDelegate;
         }
         
-        [PushNotificationManager pushManager].delegate = self;
+        [[PushNotificationManager pushManager] sendAppOpen];
         
         result(nil);
     } else if ([@"registerForPushNotifications" isEqualToString:call.method]) {
@@ -131,10 +133,13 @@
 
 @implementation PushwooshStreamHandler {
     FlutterEventSink _eventSink;
+    NSDictionary *_startPushNotification;
 }
 
 - (void)sendPushNotification:(NSDictionary *)pushNotification onStart:(BOOL)onStart {
     if (!_eventSink) {
+        //flutter app is not initialized yet, so save push notification, we send it to listener later
+        _startPushNotification = pushNotification;
         return;
     }
     
@@ -175,6 +180,12 @@
 
 - (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events {
     _eventSink = events;
+    
+    if (_startPushNotification) {
+        [self sendPushNotification:_startPushNotification onStart:YES];
+        _startPushNotification = nil;
+    }
+    
     return nil;
 }
 
