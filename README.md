@@ -9,4 +9,4 @@ Pushwoosh Flutter Plugin
 
 ### Guide
 
-https://www.pushwoosh.com/platform-docs/pushwoosh-sdk/cross-platform-frameworks/adobe-air
+https://www.pushwoosh.com/platform-docs/pushwoosh-sdk/cross-platform-frameworks/flutter
