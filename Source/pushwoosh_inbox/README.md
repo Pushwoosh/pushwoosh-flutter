@@ -4,7 +4,7 @@ Install the library from pub:
 
 ```yaml
 dependencies:
-pushwoosh_inbox: '^1.14.1'
+pushwoosh_inbox: '^1.17.0'
 ```
 
 ## Usage

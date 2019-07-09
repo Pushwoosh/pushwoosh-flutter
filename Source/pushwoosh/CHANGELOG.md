@@ -53,3 +53,7 @@
 ### Updated
 * Android SDK version updated to 5.14.4
  
+## 1.17.0
+### Fixed
+* An issue with opPushAccepted and onPushReceived callbacks not working when Flutter apps are opened by tap on a push notification
+ 
