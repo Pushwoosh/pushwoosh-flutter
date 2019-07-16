@@ -1,5 +1,7 @@
 package com.pushwoosh.plugin;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.pushwoosh.Pushwoosh;
@@ -50,17 +52,27 @@ public class PushwooshPlugin implements MethodCallHandler {
         PushwooshPlugin.acceptChannel.setStreamHandler(acceptHandler);
     }
 
-    public static void onMessageReceived(Map<String, Object> map, boolean fromBackground) {
-        StreamHandler receiveHandler = PushwooshPlugin.receiveHandler;
+    public static void onMessageReceived(final Map<String, Object> map, final boolean fromBackground) {
+        final StreamHandler receiveHandler = PushwooshPlugin.receiveHandler;
         if (receiveHandler != null) {
-            receiveHandler.sendEvent(map, fromBackground);
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                public void run() {
+                    receiveHandler.sendEvent(map, fromBackground);
+                }
+            });
         }
     }
 
-    public static void onMessageAccepted(Map<String, Object> map, boolean fromBackground) {
-        StreamHandler acceptHandler = PushwooshPlugin.acceptHandler;
+    public static void onMessageAccepted(final Map<String, Object> map, final boolean fromBackground) {
+        final StreamHandler acceptHandler = PushwooshPlugin.acceptHandler;
         if (acceptHandler != null) {
-            acceptHandler.sendEvent(map, fromBackground);
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                public void run() {
+                    acceptHandler.sendEvent(map, fromBackground);
+                }
+            });
         }
     }
 
