@@ -57,3 +57,7 @@
 ### Fixed
 * An issue with opPushAccepted and onPushReceived callbacks not working when Flutter apps are opened by tap on a push notification
  
+## 1.17.1
+### Fixed
+* Flutter Android cannot receive push when app is on foreground
+ 
