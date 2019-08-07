@@ -81,6 +81,13 @@ class Pushwoosh {
     return await _channel.invokeMethod("getTags");
   }
 
+	/// Allows multiple notifications to be displayed in notification center.
+	/// By default SDK uses single notification mode where each notification overrides previously displayed notification.
+	/// [on] enable multi/single notification mode
+  void setMultiNotificationMode(bool on) {
+    _channel.invokeMethod("setMultiNotificationMode", {"on" : on});
+  }
+
 }
 
 class PushEvent{
