@@ -35,9 +35,9 @@ android {
 }
 
 dependencies {
-    implementation "com.pushwoosh:pushwoosh-inbox:5.17.2"
-    implementation "com.pushwoosh:pushwoosh-inbox-ui:5.17.2"
-    implementation "com.pushwoosh:pushwoosh:5.17.2"
+    implementation "com.pushwoosh:pushwoosh-inbox:5.18.0"
+    implementation "com.pushwoosh:pushwoosh-inbox-ui:5.18.0"
+    implementation "com.pushwoosh:pushwoosh:5.18.0"
     implementation "com.android.support:appcompat-v7:$support"
     implementation "com.android.support:support-v4:$support"
     implementation "com.android.support:recyclerview-v7:$support"

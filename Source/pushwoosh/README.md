@@ -4,7 +4,7 @@
 
 ```yaml
 dependencies:
-  pushwoosh: '^1.17.1'
+  pushwoosh: '^1.18.0'
 ```
 
 2) Configure Firebase Android project in [Firebase console](https://console.firebase.google.com).

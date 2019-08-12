@@ -61,3 +61,7 @@
 ### Fixed
 * Flutter Android cannot receive push when app is on foreground
  
+## 1.18.0
+### Added
+* setMultiNotificationMode function for android
+ 
