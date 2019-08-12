@@ -11,6 +11,7 @@ import com.pushwoosh.exception.RegisterForPushNotificationsException;
 import com.pushwoosh.exception.UnregisterForPushNotificationException;
 import com.pushwoosh.function.Callback;
 import com.pushwoosh.inapp.PushwooshInApp;
+import com.pushwoosh.notification.PushwooshNotificationSettings;
 import com.pushwoosh.tags.Tags;
 import com.pushwoosh.tags.TagsBundle;
 
@@ -127,6 +128,9 @@ public class PushwooshPlugin implements MethodCallHandler {
             case "postEvent":
                 postEvent(call, result);
                 break;
+            case "setMultiNotificationMode":
+                setMultiNotificationMode(call);
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -230,6 +234,13 @@ public class PushwooshPlugin implements MethodCallHandler {
         JSONObject jsonObject = new JSONObject(map);
         PushwooshInApp.getInstance().postEvent(method, Tags.fromJson(jsonObject));
         result.success(null);
+    }
+
+    private void setMultiNotificationMode(MethodCall call) {
+        Object on = call.argument("on");
+        if (on instanceof Boolean) {
+            PushwooshNotificationSettings.setMultiNotificationMode((Boolean) on);
+        }
     }
 
     private void initialize(MethodCall call, Pushwoosh pushwooshInstance) {
