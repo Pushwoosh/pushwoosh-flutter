@@ -65,3 +65,16 @@
 ### Added
 * setMultiNotificationMode function for android
  
+## 1.19.0
+### iOS
+* Replaced UIWebView with WKWebView in iOS
+
+### Android
+* Fixed ANRs caused by push messages being processed in the main thread in Android
+* Fixed incorrect inbox URL opening behaviour
+* Fixed background processing that caused extra battery consumption
+
+### Updated
+* Android SDK version updated to 5.19.5
+* iOS SDK version updated to 5.19.3
+ 
