@@ -24,11 +24,25 @@
 @property (nonatomic) FlutterResult registerResult;
 @property (nonatomic) PushwooshStreamHandler *receiveHandler;
 @property (nonatomic) PushwooshStreamHandler *acceptHandler;
+@property (nonatomic) DeepLinkStreamHandler *openHandler;
+@property (nonatomic) NSString *cachedDeepLink;
 
 @end
 
 @implementation PushwooshPlugin
 
+- (BOOL)application:(UIApplication *)application
+        openURL:(NSURL *)url
+        options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
+    NSString *urlString = [url absoluteString];
+    if (self.openHandler != nil) {
+        [self.openHandler sendDeepLink:urlString];
+    } else {
+        self.cachedDeepLink = urlString;
+    }
+    return YES;
+}
+    
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     PushwooshPlugin* instance = [[PushwooshPlugin alloc] init];
     
@@ -44,6 +58,17 @@
     FlutterEventChannel *acceptEventChannel = [FlutterEventChannel eventChannelWithName:@"pushwoosh/accept" binaryMessenger:[registrar messenger]];
     instance.acceptHandler = [PushwooshStreamHandler new];
     [acceptEventChannel setStreamHandler:instance.acceptHandler];
+    
+    FlutterEventChannel *openEventChannel = [FlutterEventChannel eventChannelWithName:@"pushwoosh/open" binaryMessenger:[registrar messenger]];
+    instance.openHandler = [DeepLinkStreamHandler new];
+    [openEventChannel setStreamHandler:instance.openHandler];
+    
+    if (instance.cachedDeepLink != nil) {
+        [instance.openHandler sendDeepLink:instance.cachedDeepLink];
+        instance.cachedDeepLink = nil;
+    }
+    
+    [registrar addApplicationDelegate:instance];
 }
 
 #pragma mark - FlutterPlugin
@@ -194,6 +219,37 @@
     return nil;
 }
 
+@end
+
+@implementation DeepLinkStreamHandler {
+    FlutterEventSink _eventSink;
+    NSString *_cachedDeepLink;
+}
+    
+- (void)sendDeepLink:(NSString *)deepLink {
+    if (!_eventSink) {
+        //flutter app is not initialized yet, caching deep link to send it later
+        _cachedDeepLink = deepLink;
+        return;
+    }
+    
+    _eventSink(deepLink);
+}
+    
+- (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events {
+    _eventSink = events;
+    
+    if (_cachedDeepLink) {
+        [self sendDeepLink:_cachedDeepLink];
+        _cachedDeepLink = nil;
+    }
+    return nil;
+}
+    
+- (FlutterError * _Nullable)onCancelWithArguments:(id _Nullable)arguments {
+    _eventSink = nil;
+    return nil;
+}
 @end
 
 @implementation UIApplication (InternalPushRuntime)
