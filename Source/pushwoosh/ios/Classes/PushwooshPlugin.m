@@ -59,7 +59,7 @@
     instance.acceptHandler = [PushwooshStreamHandler new];
     [acceptEventChannel setStreamHandler:instance.acceptHandler];
     
-    FlutterEventChannel *openEventChannel = [FlutterEventChannel eventChannelWithName:@"pushwoosh/open" binaryMessenger:[registrar messenger]];
+    FlutterEventChannel *openEventChannel = [FlutterEventChannel eventChannelWithName:@"pushwoosh/deeplink" binaryMessenger:[registrar messenger]];
     instance.openHandler = [DeepLinkStreamHandler new];
     [openEventChannel setStreamHandler:instance.openHandler];
     

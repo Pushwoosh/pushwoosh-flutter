@@ -9,7 +9,7 @@ class Pushwoosh {
   static const MethodChannel _channel = const MethodChannel('pushwoosh');
   static const EventChannel _receiveChannel = const EventChannel('pushwoosh/receive');
   static const EventChannel _acceptChannel = const EventChannel('pushwoosh/accept');
-  static const EventChannel _openChannel = const EventChannel('pushwoosh/open');
+  static const EventChannel _openChannel = const EventChannel('pushwoosh/deeplink');
 
   static Pushwoosh _instance = new Pushwoosh();
 
@@ -49,7 +49,7 @@ class Pushwoosh {
       _acceptChannel.receiveBroadcastStream().map((dynamic event) => _toPushwooshMessage(event.cast<dynamic, dynamic>()));
 
   /// Get the [Stream] of opened deep links
-  Stream<String> get onPushWithLinkOpened =>
+  Stream<String> get onDeepLinkOpened =>
       _openChannel.receiveBroadcastStream().cast<String>();
 
   PushEvent _toPushwooshMessage(Map<dynamic, dynamic> map) {

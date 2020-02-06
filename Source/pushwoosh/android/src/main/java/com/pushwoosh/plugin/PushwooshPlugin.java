@@ -57,7 +57,7 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         PushwooshPlugin.channel = new MethodChannel(messenger, "pushwoosh");
         PushwooshPlugin.receiveChannel = new EventChannel(messenger, "pushwoosh/receive");
         PushwooshPlugin.acceptChannel = new EventChannel(messenger, "pushwoosh/accept");
-        PushwooshPlugin.openChannel = new EventChannel(messenger, "pushwoosh/open");
+        PushwooshPlugin.openChannel = new EventChannel(messenger, "pushwoosh/deeplink");
         PushwooshPlugin.channel.setMethodCallHandler(new PushwooshPlugin());
 
         PushwooshPlugin.receiveChannel.setStreamHandler(receiveHandler);

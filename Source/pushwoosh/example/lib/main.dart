@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
       });
     });
 
-    pushwoosh.onPushWithLinkOpened.listen((String link) {
+    pushwoosh.onDeepLinkOpened.listen((String link) {
       var message = "Link opened:\n" + link;
       print(message);
 
