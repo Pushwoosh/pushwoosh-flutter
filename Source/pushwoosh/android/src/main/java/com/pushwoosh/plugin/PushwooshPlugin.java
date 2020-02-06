@@ -131,6 +131,9 @@ public class PushwooshPlugin implements MethodCallHandler {
             case "setMultiNotificationMode":
                 setMultiNotificationMode(call);
                 break;
+            case "setUserId":
+                setUserId(call, result);
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -150,7 +153,7 @@ public class PushwooshPlugin implements MethodCallHandler {
         });
     }
 
-    private void sendResultException(Result result, PushwooshException e) {
+    private void sendResultException(Result result, Exception e) {
         if (e == null) {
             return;
         }
@@ -240,6 +243,15 @@ public class PushwooshPlugin implements MethodCallHandler {
         Object on = call.argument("on");
         if (on instanceof Boolean) {
             PushwooshNotificationSettings.setMultiNotificationMode((Boolean) on);
+        }
+    }
+
+    private void setUserId(MethodCall call, Result result) {
+        try {
+            PushwooshInApp.getInstance().setUserId((String) call.argument("userId"));
+            result.success(null);
+        } catch (Exception e) {
+            sendResultException(result, e);
         }
     }
 
