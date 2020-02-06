@@ -1,7 +1,9 @@
 package com.pushwoosh.plugin;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.pushwoosh.Pushwoosh;
@@ -30,58 +32,46 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-public class PushwooshPlugin implements MethodCallHandler {
+public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener {
     public static boolean listen;
     public static boolean showForegroundPush = true;
     public static MethodChannel channel;
     public static EventChannel receiveChannel;
     public static EventChannel acceptChannel;
+    public static EventChannel openChannel;
     public static StreamHandler receiveHandler = new StreamHandler();
     public static StreamHandler acceptHandler = new StreamHandler();
+    public static DeepLinkStreamHandler openHandler = new DeepLinkStreamHandler();
     public static BinaryMessenger messenger;
 
+    public static String cachedDeepLink;
+
     public static void registerWith(Registrar registrar) {
+        PushwooshPlugin instance = new PushwooshPlugin();
+        registrar.addNewIntentListener(instance);
+
         PushwooshPlugin.messenger = registrar.messenger();
         PushwooshPlugin.channel = new MethodChannel(messenger, "pushwoosh");
         PushwooshPlugin.receiveChannel = new EventChannel(messenger, "pushwoosh/receive");
         PushwooshPlugin.acceptChannel = new EventChannel(messenger, "pushwoosh/accept");
+        PushwooshPlugin.openChannel = new EventChannel(messenger, "pushwoosh/deeplink");
         PushwooshPlugin.channel.setMethodCallHandler(new PushwooshPlugin());
 
         PushwooshPlugin.receiveChannel.setStreamHandler(receiveHandler);
         PushwooshPlugin.acceptChannel.setStreamHandler(acceptHandler);
-    }
+        PushwooshPlugin.openChannel.setStreamHandler(openHandler);
 
-    public static void onMessageReceived(final Map<String, Object> map, final boolean fromBackground) {
-        final StreamHandler receiveHandler = PushwooshPlugin.receiveHandler;
-        if (receiveHandler != null) {
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable() {
-                public void run() {
-                    receiveHandler.sendEvent(map, fromBackground);
-                }
-            });
+
+        if (registrar.activity() != null && registrar.activity().getIntent() != null) {
+            instance.handleIntent(registrar.activity().getIntent());
         }
-    }
 
-    public static void onMessageAccepted(final Map<String, Object> map, final boolean fromBackground) {
-        final StreamHandler acceptHandler = PushwooshPlugin.acceptHandler;
-        if (acceptHandler != null) {
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable() {
-                public void run() {
-                    acceptHandler.sendEvent(map, fromBackground);
-                }
-            });
-        }
-    }
-
-    public static void callToFlutter(String methode, Map<String, Object> arg) {
-        MethodChannel channel = PushwooshPlugin.channel;
-        boolean listen = PushwooshPlugin.listen;
-        if (channel != null && listen) {
-            channel.invokeMethod(methode, arg);
+        if (cachedDeepLink != null) {
+            forwardDeepLinkToFlutter(cachedDeepLink);
+            cachedDeepLink = null;
         }
     }
 
@@ -134,6 +124,71 @@ public class PushwooshPlugin implements MethodCallHandler {
             default:
                 result.notImplemented();
                 break;
+        }
+    }
+
+    @Override
+    public boolean onNewIntent(Intent intent) {
+        handleIntent(intent);
+        return false;
+    }
+
+    private void handleIntent(Intent intent) {
+        String action = intent.getAction();
+        String url = intent.getDataString();
+
+        if (Intent.ACTION_VIEW.equals(action)) {
+            forwardDeepLinkToFlutter(url);
+        }
+    }
+
+    private static void forwardDeepLinkToFlutter(final String deepLink) {
+        if (TextUtils.isEmpty(deepLink)) {
+            return;
+        }
+        final DeepLinkStreamHandler openHandler = PushwooshPlugin.openHandler;
+        if (openHandler != null) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    openHandler.sendDeepLink(deepLink);
+                }
+            });
+        } else {
+            cachedDeepLink = deepLink;
+        }
+    }
+
+    public static void onMessageReceived(final Map<String, Object> map, final boolean fromBackground) {
+        final StreamHandler receiveHandler = PushwooshPlugin.receiveHandler;
+        if (receiveHandler != null) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                public void run() {
+                    receiveHandler.sendEvent(map, fromBackground);
+                }
+            });
+        }
+    }
+
+    public static void onMessageAccepted(final Map<String, Object> map, final boolean fromBackground) {
+        final StreamHandler acceptHandler = PushwooshPlugin.acceptHandler;
+        if (acceptHandler != null) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                public void run() {
+                    acceptHandler.sendEvent(map, fromBackground);
+                }
+            });
+        }
+    }
+
+    public static void callToFlutter(String methode, Map<String, Object> arg) {
+        MethodChannel channel = PushwooshPlugin.channel;
+        boolean listen = PushwooshPlugin.listen;
+        if (channel != null && listen) {
+            channel.invokeMethod(methode, arg);
         }
     }
 
@@ -290,7 +345,7 @@ public class PushwooshPlugin implements MethodCallHandler {
         }
 
         @Override
-        public void onListen(Object o, EventChannel.EventSink events) {
+        public void onListen(Object arguments, EventChannel.EventSink events) {
             this.events = events;
 
             if (startPushNotification != null) {
@@ -300,8 +355,36 @@ public class PushwooshPlugin implements MethodCallHandler {
         }
 
         @Override
-        public void onCancel(Object o) {
+        public void onCancel(Object arguments) {
+            this.events = null;
+        }
+    }
 
+    private static class DeepLinkStreamHandler implements EventChannel.StreamHandler {
+        private EventChannel.EventSink events;
+        private String cachedDeepLink;
+
+        @Override
+        public void onListen(Object arguments, EventChannel.EventSink events) {
+            this.events = events;
+            if (cachedDeepLink != null) {
+                events.success(cachedDeepLink);
+                cachedDeepLink = null;
+            }
+        }
+
+        @Override
+        public void onCancel(Object arguments) {
+            this.events = null;
+        }
+
+        private void sendDeepLink(String deepLink) {
+            if (events != null) {
+                events.success(deepLink);
+            } else {
+                //flutter app is not initialized yet, caching deep link to send it later
+                cachedDeepLink = deepLink;
+            }
         }
     }
 }
