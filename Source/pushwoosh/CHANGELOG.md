@@ -83,3 +83,14 @@
 * Android SDK version updated to 5.21.4
 * iOS SDK version updated to 5.21.0
  
+## 1.20.0
+### Added
+* Deep links support 
+
+### Fixed
+* Missing setUserId method in Android
+
+### Updated
+* Android SDK version updated to 5.22.0
+* iOS SDK version updated to 5.22.0
+ 

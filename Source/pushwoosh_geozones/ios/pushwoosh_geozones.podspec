@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'pushwoosh_geozones'
-  s.version          = '1.19.1'
+  s.version          = '1.20.0'
   s.summary          = 'Pushwoosh Geozones Flutter plugin'
   s.homepage         = 'http://pushwoosh.com'
   s.license          = { :file => '../LICENSE' }
