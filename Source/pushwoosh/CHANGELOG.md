@@ -94,3 +94,8 @@
 * Android SDK version updated to 5.22.0
 * iOS SDK version updated to 5.22.0
  
+## 1.20.1
+### Updated
+* iOS SDK updated to 5.23.0
+* Android SDK updated to 5.22.2
+ 
