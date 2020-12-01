@@ -349,7 +349,7 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             mapForFlutter.put("title", title == null ? "" : title);
             Object body = map.get("body");
             mapForFlutter.put("message", body == null ? "" : body);
-            Object customData = map.get("customData");
+            Object customData = map.get("userdata");
             mapForFlutter.put("customData", customData == null ? new HashMap<String, Object>() : customData);
             mapForFlutter.put("fromBackground", fromBackground);
             mapForFlutter.put("payload", map);
