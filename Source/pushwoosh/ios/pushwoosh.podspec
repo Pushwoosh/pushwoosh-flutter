@@ -17,5 +17,5 @@ Pod::Spec.new do |s|
   s.vendored_libraries = 'Library/libPushwoosh_native.a'
   s.libraries = "Pushwoosh_native", 'c++', 'z'
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '10.0'
 end

@@ -1,6 +1,8 @@
 #import "PushwooshPlugin.h"
 #import "../Library/Pushwoosh.h"
 #import "../Library/PWGDPRManager.h"
+#import "../Library/PWInAppManager.h"
+#import "../Library/PushNotificationManager.h"
 
 @interface NSError (FlutterError)
 
