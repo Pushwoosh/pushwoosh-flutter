@@ -130,6 +130,8 @@
         [[PWInAppManager sharedManager] postEvent:event withAttributes:attributes completion:^(NSError *error) {
             result(error.flutterError);
         }];
+    } else if ([@"setMultiNotificationMode" isEqualToString:call.method]) {
+       //Stub, method is not available for iOS
     } else {
         result(FlutterMethodNotImplemented);
     }
