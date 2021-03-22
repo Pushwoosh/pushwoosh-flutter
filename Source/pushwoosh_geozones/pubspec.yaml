@@ -1,6 +1,6 @@
 name: pushwoosh_geozones
 description: This plugin enables Pushwoosh Geozones feature.
-version: 1.20.1
+version: 2.0.0
 author: Pushwoosh <support@pushwoosh.com>
 homepage: https://www.pushwoosh.com/v1.0/docs/geozones
 
