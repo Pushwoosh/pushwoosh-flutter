@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.5.3'
     }
 }
 
@@ -22,10 +22,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 17
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.pushwoosh:pushwoosh-location:5.22.2'
-    implementation 'com.google.android.gms:play-services-location:15.0.1+'
-    implementation 'com.pushwoosh:pushwoosh:5.22.2'
+    implementation 'com.pushwoosh:pushwoosh-location:6.2.1'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.pushwoosh:pushwoosh:6.2.1'
 }
