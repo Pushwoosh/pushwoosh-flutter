@@ -107,3 +107,7 @@
 * setMultiNotificationMode() crashes on iOS
 * message.customData always returning null on Android
  
+## 2.0.1
+### Updated
+* Android SDK updated to 6.2.4
+ 
