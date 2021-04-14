@@ -142,11 +142,15 @@
 #pragma mark - PushNotificationDelegate
 
 - (void)onDidRegisterForRemoteNotificationsWithDeviceToken:(NSString *)token {
-    _registerResult(token);
+    if (_registerResult) {
+        _registerResult(token);
+    }
 }
 
 - (void)onDidFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-    _registerResult(error.flutterError);
+    if (_registerResult) {
+        _registerResult(error.flutterError);
+    }
 }
 
 - (void)onPushReceived:(PushNotificationManager *)pushManager withNotification:(NSDictionary *)pushNotification onStart:(BOOL)onStart {
