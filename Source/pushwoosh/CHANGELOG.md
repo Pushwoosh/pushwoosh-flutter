@@ -116,3 +116,7 @@
 * Removed the method that collected the list of installed packages to comply with the newest Play Store policy
 * Android SDK updated to 6.2.7
  
+## 2.0.3
+### Fixed
+* Crashes in registration callbacks when using the plugin with 3rd-party push providers
+ 
