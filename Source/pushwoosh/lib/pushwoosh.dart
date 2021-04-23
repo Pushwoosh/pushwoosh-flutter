@@ -93,6 +93,11 @@ class Pushwoosh {
     _channel.invokeMethod("setMultiNotificationMode", {"on" : on});
   }
 
+  /// Sent the badget number.
+  Future<void> setApplicationBadgeNumber(int number) async {
+    await _channel.invokeMethod("setApplicationBadgeNumber", number);
+  }
+
 }
 
 class PushEvent{
