@@ -1,6 +1,6 @@
 name: pushwoosh_inbox
 description: This plugin enables Pushwoosh Inbox feature.
-version: 2.0.3
+version: 2.1.0
 author: Pushwoosh <support@pushwoosh.com>
 homepage: https://www.pushwoosh.com/v1.0/docs/message-inbox
 

@@ -120,3 +120,8 @@
 ### Fixed
 * Crashes in registration callbacks when using the plugin with 3rd-party push providers
  
+## 2.1.0
+### Updated
+ * iOS SDK updated to 6.2.5
+ * Android SDK updated to 6.3.3
+ 

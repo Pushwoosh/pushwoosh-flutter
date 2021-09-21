@@ -1,6 +1,6 @@
 name: pushwoosh
 description: This plugin allows you to receive push notifications. Powered by Pushwoosh (www.pushwoosh.com).
-version: 2.0.3
+version: 2.1.0
 author: Pushwoosh <support@pushwoosh.com>
 homepage: https://www.pushwoosh.com/
 
