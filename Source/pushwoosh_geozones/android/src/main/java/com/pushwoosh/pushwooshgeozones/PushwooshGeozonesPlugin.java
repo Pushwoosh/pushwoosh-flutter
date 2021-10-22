@@ -9,12 +9,27 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.plugin.common.BinaryMessenger;
 
-public class PushwooshGeozonesPlugin implements MethodCallHandler {
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+
+public class PushwooshGeozonesPlugin implements MethodCallHandler, FlutterPlugin {
     public static void registerWith(Registrar registrar) {
-        MethodChannel channel = new MethodChannel(registrar.messenger(), "pushwoosh_geozones");
+        onAttachedToEngine(registrar.messenger());
+    }
+
+    @Override
+    public void onAttachedToEngine(FlutterPluginBinding binding) {
+        onAttachedToEngine(binding.getBinaryMessenger());
+    }
+
+    private static void onAttachedToEngine(BinaryMessenger messenger) {
+        MethodChannel channel = new MethodChannel(messenger, "pushwoosh_geozones");
         channel.setMethodCallHandler(new PushwooshGeozonesPlugin());
     }
+
+    @Override
+    public void onDetachedFromEngine(FlutterPluginBinding binding) { }
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
