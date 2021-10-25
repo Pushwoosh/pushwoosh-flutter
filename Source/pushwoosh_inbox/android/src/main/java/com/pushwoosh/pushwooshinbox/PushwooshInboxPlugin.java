@@ -20,18 +20,37 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import io.flutter.FlutterInjector;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.plugin.common.BinaryMessenger;
 
-public class PushwooshInboxPlugin implements MethodCallHandler {
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+
+public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
     private static final String TAG = "PushwooshInboxPlugin";
-    public static Registrar registrar;
+    public static Context context;
 
     public static void registerWith(Registrar registrar) {
-        PushwooshInboxPlugin.registrar = registrar;
-        MethodChannel channel = new MethodChannel(registrar.messenger(), "pushwoosh_inbox");
+        context = registrar.context();
+        onAttachedToEngine(registrar.messenger());
+    }
+
+    @Override
+    public void onAttachedToEngine(FlutterPluginBinding binding) {
+        context = binding.getApplicationContext();
+        onAttachedToEngine(binding.getBinaryMessenger());
+    }
+
+    @Override
+    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+        context = null;
+    }
+
+    private static void onAttachedToEngine(BinaryMessenger messenger) {
+        MethodChannel channel = new MethodChannel(messenger, "pushwoosh_inbox");
         channel.setMethodCallHandler(new PushwooshInboxPlugin());
     }
 
@@ -128,8 +147,8 @@ public class PushwooshInboxPlugin implements MethodCallHandler {
     }
 
     private Drawable toDrawable(String imageString) {
-        AssetManager assetManager = registrar.context().getAssets();
-        String key = registrar.lookupKeyForAsset(imageString);
+        AssetManager assetManager = context.getAssets();
+        String key = FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(imageString);
         try {
             AssetFileDescriptor fd = assetManager.openFd(key);
             FileInputStream fileInputStream = fd.createInputStream();
