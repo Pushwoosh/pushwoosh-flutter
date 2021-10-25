@@ -1,5 +1,7 @@
 package com.pushwoosh.pushwooshgeozones;
 
+import android.annotation.SuppressLint;
+
 import com.pushwoosh.function.Callback;
 import com.pushwoosh.location.PushwooshLocation;
 import com.pushwoosh.location.network.exception.LocationNotAvailableException;
@@ -14,6 +16,8 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 
 public class PushwooshGeozonesPlugin implements MethodCallHandler, FlutterPlugin {
+    @Deprecated
+    @SuppressLint("Registrar")
     public static void registerWith(Registrar registrar) {
         onAttachedToEngine(registrar.messenger());
     }
