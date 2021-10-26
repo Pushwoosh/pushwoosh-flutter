@@ -16,7 +16,7 @@ class Pushwoosh {
   /// Returns the default (first initialized) instance of the Pushwoosh.
   static Pushwoosh get getInstance => _instance;
 
-  Future<bool> get showForegroundAlert async => await _channel.invokeMethod("showForegroundAlert");
+  Future<bool> get showForegroundAlert async => await (_channel.invokeMethod("showForegroundAlert") as FutureOr<bool>);
 
   /// Show push notifications alert when push notification is received while the app is running, default is `true`
   void setShowForegroundAlert(bool value) {
@@ -30,13 +30,13 @@ class Pushwoosh {
   }
 
   /// Registers device for push notifications
-  Future<String> registerForPushNotifications() async {
-    String token = await _channel.invokeMethod('registerForPushNotifications');
+  Future<String?> registerForPushNotifications() async {
+    String? token = await _channel.invokeMethod('registerForPushNotifications');
     return token;
   }
 
   /// Unregisters device from push notifications
-  Future<String> unregisterForPushNotifications() async {
+  Future<String?> unregisterForPushNotifications() async {
     return await _channel.invokeMethod("unregisterForPushNotifications");
   }
 
@@ -58,10 +58,10 @@ class Pushwoosh {
   }
 
   /// Pushwoosh HWID associated with current device
-  Future<String> get getHWID async => await _channel.invokeMethod("getHWID");
+  Future<String?> get getHWID async => await _channel.invokeMethod("getHWID");
 
   /// Push notification token or null if device is not registered yet.
-  Future<String> get getPushToken async => await _channel.invokeMethod("getPushToken");
+  Future<String?> get getPushToken async => await _channel.invokeMethod("getPushToken");
   
   /// Set User indentifier. This could be Facebook ID, username or email, or any other user ID.
   /// This allows data and events to be matched across multiple user devices.
@@ -82,7 +82,7 @@ class Pushwoosh {
   }
 
   /// Gets tags associated with current device
-  Future<Map<dynamic, dynamic>> getTags() async {
+  Future<Map<dynamic, dynamic>?> getTags() async {
     return await _channel.invokeMethod("getTags");
   }
 
@@ -97,16 +97,16 @@ class Pushwoosh {
 
 class PushEvent{
   final PushwooshMessage pushwooshMessage;
-  final bool fromBackground;
+  final bool? fromBackground;
 
   PushEvent(this.pushwooshMessage, this.fromBackground);
 }
 
 class PushwooshMessage {
-  final String title;
-  final String message;
-  final Map<dynamic, dynamic> payload;
-  final Map<dynamic, dynamic> customData;
+  final String? title;
+  final String? message;
+  final Map<dynamic, dynamic>? payload;
+  final Map<dynamic, dynamic>? customData;
 
   PushwooshMessage(this.title, this.message, this.payload, this.customData);
 }
