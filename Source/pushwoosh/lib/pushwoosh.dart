@@ -58,7 +58,7 @@ class Pushwoosh {
   }
 
   /// Pushwoosh HWID associated with current device
-  Future<String?> get getHWID async => await _channel.invokeMethod("getHWID");
+  Future<String> get getHWID async => await _channel.invokeMethod("getHWID");
 
   /// Push notification token or null if device is not registered yet.
   Future<String?> get getPushToken async => await _channel.invokeMethod("getPushToken");
@@ -82,8 +82,8 @@ class Pushwoosh {
   }
 
   /// Gets tags associated with current device
-  Future<Map<dynamic, dynamic>?> getTags() async {
-    return await _channel.invokeMethod("getTags");
+  Future<Map<dynamic, dynamic>> getTags() async {
+    return await _channel.invokeMethod("getTags") ?? {};
   }
 
 	/// Allows multiple notifications to be displayed in notification center.
@@ -105,7 +105,7 @@ class PushEvent{
 class PushwooshMessage {
   final String? title;
   final String? message;
-  final Map<dynamic, dynamic>? payload;
+  final Map<dynamic, dynamic> payload;
   final Map<dynamic, dynamic>? customData;
 
   PushwooshMessage(this.title, this.message, this.payload, this.customData);
