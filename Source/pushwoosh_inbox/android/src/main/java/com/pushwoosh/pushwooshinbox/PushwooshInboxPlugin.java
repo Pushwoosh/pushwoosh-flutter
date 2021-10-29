@@ -24,7 +24,6 @@ import io.flutter.FlutterInjector;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.plugin.common.BinaryMessenger;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -32,11 +31,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
     private static final String TAG = "PushwooshInboxPlugin";
     public static Context context;
-
-    public static void registerWith(Registrar registrar) {
-        context = registrar.context();
-        onAttachedToEngine(registrar.messenger());
-    }
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {

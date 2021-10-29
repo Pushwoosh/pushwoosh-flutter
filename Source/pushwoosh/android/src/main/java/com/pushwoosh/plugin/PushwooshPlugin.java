@@ -15,7 +15,7 @@ import com.pushwoosh.exception.PushwooshException;
 import com.pushwoosh.exception.RegisterForPushNotificationsException;
 import com.pushwoosh.exception.UnregisterForPushNotificationException;
 import com.pushwoosh.function.Callback;
-import com.pushwoosh.inapp.PushwooshInApp;
+import com.pushwoosh.inapp.InAppManager;
 import com.pushwoosh.notification.PushwooshNotificationSettings;
 import com.pushwoosh.tags.Tags;
 import com.pushwoosh.tags.TagsBundle;
@@ -36,7 +36,6 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -81,12 +80,6 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         }
     }
 
-    public static void registerWith(Registrar registrar) {
-        PushwooshPlugin instance = new PushwooshPlugin();
-        registrar.addNewIntentListener(instance);
-        instance.onAttachedToEngine(registrar.messenger());
-        handleCachedLinkIntent(instance,registrar.activity());
-    }
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {
@@ -324,7 +317,7 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             return;
         }
         JSONObject json = new JSONObject(map);
-        Pushwoosh.getInstance().sendTags(Tags.fromJson(json), new Callback<Void, PushwooshException>() {
+        Pushwoosh.getInstance().setTags(Tags.fromJson(json), new Callback<Void, PushwooshException>() {
             @Override
             public void process(com.pushwoosh.function.Result<Void, PushwooshException> resultRequest) {
                 if (resultRequest.isSuccess()) {
@@ -344,12 +337,13 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void postEvent(MethodCall call, Result result) {
-        List<Object> args = (ArrayList<Object>) call.arguments;
+        List<Object> args = call.arguments();
         String method = (String) args.get(0);
         Map<String, Object> map = (Map<String, Object>) args.get(1);
         JSONObject jsonObject = new JSONObject(map);
-        PushwooshInApp.getInstance().postEvent(method, Tags.fromJson(jsonObject));
+        InAppManager.getInstance().postEvent(method, Tags.fromJson(jsonObject));
         result.success(null);
     }
 
@@ -362,7 +356,7 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
 
     private void setUserId(MethodCall call, Result result) {
         try {
-            PushwooshInApp.getInstance().setUserId((String) call.argument("userId"));
+            Pushwoosh.getInstance().setUserId((String) call.argument("userId"));
             result.success(null);
         } catch (Exception e) {
             sendResultException(result, e);
