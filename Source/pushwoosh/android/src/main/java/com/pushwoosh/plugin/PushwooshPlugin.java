@@ -1,10 +1,13 @@
 package com.pushwoosh.plugin;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.pushwoosh.Pushwoosh;
 import com.pushwoosh.exception.GetTagsException;
@@ -12,7 +15,7 @@ import com.pushwoosh.exception.PushwooshException;
 import com.pushwoosh.exception.RegisterForPushNotificationsException;
 import com.pushwoosh.exception.UnregisterForPushNotificationException;
 import com.pushwoosh.function.Callback;
-import com.pushwoosh.inapp.PushwooshInApp;
+import com.pushwoosh.inapp.InAppManager;
 import com.pushwoosh.notification.PushwooshNotificationSettings;
 import com.pushwoosh.tags.Tags;
 import com.pushwoosh.tags.TagsBundle;
@@ -33,9 +36,12 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener {
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+
+public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
     public static boolean listen;
     public static boolean showForegroundPush = true;
     public static MethodChannel channel;
@@ -46,14 +52,13 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     public static StreamHandler acceptHandler = new StreamHandler();
     public static DeepLinkStreamHandler openHandler = new DeepLinkStreamHandler();
     public static BinaryMessenger messenger;
+    public static ActivityPluginBinding activityPluginBinding;
+    public static PushwooshPlugin pluginInstance;
 
     public static String cachedDeepLink;
 
-    public static void registerWith(Registrar registrar) {
-        PushwooshPlugin instance = new PushwooshPlugin();
-        registrar.addNewIntentListener(instance);
-
-        PushwooshPlugin.messenger = registrar.messenger();
+    private void onAttachedToEngine(BinaryMessenger messenger) {
+        PushwooshPlugin.messenger = messenger;
         PushwooshPlugin.channel = new MethodChannel(messenger, "pushwoosh");
         PushwooshPlugin.receiveChannel = new EventChannel(messenger, "pushwoosh/receive");
         PushwooshPlugin.acceptChannel = new EventChannel(messenger, "pushwoosh/accept");
@@ -63,16 +68,63 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         PushwooshPlugin.receiveChannel.setStreamHandler(receiveHandler);
         PushwooshPlugin.acceptChannel.setStreamHandler(acceptHandler);
         PushwooshPlugin.openChannel.setStreamHandler(openHandler);
+    }
 
-
-        if (registrar.activity() != null && registrar.activity().getIntent() != null) {
-            instance.handleIntent(registrar.activity().getIntent());
+    private static void handleCachedLinkIntent(PushwooshPlugin instance, Activity activity) {
+        if (activity != null && activity.getIntent() != null) {
+            instance.handleIntent(activity.getIntent());
         }
-
         if (cachedDeepLink != null) {
             forwardDeepLinkToFlutter(cachedDeepLink);
             cachedDeepLink = null;
         }
+    }
+
+
+    @Override
+    public void onAttachedToEngine(FlutterPluginBinding binding) {
+        pluginInstance = new PushwooshPlugin();
+        pluginInstance.onAttachedToEngine(binding.getBinaryMessenger());
+        if (activityPluginBinding != null) {
+            PushwooshPlugin.handleCachedLinkIntent(pluginInstance, activityPluginBinding.getActivity());
+        }
+    }
+
+    @Override
+    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+        PushwooshPlugin.messenger = null;
+        PushwooshPlugin.channel = null;
+        PushwooshPlugin.receiveChannel = null;
+        PushwooshPlugin.acceptChannel = null;
+        PushwooshPlugin.openChannel = null;
+        PushwooshPlugin.receiveHandler = null;
+        PushwooshPlugin.acceptHandler = null;
+        PushwooshPlugin.openHandler = null;
+        PushwooshPlugin.activityPluginBinding = null;
+        PushwooshPlugin.pluginInstance = null;
+    }
+
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        activityPluginBinding = binding;
+        activityPluginBinding.addOnNewIntentListener(pluginInstance);
+        handleIntent(binding.getActivity().getIntent());
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        onDetachedFromActivity();
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+        onAttachedToActivity(binding);
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        activityPluginBinding.removeOnNewIntentListener(pluginInstance);
+        activityPluginBinding=null;
     }
 
     @Override
@@ -265,7 +317,7 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             return;
         }
         JSONObject json = new JSONObject(map);
-        Pushwoosh.getInstance().sendTags(Tags.fromJson(json), new Callback<Void, PushwooshException>() {
+        Pushwoosh.getInstance().setTags(Tags.fromJson(json), new Callback<Void, PushwooshException>() {
             @Override
             public void process(com.pushwoosh.function.Result<Void, PushwooshException> resultRequest) {
                 if (resultRequest.isSuccess()) {
@@ -285,12 +337,13 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void postEvent(MethodCall call, Result result) {
-        List<Object> args = (ArrayList<Object>) call.arguments;
+        List<Object> args = call.arguments();
         String method = (String) args.get(0);
         Map<String, Object> map = (Map<String, Object>) args.get(1);
         JSONObject jsonObject = new JSONObject(map);
-        PushwooshInApp.getInstance().postEvent(method, Tags.fromJson(jsonObject));
+        InAppManager.getInstance().postEvent(method, Tags.fromJson(jsonObject));
         result.success(null);
     }
 
@@ -303,7 +356,7 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
 
     private void setUserId(MethodCall call, Result result) {
         try {
-            PushwooshInApp.getInstance().setUserId((String) call.argument("userId"));
+            Pushwoosh.getInstance().setUserId((String) call.argument("userId"));
             result.success(null);
         } catch (Exception e) {
             sendResultException(result, e);

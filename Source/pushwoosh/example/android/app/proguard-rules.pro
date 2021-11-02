@@ -1,1 +1,4 @@
 -keep class com.pushwoosh.plugin.* { *; }
+-keep class com.pushwoosh.inbox.PushwooshInboxPlugin { *; }
+-keep class com.pushwoosh.badge.BadgePlugin { *; }
+-keep class com.pushwoosh.location.LocationPlugin { *; }
