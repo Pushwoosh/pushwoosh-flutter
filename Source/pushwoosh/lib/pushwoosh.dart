@@ -16,7 +16,7 @@ class Pushwoosh {
   /// Returns the default (first initialized) instance of the Pushwoosh.
   static Pushwoosh get getInstance => _instance;
 
-  Future<bool> get showForegroundAlert async => await (_channel.invokeMethod("showForegroundAlert") as FutureOr<bool>);
+  Future<bool> get showForegroundAlert async => await _channel.invokeMethod("showForegroundAlert");
 
   /// Show push notifications alert when push notification is received while the app is running, default is `true`
   void setShowForegroundAlert(bool value) {
