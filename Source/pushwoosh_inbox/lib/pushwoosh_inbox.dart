@@ -6,76 +6,76 @@ import 'package:flutter/services.dart';
 class PWInboxStyle {
 
   /// Inbox message date format. For example: "dd.MMMM.yyyy"
-  String dateFormat;
+  String? dateFormat;
 
   /// The default icon in the cell next to the message; if not specified, the app icon is used
-  String defaultImage;
+  String? defaultImage;
 
   /// The appearance of the unread messages mark (iOS only)
-  String unreadImage;
+  String? unreadImage;
 
   /// The image which is displayed if an error occurs and the list of inbox messages is empty
-  String listErrorImage;
+  String? listErrorImage;
 
   /// The image which is displayed if the list of inbox messages is empty
-  String listEmptyImage;
+  String? listEmptyImage;
 
   /// The error text which is displayed when an error occurs; cannot be localized
-  String listErrorMessage;
+  String? listErrorMessage;
 
   /// The text which is displayed if the list of inbox messages is empty; cannot be localized
-  String listEmptyMessage;
+  String? listEmptyMessage;
 
   /// The default bar title text
-  String barTitle;
+  String? barTitle;
 
   /// The accent color
-  String accentColor;
+  String? accentColor;
 
   /// The default background color
-  String backgroundColor;
+  String? backgroundColor;
 
   /// The default selection color
-  String highlightColor;
+  String? highlightColor;
 
   /// The default text color (iOS only)
-  String defaultTextColor;
+  String? defaultTextColor;
 
   /// The color of the unread message action icon (Deep Link, URL, etc.). By default used [accentColor] (Android only)
-  String imageTypeColor;
+  String? imageTypeColor;
 
   /// The color of the read message action icon. By default used [readDateColor] (Android only)
-  String readImageTypeColor;
+  String? readImageTypeColor;
 
   /// The color of message titles
-  String titleColor;
+  String? titleColor;
 
   /// The color of message titles if message was readed (Android only)
-  String readTitleColor;
+  String? readTitleColor;
 
   /// The color of messages descriptions
-  String descriptionColor;
+  String? descriptionColor;
 
   /// The color of messages descriptions if message was readed (Android only)
-  String readDescriptionColor;
+  String? readDescriptionColor;
 
   /// The color of message dates
-  String dateColor;
+  String? dateColor;
 
   /// The color of message dates if message was readed (Android only)
-  String readDateColor;
+  String? readDateColor;
 
   /// The color of the separator
-  String dividerColor;
+  String? dividerColor;
 
   /// The default bar color
-  String barBackgroundColor;
+  String? barBackgroundColor;
 
   /// The default back button color
-  String barAccentColor;
+  String? barAccentColor;
 
   /// The default bar accent color
-  String barTextColor;
+  String? barTextColor;
 
   Map<String, dynamic> _dictionaryRepresentation() {
     Map<String, dynamic> params = Map();
@@ -185,7 +185,7 @@ class PushwooshInbox {
   static const MethodChannel _channel = const MethodChannel('pushwoosh_inbox');
 
   /// Present Inbox UI
-  static void presentInboxUI({PWInboxStyle style}) {
+  static void presentInboxUI({PWInboxStyle? style}) {
     if (style != null) {
       _channel.invokeMethod("presentInboxUI", style._dictionaryRepresentation());
     } else {

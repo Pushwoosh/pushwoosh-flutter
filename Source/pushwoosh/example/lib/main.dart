@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
 
     String token = "empty";
     try {
-      token = await pushwoosh.registerForPushNotifications();
+      token = await pushwoosh.registerForPushNotifications() ?? token;
     } catch (e) {
       token = e.toString();
     }
@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> {
   void _getTags() async {
     Pushwoosh pushwoosh = Pushwoosh.getInstance;
 
-    Map<dynamic, dynamic> tags;
+    Map<dynamic, dynamic> tags = {};
     try {
       tags = await pushwoosh.getTags();
     } catch (e) {
@@ -154,7 +154,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _getToken() async {
-    String token = await Pushwoosh.getInstance.getPushToken;
+    String? token = await Pushwoosh.getInstance.getPushToken;
 
     setState(() {
       if (token != null) {
