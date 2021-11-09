@@ -125,3 +125,12 @@
  * iOS SDK updated to 6.2.5
  * Android SDK updated to 6.3.3
  
+## 2.2.0
+### Changed
+* Migrated Android plugins to the V2 embedding 
+* Migrated to null safety
+
+### Updated
+ * iOS SDK updated to 6.3.1
+ * Android SDK updated to 6.3.5
+ 
