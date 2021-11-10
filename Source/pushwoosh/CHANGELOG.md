@@ -134,3 +134,7 @@
  * iOS SDK updated to 6.3.1
  * Android SDK updated to 6.3.5
  
+## 2.2.1
+### Fixed
+* Null safety migration
+ 
