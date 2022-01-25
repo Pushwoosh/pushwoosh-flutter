@@ -138,3 +138,8 @@
 ### Fixed
 * Null safety migration
  
+## 2.2.2
+### Updated
+* Version of Pushwoosh iOS SDK to 6.3.2
+* Version of Pushwoosh Android SDK to 6.4.0
+ 

@@ -36,6 +36,6 @@ android {
 dependencies {
     implementation 'androidx.core:core:1.0.1'
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
-    implementation 'com.pushwoosh:pushwoosh:6.3.5'
-    implementation "com.pushwoosh:pushwoosh-firebase:6.3.5"
+    implementation 'com.pushwoosh:pushwoosh:6.4.0'
+    implementation "com.pushwoosh:pushwoosh-firebase:6.4.0"
 }
