@@ -143,3 +143,11 @@
 * Version of Pushwoosh iOS SDK to 6.3.2
 * Version of Pushwoosh Android SDK to 6.4.0
  
+## 2.2.3
+### Fixed
+* java.lang.NullPointerException while executing doInBackground()
+
+### Updated
+* Pushwoosh Android SDK to 6.4.1
+* Pushwoosh iOS SDK to 6.3.3
+ 
