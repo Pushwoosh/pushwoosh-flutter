@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
@@ -191,6 +192,53 @@ class PushwooshInbox {
     } else {
       _channel.invokeMethod("presentInboxUI");
     }
-    
   }
+
+  static Future<int?> messagesWithNoActionPerformedCount() async {
+    return await _channel.invokeMethod("messagesWithNoActionPerformedCount");
+  }
+
+  static Future<int?> unreadMessagesCount() async {
+    return await _channel.invokeMethod("unreadMessagesCount");
+  }
+
+  static Future<int?> messagesCount() async {
+    return await _channel.invokeMethod("messagesCount");
+  }
+
+  static Future<List<InboxMessage>> loadMessages() async {
+    List<Object?> inboxMessages = await _channel.invokeMethod("loadMessages");
+    //List<String> inboxMessages = await _channel.invokeMethod("loadMessages");
+    List<InboxMessage> inboxMessageList = [];
+    for (final Object? messageJson in inboxMessages) {
+      inboxMessageList.add(InboxMessage.fromJson(jsonDecode(messageJson.toString())));
+    }
+    return inboxMessageList;
+  }
+}
+
+class InboxMessage {
+  final String code;
+  final String? title;
+  final String? imageUrl;
+  final String? message;
+  final String? sendDate;
+  final int? messageType;
+  final String? bannerUrl;
+
+  bool? isRead;
+  bool? isActionPerformed;
+
+  InboxMessage(this.code, this.title, this.imageUrl, this.message, this.sendDate, this.messageType, this.bannerUrl, this.isRead, this.isActionPerformed);
+
+  InboxMessage.fromJson(Map<String,dynamic> json)
+    : code = json['code'],
+      title = json['title'],
+      imageUrl = json['imageUrl'],
+      message = json['message'],
+      sendDate = json['sendDate'],
+      messageType = json['messageType'],
+      bannerUrl = json['bannerUrl'],
+      isRead = json['isRead'],
+      isActionPerformed = json['isActionPerformed'];
 }
