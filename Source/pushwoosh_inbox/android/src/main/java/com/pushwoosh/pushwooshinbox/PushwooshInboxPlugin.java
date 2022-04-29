@@ -61,20 +61,12 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
         channel.setMethodCallHandler(new PushwooshInboxPlugin());
     }
 
-
   // registerMessagesWithNoActionPerformedCountObserver
   // unregisterMessagesWithNoActionPerformedCountObserver
   // registerUnreadMessagesCountObserver
   // unregisterUnreadMessagesCountObserver
   // registerMessagesCountObserver
   // unregisterMessagesCountObserver
-  // loadMessages
-  // loadCachedMessages
-  // readMessage
-  // readMessages
-  // performAction
-  // deleteMessage
-  // deleteMessages
     @Override
     public void onMethodCall(MethodCall call, MethodChannel.Result result) {
         switch (call.method) {
@@ -92,6 +84,23 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
                 break;
             case "loadMessages":
                 loadMessages(result);
+                break;
+            case "loadCachedMessages":
+                loadCachedMessages(result);
+                break;
+            case "readMessage":
+                readMessage(call, result);
+                break;
+            case "readMessages":
+                readMessages(call, result);
+            case "deleteMessage":
+                deleteMessage(call, result);
+                break;
+            case "deleteMessages":
+                deleteMessages(call, result);
+                break;    
+            case "performAction":
+                performAction(call, result);
                 break;
             default:
                 result.notImplemented();
@@ -154,6 +163,48 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
                 }
             }
         });
+    }
+    
+    private static void loadCachedMessages(Result result) {
+        try {
+            PushwooshInbox.loadCachedMessages(new Callback<Collection<InboxMessage>, InboxMessagesException>() {
+                @Override
+                public void process(com.pushwoosh.function.Result<Collection<InboxMessage>, InboxMessagesException> resultRequest) {
+                    if (resultRequest.isSuccess()) {
+                        ArrayList<InboxMessage> inboxMessageList = new ArrayList<>(resultRequest.getData());
+                        ArrayList<String> objectArrayList = new ArrayList<>();
+                        for (InboxMessage message: inboxMessageList) {
+                            objectArrayList.add(toJson(message).toString());
+                        }
+                        result.success(objectArrayList);
+                    } else {
+                        sendResultException(result, resultRequest.getException());
+                    }
+                }
+            }, null, -1);
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+    
+    private static void readMessage(MethodCall call, Result result) {
+        PushwooshInbox.readMessage(call.argument("code"));
+    }
+    
+    private static void readMessages(MethodCall call, Result result) {
+        PushwooshInbox.readMessages(call.argument("codes"));
+    }
+    
+    private static void deleteMessage(MethodCall call, Result result) {
+        PushwooshInbox.deleteMessage(call.argument("code"));
+    }
+
+    private static void deleteMessages(MethodCall call, Result result) {
+        PushwooshInbox.deleteMessages(call.argument("codes"));
+    }
+    
+    private static void performAction(MethodCall call, Result result) {
+        PushwooshInbox.performAction(call.argument("code"));
     }
 
     private static JSONObject toJson(InboxMessage message) {

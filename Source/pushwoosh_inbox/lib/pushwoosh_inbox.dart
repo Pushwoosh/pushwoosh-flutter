@@ -208,12 +208,40 @@ class PushwooshInbox {
 
   static Future<List<InboxMessage>> loadMessages() async {
     List<Object?> inboxMessages = await _channel.invokeMethod("loadMessages");
-    //List<String> inboxMessages = await _channel.invokeMethod("loadMessages");
     List<InboxMessage> inboxMessageList = [];
     for (final Object? messageJson in inboxMessages) {
       inboxMessageList.add(InboxMessage.fromJson(jsonDecode(messageJson.toString())));
     }
     return inboxMessageList;
+  }
+
+  static Future<List<InboxMessage>> loadCachedMessages() async {
+    List<Object?> inboxMessages = await _channel.invokeMethod("loadCachedMessages");
+    List<InboxMessage> inboxMessageList = [];
+    for (final Object? messageJson in inboxMessages) {
+      inboxMessageList.add(InboxMessage.fromJson(jsonDecode(messageJson.toString())));
+    }
+    return inboxMessageList;
+  }
+
+  static void readMessage(String code) {
+    _channel.invokeMethod("readMessage", {"code": code});
+  }
+  
+  static void readMessages(List<String> codes) { 
+    _channel.invokeMethod("readMessages", {"codes": codes});  
+  }
+
+  static void deleteMessage(String code) {
+    _channel.invokeMethod("deleteMessage", {"code": code});
+  }
+
+  static void deleteMessages(List<String> codes) {
+    _channel.invokeMethod("deleteMessages", {"codes": codes});
+  }
+  
+  static void performAction(String code) {
+    _channel.invokeMethod("performAction", {"code": code});
   }
 }
 
