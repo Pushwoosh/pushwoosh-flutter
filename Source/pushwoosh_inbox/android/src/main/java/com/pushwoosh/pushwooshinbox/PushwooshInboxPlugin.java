@@ -108,7 +108,7 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
         }
     }
 
-    private static void messagesWithNoActionPerformedCount(Result result) {
+    private static void messagesWithNoActionPerformedCount(final Result result) {
         PushwooshInbox.messagesWithNoActionPerformedCount(new Callback<Integer, InboxMessagesException>() {
             @Override
             public void process(com.pushwoosh.function.Result<Integer, InboxMessagesException> resultRequest) {
@@ -121,7 +121,7 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
         });
     }
 
-    private static void unreadMessagesCount(Result result) {
+    private static void unreadMessagesCount(final Result result) {
         PushwooshInbox.unreadMessagesCount(new Callback<Integer, InboxMessagesException>() {
             @Override
             public void process(com.pushwoosh.function.Result<Integer, InboxMessagesException> resultRequest) {
@@ -134,7 +134,7 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
         });
     }
 
-    private static void messagesCount(Result result) {
+    private static void messagesCount(final Result result) {
         PushwooshInbox.messagesCount(new Callback<Integer, InboxMessagesException>() {
             @Override
             public void process(com.pushwoosh.function.Result<Integer, InboxMessagesException> resultRequest) {
@@ -147,7 +147,7 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
         });
     }
 
-    private static void loadMessages(Result result) {
+    private static void loadMessages(final Result result) {
         PushwooshInbox.loadMessages(new Callback<Collection<InboxMessage>, InboxMessagesException>() {
             @Override
             public void process(com.pushwoosh.function.Result<Collection<InboxMessage>, InboxMessagesException> resultRequest) {
@@ -165,7 +165,7 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
         });
     }
     
-    private static void loadCachedMessages(Result result) {
+    private static void loadCachedMessages(final Result result) {
         try {
             PushwooshInbox.loadCachedMessages(new Callback<Collection<InboxMessage>, InboxMessagesException>() {
                 @Override
@@ -188,23 +188,23 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
     }
     
     private static void readMessage(MethodCall call, Result result) {
-        PushwooshInbox.readMessage(call.argument("code"));
+        PushwooshInbox.readMessage((String) call.argument("code"));
     }
     
     private static void readMessages(MethodCall call, Result result) {
-        PushwooshInbox.readMessages(call.argument("codes"));
+        PushwooshInbox.readMessages((Collection<String>) call.argument("codes"));
     }
     
     private static void deleteMessage(MethodCall call, Result result) {
-        PushwooshInbox.deleteMessage(call.argument("code"));
+        PushwooshInbox.deleteMessage((String) call.argument("code"));
     }
 
     private static void deleteMessages(MethodCall call, Result result) {
-        PushwooshInbox.deleteMessages(call.argument("codes"));
+        PushwooshInbox.deleteMessages((Collection<String>) call.argument("codes"));
     }
     
     private static void performAction(MethodCall call, Result result) {
-        PushwooshInbox.performAction(call.argument("code"));
+        PushwooshInbox.performAction((String) call.argument("code"));
     }
 
     private static JSONObject toJson(InboxMessage message) {
