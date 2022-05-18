@@ -157,3 +157,10 @@
 * Pushwoosh Android SDK version to 6.4.4
 * Pushwoosh iOS SDK to 6.3.5
  
+## 2.2.5
+### Added
+* API to communicate with Pushwoosh Inbox endpoints directly
+### Updated
+* Pushwoosh Android SDK to 6.5.2
+* Pushwoosh iOS SDK to 6.4.2
+ 
