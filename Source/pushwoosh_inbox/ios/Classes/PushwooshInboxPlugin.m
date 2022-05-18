@@ -182,7 +182,7 @@
             NSMutableArray* array = [[NSMutableArray alloc] init];
             for (NSObject<PWInboxMessageProtocol>* message in messages) {
                 NSData* json = [self toJson:message];
-                NSString* jsonString = [[NSString alloc] initWithData:json encoding:NSASCIIStringEncoding];
+                NSString* jsonString = [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
                 [array addObject:jsonString];
             }
             result(array);
@@ -283,27 +283,33 @@
 - (NSData*)toJson:(NSObject<PWInboxMessageProtocol>*) message {
     NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
     [dictionary setValue:@(message.type) forKey:@"type"];
-    [dictionary setValue:message.imageUrl forKey:@"imageUrl"];
-    [dictionary setValue:message.code forKey:@"code"];
-    [dictionary setValue:message.title forKey:@"title"];
-    [dictionary setValue:message.message forKey:@"message"];
-    [dictionary setValue:[self dateToString:message.sendDate] forKey:@"sendDate"];
+    [dictionary setValue:[self stringOrEmpty: message.imageUrl] forKey:@"imageUrl"];
+    [dictionary setValue:[self stringOrEmpty: message.code] forKey:@"code"];
+    [dictionary setValue:[self stringOrEmpty: message.title] forKey:@"title"];
+    [dictionary setValue:[self stringOrEmpty: message.message] forKey:@"message"];
+    [dictionary setValue:[self stringOrEmpty: [self dateToString:message.sendDate]] forKey:@"sendDate"];
     [dictionary setValue:@(message.isRead) forKey:@"isRead"];
     [dictionary setValue:@(message.isActionPerformed) forKey:@"isActionPerformed"];
-    NSData* json = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:nil];
+    NSError * error = nil;
+    NSData* json = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&error];
+    if (error) {
+        return [[NSData alloc] init];
+    }
     return json;
 }
+
+- (NSString *)stringOrEmpty:(NSString *)string {
+    return string != nil ? string : @"";
+}
+
+
 
 - (NSString*)dateToString:(NSDate*)date {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setFormatterBehavior:NSDateFormatterBehaviorDefault];
     [formatter setDateStyle:NSDateFormatterFullStyle];
-    [formatter setTimeStyle:NSDateFormatterFullStyle];
+    [formatter setTimeStyle:NSDateFormatterMediumStyle];
     return [formatter stringFromDate:[NSDate date]];
-}
-
-- (BOOL)isSystemVersionGreaterOrEqualTo:(NSString *)systemVersion {
-    return ([[[UIDevice currentDevice] systemVersion] compare:systemVersion options:NSNumericSearch] != NSOrderedAscending);
 }
 
 - (UIViewController*)findTopViewController {

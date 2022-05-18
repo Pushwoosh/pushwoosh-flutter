@@ -210,7 +210,10 @@ class PushwooshInbox {
     List<Object?> inboxMessages = await _channel.invokeMethod("loadMessages");
     List<InboxMessage> inboxMessageList = [];
     for (final Object? messageJson in inboxMessages) {
-      inboxMessageList.add(InboxMessage.fromJson(jsonDecode(messageJson.toString())));
+      InboxMessage inboxMessage = InboxMessage.fromJson(jsonDecode(messageJson.toString()));
+      if (inboxMessage.code != "") {
+        inboxMessageList.add(InboxMessage.fromJson(jsonDecode(messageJson.toString())));
+      }
     }
     return inboxMessageList;
   }
@@ -260,7 +263,7 @@ class InboxMessage {
   InboxMessage(this.code, this.title, this.imageUrl, this.message, this.sendDate, this.messageType, this.bannerUrl, this.isRead, this.isActionPerformed);
 
   InboxMessage.fromJson(Map<String,dynamic> json)
-    : code = json['code'],
+    : code = json['code'] != null ? json['code'] : "",
       title = json['title'],
       imageUrl = json['imageUrl'],
       message = json['message'],
