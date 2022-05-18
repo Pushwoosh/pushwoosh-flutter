@@ -309,7 +309,7 @@
     [formatter setFormatterBehavior:NSDateFormatterBehaviorDefault];
     [formatter setDateStyle:NSDateFormatterFullStyle];
     [formatter setTimeStyle:NSDateFormatterMediumStyle];
-    return [formatter stringFromDate:[NSDate date]];
+    return [formatter stringFromDate:date];
 }
 
 - (UIViewController*)findTopViewController {
