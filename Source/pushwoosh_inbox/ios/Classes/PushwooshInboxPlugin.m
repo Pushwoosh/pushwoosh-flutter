@@ -181,7 +181,9 @@
         if (!error) {
             NSMutableArray* array = [[NSMutableArray alloc] init];
             for (NSObject<PWInboxMessageProtocol>* message in messages) {
-                [array addObject:message];
+                NSData* json = [self toJson:message];
+                NSString* jsonString = [[NSString alloc] initWithData:json encoding:NSASCIIStringEncoding];
+                [array addObject:jsonString];
             }
             result(array);
         } else result(error.flutterError);
@@ -285,11 +287,23 @@
     [dictionary setValue:message.code forKey:@"code"];
     [dictionary setValue:message.title forKey:@"title"];
     [dictionary setValue:message.message forKey:@"message"];
-    [dictionary setValue:message.sendDate forKey:@"sendDate"];
+    [dictionary setValue:[self dateToString:message.sendDate] forKey:@"sendDate"];
     [dictionary setValue:@(message.isRead) forKey:@"isRead"];
     [dictionary setValue:@(message.isActionPerformed) forKey:@"isActionPerformed"];
-    NSData* json = [NSKeyedArchiver archivedDataWithRootObject:dictionary];
+    NSData* json = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:nil];
     return json;
+}
+
+- (NSString*)dateToString:(NSDate*)date {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setFormatterBehavior:NSDateFormatterBehaviorDefault];
+    [formatter setDateStyle:NSDateFormatterFullStyle];
+    [formatter setTimeStyle:NSDateFormatterFullStyle];
+    return [formatter stringFromDate:[NSDate date]];
+}
+
+- (BOOL)isSystemVersionGreaterOrEqualTo:(NSString *)systemVersion {
+    return ([[[UIDevice currentDevice] systemVersion] compare:systemVersion options:NSNumericSearch] != NSOrderedAscending);
 }
 
 - (UIViewController*)findTopViewController {
