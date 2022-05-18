@@ -1,10 +1,27 @@
 #import "PushwooshInboxPlugin.h"
 #import "../Library/PushwooshInboxUI.h"
+#import "../Library/PWInbox.h"
 
 @interface PushwooshInboxPlugin ()
 
 @property (nonatomic) PWIInboxViewController *inboxVC;
 @property (nonatomic) NSObject<FlutterPluginRegistrar>* registrar;
+
+@end
+
+@interface NSError (FlutterError)
+
+@property(readonly, nonatomic) FlutterError *flutterError;
+
+@end
+
+@implementation NSError (FlutterError)
+
+- (FlutterError *)flutterError {
+    return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)self.code]
+                               message:self.domain
+                               details:self.localizedDescription];
+}
 
 @end
 
@@ -108,8 +125,105 @@
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"presentInboxUI" isEqualToString:call.method]) {
-        
-        PWIInboxStyle *style = [PWIInboxStyle defaultStyle];
+        [self presentInboxUI:call result:result];
+    } else if ([@"messagesWithNoActionPerformedCount" isEqualToString:call.method]){
+        [self messagesWithNoActionPerformedCount:call result: result];
+    } else if ([@"unreadMessagesCount" isEqualToString:call.method]) {
+        [self unreadMessagesCount:call result:result];
+    } else if ([@"messagesCount" isEqualToString:call.method]) {
+        [self messagesCount:call result: result];
+    } else if ([@"loadMessages" isEqualToString: call.method]) {
+        [self loadMessages:call result:result];
+    } else if ([@"loadCachedMessages" isEqualToString: call.method]) {
+        [self loadMessages:call result:result];
+    } else if ([@"readMessage" isEqualToString: call.method]) {
+        [self readMessage:call result:result];
+    } else if ([@"readMessages" isEqualToString:call.method]) {
+        [self readMessages:call result:result];
+    } else if ([@"deleteMessage" isEqualToString:call.method]) {
+        [self deleteMessage:call result:result];
+    } else if ([@"deleteMessages" isEqualToString:call.method]) {
+        [self deleteMessages:call result:result];
+    } else if ([@"performAction" isEqualToString:call.method]) {
+        [self performAction:call result:result];
+    }
+    else {
+        result(FlutterMethodNotImplemented);
+    }
+}
+
+- (void)messagesWithNoActionPerformedCount:(FlutterMethodCall*)call result:(FlutterResult) result {
+    [PWInbox messagesWithNoActionPerformedCountWithCompletion:^(NSInteger count, NSError *error) {
+        if (!error) {
+            result(@(count));
+        } else result(error.flutterError);
+    }];
+}
+
+- (void)unreadMessagesCount:(FlutterMethodCall*)call result:(FlutterResult) result {
+    [PWInbox unreadMessagesCountWithCompletion:^(NSInteger count, NSError *error) {
+        if (!error) {
+            result(@(count));
+        } else result(error.flutterError);
+    }];
+}
+
+- (void)messagesCount:(FlutterMethodCall*)call result:(FlutterResult) result {
+    [PWInbox messagesCountWithCompletion:^(NSInteger count, NSError *error) {
+        if (!error) {
+            result(@(count));
+        } else result(error.flutterError);
+    }];
+}
+
+- (void)loadMessages:(FlutterMethodCall*) call result: (FlutterResult) result {
+    [PWInbox loadMessagesWithCompletion:^(NSArray<NSObject<PWInboxMessageProtocol> *> *messages, NSError* error) {
+        if (!error) {
+            NSMutableArray* array = [[NSMutableArray alloc] init];
+            for (NSObject<PWInboxMessageProtocol>* message in messages) {
+                NSData* json = [self toJson:message];
+                NSString* jsonString = [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
+                [array addObject:jsonString];
+            }
+            result(array);
+        } else result(error.flutterError);
+    }];
+}
+
+- (void)readMessage:(FlutterMethodCall*) call result:(FlutterResult) result {
+    NSString* code = [call.arguments objectForKey:@"code"];
+    NSArray* codes= [[NSArray alloc] initWithObjects:code, nil];
+    [PWInbox readMessagesWithCodes:codes];
+    result(nil);
+}
+
+- (void)readMessages:(FlutterMethodCall*) call result:(FlutterResult) result {
+    NSArray<NSString*> *codes = [call.arguments objectForKey:@"codes"];
+    [PWInbox readMessagesWithCodes:codes];
+    result(nil);
+}
+
+- (void)deleteMessage:(FlutterMethodCall*) call result:(FlutterResult) result {
+    NSString* code = [call.arguments objectForKey:@"code"];
+    NSArray* codes= [[NSArray alloc] initWithObjects:code, nil];
+    [PWInbox deleteMessagesWithCodes:codes];
+    result(nil);
+}
+
+- (void)deleteMessages:(FlutterMethodCall*) call result:(FlutterResult) result {
+    NSArray<NSString*> *codes = [call.arguments objectForKey:@"codes"];
+    [PWInbox deleteMessagesWithCodes:codes];
+    result(nil);
+}
+
+- (void)performAction:(FlutterMethodCall*) call result:(FlutterResult) result {
+    NSString* code = [call.arguments objectForKey:@"code"];
+    [PWInbox performActionForMessageWithCode:code];
+    result(nil);
+}
+
+- (void)presentInboxUI: (FlutterMethodCall*)call result:(FlutterResult) result  {
+    PWIInboxStyle *style = [PWIInboxStyle defaultStyle];
         
         NSDictionary *params = call.arguments;
         
@@ -158,14 +272,44 @@
         UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:_inboxVC];
         UIViewController *topViewController = [self findTopViewController];
         [topViewController presentViewController:nc animated:YES completion:nil];
+
         result(nil);
-    } else {
-        result(FlutterMethodNotImplemented);
-    }
 }
 
 - (void)closeInbox {
     [_inboxVC dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (NSData*)toJson:(NSObject<PWInboxMessageProtocol>*) message {
+    NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+    [dictionary setValue:@(message.type) forKey:@"type"];
+    [dictionary setValue:[self stringOrEmpty: message.imageUrl] forKey:@"imageUrl"];
+    [dictionary setValue:[self stringOrEmpty: message.code] forKey:@"code"];
+    [dictionary setValue:[self stringOrEmpty: message.title] forKey:@"title"];
+    [dictionary setValue:[self stringOrEmpty: message.message] forKey:@"message"];
+    [dictionary setValue:[self stringOrEmpty: [self dateToString:message.sendDate]] forKey:@"sendDate"];
+    [dictionary setValue:@(message.isRead) forKey:@"isRead"];
+    [dictionary setValue:@(message.isActionPerformed) forKey:@"isActionPerformed"];
+    NSError * error = nil;
+    NSData* json = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&error];
+    if (error) {
+        return [[NSData alloc] init];
+    }
+    return json;
+}
+
+- (NSString *)stringOrEmpty:(NSString *)string {
+    return string != nil ? string : @"";
+}
+
+
+
+- (NSString*)dateToString:(NSDate*)date {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setFormatterBehavior:NSDateFormatterBehaviorDefault];
+    [formatter setDateStyle:NSDateFormatterFullStyle];
+    [formatter setTimeStyle:NSDateFormatterMediumStyle];
+    return [formatter stringFromDate:date];
 }
 
 - (UIViewController*)findTopViewController {
