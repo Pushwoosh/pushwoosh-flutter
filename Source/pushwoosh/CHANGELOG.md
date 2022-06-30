@@ -164,3 +164,9 @@
 * Pushwoosh Android SDK to 6.5.2
 * Pushwoosh iOS SDK to 6.4.2
  
+## 2.2.6
+###Added
+* customData parameter to `InboxMessage` class
+###Fixed
+* iOS build issue in pushwoosh_inbox module
+ 
