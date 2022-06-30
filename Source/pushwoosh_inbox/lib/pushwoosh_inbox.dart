@@ -256,11 +256,12 @@ class InboxMessage {
   final String? sendDate;
   final int? messageType;
   final String? bannerUrl;
+  final Map<String,dynamic>? customData;
 
   bool? isRead;
   bool? isActionPerformed;
 
-  InboxMessage(this.code, this.title, this.imageUrl, this.message, this.sendDate, this.messageType, this.bannerUrl, this.isRead, this.isActionPerformed);
+  InboxMessage(this.code, this.title, this.imageUrl, this.message, this.sendDate, this.messageType, this.bannerUrl, this.isRead, this.isActionPerformed, this.customData);
 
   InboxMessage.fromJson(Map<String,dynamic> json)
     : code = json['code'] != null ? json['code'] : "",
@@ -271,5 +272,6 @@ class InboxMessage {
       messageType = json['messageType'],
       bannerUrl = json['bannerUrl'],
       isRead = json['isRead'],
-      isActionPerformed = json['isActionPerformed'];
+      isActionPerformed = json['isActionPerformed'],
+      customData = json['customData'] != null ? jsonDecode(json['customData']) : null;
 }

@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.pushwoosh.function.Callback;
@@ -20,6 +21,7 @@ import com.pushwoosh.inbox.ui.PushwooshInboxStyle;
 import com.pushwoosh.inbox.ui.model.customizing.formatter.InboxDateFormatter;
 import com.pushwoosh.inbox.ui.presentation.view.activity.InboxActivity;
 import com.pushwoosh.internal.platform.AndroidPlatformModule;
+import com.pushwoosh.internal.utils.JsonUtils;
 import com.pushwoosh.internal.utils.PWLog;
 
 import java.io.FileInputStream;
@@ -61,12 +63,6 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
         channel.setMethodCallHandler(new PushwooshInboxPlugin());
     }
 
-  // registerMessagesWithNoActionPerformedCountObserver
-  // unregisterMessagesWithNoActionPerformedCountObserver
-  // registerUnreadMessagesCountObserver
-  // unregisterUnreadMessagesCountObserver
-  // registerMessagesCountObserver
-  // unregisterMessagesCountObserver
     @Override
     public void onMethodCall(MethodCall call, MethodChannel.Result result) {
         switch (call.method) {
@@ -219,6 +215,12 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
                     .put("bannerUrl", message.getBannerUrl())
                     .put("isRead",message.isRead())
                     .put("isActionPerformed",message.isActionPerformed());
+
+            Bundle bundle = JsonUtils.jsonStringToBundle( message.getActionParams());
+            String customData = bundle.getString("u");
+            if (customData != null) {
+                object.put("customData", customData);
+            }
         } catch (JSONException e) {
             Log.e("PushwooshInbox", "Failed to fetch inbox message :" + e.getMessage());
         }
