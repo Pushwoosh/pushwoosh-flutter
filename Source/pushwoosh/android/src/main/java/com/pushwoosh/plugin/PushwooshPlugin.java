@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.pushwoosh.Pushwoosh;
+import com.pushwoosh.RegisterForPushNotificationsResultData;
 import com.pushwoosh.exception.GetTagsException;
 import com.pushwoosh.exception.PushwooshException;
 import com.pushwoosh.exception.RegisterForPushNotificationsException;
@@ -248,11 +249,11 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     }
 
     private void registerForPushNotifications(MethodCall call, final Result result) {
-        Pushwoosh.getInstance().registerForPushNotifications(new Callback<String, RegisterForPushNotificationsException>() {
+        Pushwoosh.getInstance().registerForPushNotifications(new Callback<RegisterForPushNotificationsResultData, RegisterForPushNotificationsException>() {
             @Override
-            public void process(com.pushwoosh.function.Result<String, RegisterForPushNotificationsException> resultRequest) {
-                if (resultRequest.isSuccess()) {
-                    result.success(resultRequest.getData());
+            public void process(com.pushwoosh.function.Result<RegisterForPushNotificationsResultData, RegisterForPushNotificationsException> resultRequest) {
+                if (resultRequest.isSuccess() && resultRequest.getData() != null) {
+                    result.success(resultRequest.getData().getToken());
                 } else {
                     sendResultException(result, resultRequest.getException());
                 }
