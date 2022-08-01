@@ -170,3 +170,8 @@
 ###Fixed
 * iOS build issue in pushwoosh_inbox module
  
+## 2.2.7
+### Updated
+* Pushwoosh Android SDK to 6.6.1
+* Pushwoosh iOS SDK to 6.4.3
+ 
