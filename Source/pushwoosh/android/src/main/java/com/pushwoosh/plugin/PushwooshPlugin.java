@@ -93,16 +93,20 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
 
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
-        PushwooshPlugin.messenger = null;
+        PushwooshPlugin.channel.setMethodCallHandler(null);
+        PushwooshPlugin.receiveChannel.setStreamHandler(null);
+        PushwooshPlugin.openChannel.setStreamHandler(null);
+        PushwooshPlugin.acceptChannel.setStreamHandler(null);
+
+        PushwooshPlugin.receiveHandler.onCancel(null);
+        PushwooshPlugin.acceptHandler.onCancel(null);
+        PushwooshPlugin.openHandler.onCancel(null);
         PushwooshPlugin.channel = null;
         PushwooshPlugin.receiveChannel = null;
         PushwooshPlugin.acceptChannel = null;
         PushwooshPlugin.openChannel = null;
-        PushwooshPlugin.receiveHandler = null;
-        PushwooshPlugin.acceptHandler = null;
-        PushwooshPlugin.openHandler = null;
-        PushwooshPlugin.activityPluginBinding = null;
         PushwooshPlugin.pluginInstance = null;
+        PushwooshPlugin.messenger = null;
     }
 
     @Override
