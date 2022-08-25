@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.pushwoosh.Pushwoosh;
+import com.pushwoosh.badge.PushwooshBadge;
 import com.pushwoosh.RegisterForPushNotificationsResultData;
 import com.pushwoosh.exception.GetTagsException;
 import com.pushwoosh.exception.PushwooshException;
@@ -180,6 +181,9 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
                 break;
             case "setUserId":
                 setUserId(call, result);
+                break;
+            case "addToApplicationIconBadgeNumber":
+                addToApplicationIconBadgeNumber(call, result);
                 break;
             default:
                 result.notImplemented();
@@ -362,6 +366,15 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     private void setUserId(MethodCall call, Result result) {
         try {
             Pushwoosh.getInstance().setUserId((String) call.argument("userId"));
+            result.success(null);
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+
+    private void addToApplicationIconBadgeNumber(Method call, Result result) {
+        try {
+            PushwooshBadge.setBadgeNumber((int) call.arguments("badges"));
             result.success(null);
         } catch (Exception e) {
             sendResultException(result, e);
