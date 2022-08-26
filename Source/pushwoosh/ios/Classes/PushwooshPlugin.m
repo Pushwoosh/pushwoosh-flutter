@@ -137,6 +137,12 @@
     } else if ([@"addToApplicationIconBadgeNumber" isEqualToString:call.method]) {
         NSInteger badge = [[call.arguments objectForKey:@"badges"] integerValue];
         [UIApplication sharedApplication].applicationIconBadgeNumber += badge;
+    } else if ([@"setApplicationIconBadgeNumber" isEqualToString:call.method]) {
+        NSInteger badge = [[call.arguments objectForKey:@"badges"] integerValue];
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badge];
+    } else if ([@"getApplicationIconBadgeNumber" isEqualToString:call.method]) {
+        NSInteger badge = [UIApplication sharedApplication].applicationIconBadgeNumber;
+        result([NSNumber numberWithInteger:badge]);
     } else {
         result(FlutterMethodNotImplemented);
     }

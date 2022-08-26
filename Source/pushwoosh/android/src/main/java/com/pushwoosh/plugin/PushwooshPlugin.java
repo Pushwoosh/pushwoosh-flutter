@@ -185,6 +185,11 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             case "addToApplicationIconBadgeNumber":
                 addToApplicationIconBadgeNumber(call, result);
                 break;
+            case "setApplicationIconBadgeNumber"
+                setApplicationIconBadgeNumber(call, result);
+                break;
+            case "getApplicationIconBadgeNumber"
+                result.success(PushwooshBadge.getBadgeNumber());
             default:
                 result.notImplemented();
                 break;
@@ -366,6 +371,15 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     private void setUserId(MethodCall call, Result result) {
         try {
             Pushwoosh.getInstance().setUserId((String) call.argument("userId"));
+            result.success(null);
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+
+    private void setApplicationIconBadgeNumber(Method call, Result result) {
+        try {
+            PushwooshBadge.setBadgeNumber((int) call.arguments("badges"));
             result.success(null);
         } catch (Exception e) {
             sendResultException(result, e);
