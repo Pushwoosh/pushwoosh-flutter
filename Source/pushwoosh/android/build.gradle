@@ -38,4 +38,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
     implementation 'com.pushwoosh:pushwoosh:6.6.1'
     implementation "com.pushwoosh:pushwoosh-firebase:6.6.1"
+    implementation 'com.pushwoosh:pushwoosh-badge:6.6.1'
 }
