@@ -185,11 +185,12 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             case "addToApplicationIconBadgeNumber":
                 addToApplicationIconBadgeNumber(call, result);
                 break;
-            case "setApplicationIconBadgeNumber"
+            case "setApplicationIconBadgeNumber":
                 setApplicationIconBadgeNumber(call, result);
                 break;
-            case "getApplicationIconBadgeNumber"
+            case "getApplicationIconBadgeNumber":
                 result.success(PushwooshBadge.getBadgeNumber());
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -377,18 +378,18 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         }
     }
 
-    private void setApplicationIconBadgeNumber(Method call, Result result) {
+    private void setApplicationIconBadgeNumber(MethodCall call, Result result) {
         try {
-            PushwooshBadge.setBadgeNumber((int) call.arguments("badges"));
+            PushwooshBadge.setBadgeNumber((int) call.argument("badges"));
             result.success(null);
         } catch (Exception e) {
             sendResultException(result, e);
         }
     }
 
-    private void addToApplicationIconBadgeNumber(Method call, Result result) {
+    private void addToApplicationIconBadgeNumber(MethodCall call, Result result) {
         try {
-            PushwooshBadge.setBadgeNumber((int) call.arguments("badges"));
+            PushwooshBadge.setBadgeNumber((int) call.argument("badges"));
             result.success(null);
         } catch (Exception e) {
             sendResultException(result, e);
