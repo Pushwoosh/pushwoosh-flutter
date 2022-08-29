@@ -183,3 +183,8 @@
 * Pushwoosh iOS SDK to 6.4.5
 * Pushwoosh Android SDK to 6.6.1
  
+## 2.2.9
+### Fixed
+
+* Android compile issue introduced with the 2.2.8 release
+ 
