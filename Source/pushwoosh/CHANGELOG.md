@@ -188,3 +188,7 @@
 
 * Android compile issue introduced with the 2.2.8 release
  
+## 2.2.10
+### Changed
+* `sendDate` parameter of `InboxMessage` now returns ISO8601-formatted string on both platforms
+ 
