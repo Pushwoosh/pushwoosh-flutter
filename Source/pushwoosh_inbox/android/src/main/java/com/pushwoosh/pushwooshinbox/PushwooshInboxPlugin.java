@@ -210,7 +210,7 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
                     .put("title", message.getTitle())
                     .put("imageUrl", message.getImageUrl())
                     .put("message",message.getMessage())
-                    .put("sendDate",message.getSendDate().toString())
+                    .put("sendDate",message.getISO8601SendDate())
                     .put("messageType", message.getType().getCode())
                     .put("bannerUrl", message.getBannerUrl())
                     .put("isRead",message.isRead())

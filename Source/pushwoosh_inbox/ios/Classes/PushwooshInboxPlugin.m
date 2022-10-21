@@ -311,7 +311,7 @@
 
 - (NSString*)dateToString:(NSDate*)date {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"EEE MMM d HH:mm:ss 'GMT'ZZZZZ yyyy"];
+    [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
     return [formatter stringFromDate:date];
 }
 
