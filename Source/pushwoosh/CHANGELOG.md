@@ -192,3 +192,12 @@
 ### Changed
 * `sendDate` parameter of `InboxMessage` now returns ISO8601-formatted string on both platforms
  
+## 2.2.11
+### Added
+* Huawei platform support
+* `setLanguage()` method for iOS and Android
+
+### Updated
+* Pushwoosh Android SDK to 6.6.5
+* Pushwoosh iOS SDK to 6.4.8
+ 
