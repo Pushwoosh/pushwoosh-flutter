@@ -133,7 +133,9 @@
             result(error.flutterError);
         }];
     } else if ([@"setMultiNotificationMode" isEqualToString:call.method]) {
-       //Stub, method is not available for iOS
+        //Stub, method is not available for iOS
+    } else if ([@"enableHuaweiNotifications" isEqualToString:call.method]) {
+        //Stub, method is not available for iOS
     } else if ([@"addToApplicationIconBadgeNumber" isEqualToString:call.method]) {
         NSInteger badge = [[call.arguments objectForKey:@"badges"] integerValue];
         [UIApplication sharedApplication].applicationIconBadgeNumber += badge;
