@@ -106,6 +106,10 @@ class Pushwoosh {
   void enableHuaweiNotifications() {
     _channel.invokeMethod("enableHuaweiNotifications");
   }
+
+  void setLanguage(String language) {
+    _channel.invokeMethod("setLanguage", {"language" : language});
+  }
   
 }
 
