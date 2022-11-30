@@ -143,6 +143,9 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             case "initialize":
                 initialize(call, pushwooshInstance);
                 break;
+            case "enableHuaweiNotifications":
+                enableHuaweiNotifications();
+                break;
             case "getInstance":
                 result.success(pushwooshInstance);
                 break;
@@ -405,6 +408,10 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         if (sendId != null) {
             pushwooshInstance.setSenderId(sendId);
         }
+    }
+
+    private void enableHuaweiNotifications() {
+        Pushwoosh.getInstance().enableHuaweiPushNotifications();
     }
 
     private void setShowForegroundPush(MethodCall call) {
