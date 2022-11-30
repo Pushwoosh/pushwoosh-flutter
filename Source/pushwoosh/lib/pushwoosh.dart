@@ -102,6 +102,10 @@ class Pushwoosh {
   void addToApplicationIconBadgeNumber(int badges) {
     _channel.invokeMethod("addToApplicationIconBadgeNumber",  {"badges": badges});
   }
+
+  void enableHuaweiNotifications() {
+    _channel.invokeMethod("enableHuaweiNotifications");
+  }
   
 }
 
