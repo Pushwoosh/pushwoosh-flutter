@@ -113,6 +113,9 @@
         NSString *userID = [call.arguments objectForKey:@"userId"];
         [[PWInAppManager sharedManager] setUserId:userID];
         result(nil);
+    } else if([@"setLanguage" isEqualToString:call.method]) {
+        NSString *language = [call.arguments objectForKey:@"language"];
+        [[PushNotificationManager pushManager] setLanguage:language];
     } else if ([@"setTags" isEqualToString:call.method]) {
         NSDictionary *tags = [call.arguments objectForKey:@"tags"];
         

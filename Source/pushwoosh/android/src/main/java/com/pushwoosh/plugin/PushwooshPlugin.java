@@ -185,6 +185,9 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             case "setUserId":
                 setUserId(call, result);
                 break;
+            case "setLanguage":
+                setLanguage(call, result);
+                break;
             case "addToApplicationIconBadgeNumber":
                 addToApplicationIconBadgeNumber(call, result);
                 break;
@@ -375,6 +378,15 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     private void setUserId(MethodCall call, Result result) {
         try {
             Pushwoosh.getInstance().setUserId((String) call.argument("userId"));
+            result.success(null);
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+
+    private void setLanguage(MethodCall call, Result result) {
+        try {
+            Pushwoosh.getInstance().setLanguage((String) call.argument("language"));
             result.success(null);
         } catch (Exception e) {
             sendResultException(result, e);
