@@ -290,10 +290,13 @@
     [dictionary setValue:[self stringOrEmpty: [self dateToString:message.sendDate]] forKey:@"sendDate"];
     [dictionary setValue:@(message.isRead) forKey:@"isRead"];
     [dictionary setValue:@(message.isActionPerformed) forKey:@"isActionPerformed"];
-    
+    [dictionary setValue:[self dictionaryOrEmpty:message.actionParams] forKey:@"actionParams"];
+
     NSDictionary* actionParams = [NSDictionary dictionaryWithDictionary:message.actionParams];
     NSData* customData = [actionParams valueForKey:@"u"];
-    [dictionary setValue:customData forKey:@"customData"];
+    if (customData != nil) {
+        [dictionary setValue:customData forKey:@"customData"];
+    }
     
     NSError * error = nil;
     NSData* json = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&error];
@@ -307,7 +310,9 @@
     return string != nil ? string : @"";
 }
 
-
+- (NSDictionary *)dictionaryOrEmpty:(NSDictionary *)dict {
+    return dict != nil ? dict : @{};
+}
 
 - (NSString*)dateToString:(NSDate*)date {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
