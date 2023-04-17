@@ -214,6 +214,7 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
                     .put("messageType", message.getType().getCode())
                     .put("bannerUrl", message.getBannerUrl())
                     .put("isRead",message.isRead())
+                    .put("actionParams",message.getActionParams())
                     .put("isActionPerformed",message.isActionPerformed());
 
             Bundle bundle = JsonUtils.jsonStringToBundle( message.getActionParams());
