@@ -129,8 +129,12 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
 
     @Override
     public void onDetachedFromActivity() {
-        activityPluginBinding.removeOnNewIntentListener(pluginInstance);
-        activityPluginBinding=null;
+        if (activityPluginBinding != null) {
+            if (pluginInstance != null) {
+                activityPluginBinding.removeOnNewIntentListener(pluginInstance);
+            }
+            activityPluginBinding = null;
+        }
     }
 
     @Override
