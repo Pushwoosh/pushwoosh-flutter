@@ -152,6 +152,7 @@
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				371CF7DB8CB94BABA1DC154D /* [CP] Copy Pods Resources */,
+				06FAC19CF2F276621B5876E7 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -222,6 +223,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		06FAC19CF2F276621B5876E7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/PushwooshInboxUIXCFramework/PushwooshInboxUI.framework/PushwooshInboxUI",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/PushwooshXCFramework/Core/Pushwoosh.framework/Pushwoosh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/PushwooshXCFramework/Geozones/PushwooshGeozones.framework/PushwooshGeozones",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PushwooshInboxUI.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pushwoosh.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PushwooshGeozones.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		371CF7DB8CB94BABA1DC154D /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -229,7 +252,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
-				"${PODS_ROOT}/../.symlinks/plugins/pushwoosh_inbox/ios/Library/PushwooshInboxBundle.bundle",
+				"${PODS_ROOT}/PushwooshInboxUIXCFramework/XCFramework/PushwooshInboxBundle.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (

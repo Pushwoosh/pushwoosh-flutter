@@ -1,5 +1,5 @@
 #import "PushwooshGeozonesPlugin.h"
-#import "../Library/PWGeozonesManager.h"
+#import <PushwooshGeozones/PWGeozonesManager.h>
 
 @implementation PushwooshGeozonesPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {

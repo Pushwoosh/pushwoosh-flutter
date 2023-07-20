@@ -12,10 +12,9 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
+  s.dependency 'PushwooshXCFramework'
   s.static_framework = true
 
-  s.vendored_libraries = 'Library/libPushwoosh_native.a'
-  s.libraries = "Pushwoosh_native", 'c++', 'z'
 
   s.ios.deployment_target = '10.0'
 end

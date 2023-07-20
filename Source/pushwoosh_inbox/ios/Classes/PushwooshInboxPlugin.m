@@ -1,6 +1,6 @@
 #import "PushwooshInboxPlugin.h"
-#import "../Library/PushwooshInboxUI.h"
-#import "../Library/PWInbox.h"
+#import <PushwooshInboxUI/PushwooshInboxUI.h>
+#import <Pushwoosh/PWInbox.h>
 
 @interface PushwooshInboxPlugin ()
 
