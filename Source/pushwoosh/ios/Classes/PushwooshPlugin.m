@@ -135,6 +135,10 @@
         [[PWInAppManager sharedManager] postEvent:event withAttributes:attributes completion:^(NSError *error) {
             result(error.flutterError);
         }];
+    } else if ([@"requestProvisionalAuthOptions" isEqualToString:call.method]) {
+        if (@available(iOS 12.0, *)) {
+            [Pushwoosh sharedInstance].additionalAuthorizationOptions = UNAuthorizationOptionProvisional;
+        }
     } else if ([@"setMultiNotificationMode" isEqualToString:call.method]) {
         //Stub, method is not available for iOS
     } else if ([@"enableHuaweiNotifications" isEqualToString:call.method]) {
