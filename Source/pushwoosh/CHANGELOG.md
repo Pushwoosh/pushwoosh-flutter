@@ -222,3 +222,13 @@
 * Pushwoosh Android SDK version updated to 6.6.10
 * Pushwoosh iOS SDK version updated to 6.4.12
  
+## 2.2.14
+### Changed
+* the plugin now uses xcframework via Cocoapods instead of embedded static library
+
+### Added
+* iOS provisional pushes are supported now. To enable it, call `requestProvisionalAuthOptions()` method before calling `registerForPushNotifications()`. 
+
+### Fixed
+* `Undefined symbols for architecture arm64: "_OBJC_CLASS_"` crash when `use_frameworks!` is specified in Podfile.
+ 
