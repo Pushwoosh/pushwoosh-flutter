@@ -7,7 +7,7 @@ homepage: https://www.pushwoosh.com/v1.0/docs/message-inbox
 dependencies:
   flutter:
     sdk: flutter
-  pushwoosh: 
+  pushwoosh_flutter: 
     path: ../pushwoosh
 
 environment:

@@ -16,7 +16,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  pushwoosh:
+  pushwoosh_flutter:
     path: ../
 
   pushwoosh_geozones:
