@@ -93,6 +93,10 @@ class Pushwoosh {
     _channel.invokeMethod("setMultiNotificationMode", {"on" : on});
   }
 
+  void requestProvisionalAuthOptions() {
+    _channel.invokeMethod("requestProvisionalAuthOptions");
+  }
+
   void setApplicationIconBadgeNumber(int badges) {
     _channel.invokeMethod("setApplicationIconBadgeNumber", {"badges": badges});
   }
