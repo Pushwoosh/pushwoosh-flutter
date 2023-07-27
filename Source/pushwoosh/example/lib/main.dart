@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pushwoosh/pushwoosh.dart';
+import 'package:pushwoosh_flutter/pushwoosh_flutter.dart';
 import 'package:pushwoosh_geozones/pushwoosh_geozones.dart';
 import 'package:pushwoosh_inbox/pushwoosh_inbox.dart';
 
