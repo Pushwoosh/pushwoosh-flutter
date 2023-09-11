@@ -15,6 +15,6 @@ Pod::Spec.new do |s|
   s.dependency 'PushwooshXCFramework/Geozones'
   s.static_framework = true
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '11.0'
 end
 
