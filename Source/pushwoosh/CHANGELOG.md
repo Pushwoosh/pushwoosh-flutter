@@ -262,3 +262,14 @@
 ### Fixed
 * `Undefined symbols for architecture arm64: "_OBJC_CLASS_"` crash when `use_frameworks!` is specified in Podfile.
  
+## 2.2.15
+### Fixed
+* PushwooshInbox.loadMessages() not working on Android: Unhandled Exception: type 'String' is not a subtype of type 'Map<String, dynamic>?' #68
+
+### Added
+* Android 14 support
+
+### Updated
+* Pushwoosh Android SDK 6.6.16
+* Pushwoosh iOS SDK updated to 6.5.1
+ 
