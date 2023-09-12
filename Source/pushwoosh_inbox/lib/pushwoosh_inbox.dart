@@ -273,7 +273,7 @@ class InboxMessage {
       messageType = json['messageType'],
       bannerUrl = json['bannerUrl'],
       isRead = json['isRead'],
-      actionParams = json['actionParams'],
+      actionParams = json['actionParams'] != null ? json['actionParams'] is String ? jsonDecode(json['actionParams']) : json['actionParams'] : null,
 
       isActionPerformed = json['isActionPerformed'],
       customData = json['customData'] != null ? jsonDecode(json['customData']) : null;
