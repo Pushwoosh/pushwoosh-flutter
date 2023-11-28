@@ -273,3 +273,8 @@
 * Pushwoosh Android SDK 6.6.16
 * Pushwoosh iOS SDK updated to 6.5.1
  
+## 2.2.16
+### Changed
+
+* Pushwoosh plugin's notification center delegate now calls implementations of delegate methods of 3rd-party push services.
+ 
