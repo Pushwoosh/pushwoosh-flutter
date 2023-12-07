@@ -278,3 +278,8 @@
 
 * Pushwoosh plugin's notification center delegate now calls implementations of delegate methods of 3rd-party push services.
  
+## 2.2.17
+### Updated
+
+* Pushwoosh Android SDK 6.7.0
+ 
