@@ -283,3 +283,8 @@
 
 * Pushwoosh Android SDK 6.7.0
  
+## 2.2.18
+### Fixed
+
+* Issue with duplicate notifications on iOS when the app is in the foreground.
+ 
