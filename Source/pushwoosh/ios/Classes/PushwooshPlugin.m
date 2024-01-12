@@ -268,7 +268,6 @@ API_AVAILABLE(ios(10.0)) {
     }
 }
 
-/Users/akidis/Desktop/somedemo/platforms/ios/HelloCordova/Plugins/cordova-plugin-local-notification/APPLocalNotification.m:381:30 Block implicitly retains 'self'; explicitly mention 'self' to indicate this is intended behavior
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
    openSettingsForNotification:(nullable UNNotification *)notification
 API_AVAILABLE(ios(10.0)) {
