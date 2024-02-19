@@ -288,3 +288,8 @@
 
 * Issue with duplicate notifications on iOS when the app is in the foreground.
  
+## 2.2.19
+### Fixed
+
+* resolved the issue related to retrieving silent push notification.
+ 
