@@ -4,6 +4,9 @@
 #import <Pushwoosh/PWInAppManager.h>
 #import <Pushwoosh/PushNotificationManager.h>
 
+#import <UserNotifications/UserNotifications.h>
+#import <objc/runtime.h>
+
 @interface NSError (FlutterError)
 
 @property(readonly, nonatomic) FlutterError *flutterError;
@@ -29,7 +32,23 @@
 @property (nonatomic) DeepLinkStreamHandler *openHandler;
 @property (nonatomic) NSString *cachedDeepLink;
 
+- (void) application:(UIApplication *)application pwplugin_didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
+
 @end
+
+void pushwoosh_swizzle(Class class, SEL fromChange, SEL toChange, IMP impl, const char * signature) {
+    Method method = nil;
+    method = class_getInstanceMethod(class, fromChange);
+    
+    if (method) {
+        //method exists add a new method and swap with original
+        class_addMethod(class, toChange, impl, signature);
+        method_exchangeImplementations(class_getInstanceMethod(class, fromChange), class_getInstanceMethod(class, toChange));
+    } else {
+        //just add as orignal method
+        class_addMethod(class, fromChange, impl, signature);
+    }
+}
 
 @implementation PushwooshPlugin
 
@@ -56,7 +75,8 @@ API_AVAILABLE(ios(10))
     
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     PushwooshPlugin* instance = [[PushwooshPlugin alloc] init];
-    
+    [PushwooshPlugin swizzleNotificationSettingsHandler];
+
     [PushNotificationManager pushManager].delegate = instance;
     
     FlutterMethodChannel* channel = [FlutterMethodChannel methodChannelWithName:@"pushwoosh" binaryMessenger:[registrar messenger]];
@@ -80,6 +100,22 @@ API_AVAILABLE(ios(10))
     }
     
     [registrar addApplicationDelegate:instance];
+}
+
++ (void) swizzleNotificationSettingsHandler {
+    if ([UIApplication sharedApplication].delegate == nil) {
+        return;
+    }
+    
+    static Class appDelegateClass = nil;
+    
+    //do not swizzle the same class twice
+    id delegate = [UIApplication sharedApplication].delegate;
+    if(appDelegateClass == [delegate class]) {
+        return;
+    }
+        
+    pushwoosh_swizzle([self class], @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:), @selector(application:pwplugin_didReceiveRemoteNotification:fetchCompletionHandler:), (IMP)pwplugin_didReceiveRemoteNotification, "v@::::");
 }
 
 #pragma mark - FlutterPlugin
@@ -194,6 +230,14 @@ API_AVAILABLE(ios(10))
     } else {
         result(FlutterMethodNotImplemented);
     }
+}
+
+void pwplugin_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication * application, NSDictionary * userInfo, void (^completionHandler)(UIBackgroundFetchResult)) {
+    if ([self respondsToSelector:@selector(application:pwplugin_didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+        [self application:application pwplugin_didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+    }
+    
+    [[Pushwoosh sharedInstance] handlePushReceived:userInfo];
 }
 
 #pragma mark - UNUserNotificationCenter Delegate Methods
