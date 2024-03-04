@@ -86,6 +86,16 @@ class Pushwoosh {
     return await _channel.invokeMethod("getTags") ?? {};
   }
 
+  /// Start Live Activity
+  Future<void>  startLiveActivityWithToken(String token) async {
+    await _channel.invokeMethod("startLiveActivityWithToken", {"token" : token});
+  }
+
+  /// Stop Live Activity
+  Future<void> stopLiveActivity() async {
+    _channel.invokeMethod("stopLiveActivity");
+  }
+
 	/// Allows multiple notifications to be displayed in notification center.
 	/// By default SDK uses single notification mode where each notification overrides previously displayed notification.
 	/// [on] enable multi/single notification mode
@@ -114,7 +124,6 @@ class Pushwoosh {
   void setLanguage(String language) {
     _channel.invokeMethod("setLanguage", {"language" : language});
   }
-  
 }
 
 class PushEvent{

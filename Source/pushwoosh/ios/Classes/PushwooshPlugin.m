@@ -226,6 +226,15 @@ API_AVAILABLE(ios(10))
     } else if ([@"getApplicationIconBadgeNumber" isEqualToString:call.method]) {
         NSInteger badge = [UIApplication sharedApplication].applicationIconBadgeNumber;
         result([NSNumber numberWithInteger:badge]);
+    } else if ([@"startLiveActivityWithToken" isEqualToString:call.method]) {
+        NSString *token = [call.arguments objectForKey:@"token"];
+        [[Pushwoosh sharedInstance] startLiveActivityWithToken:token completion:^(NSError * _Nullable error) {
+            result(error.flutterError);
+        }];
+    } else if ([@"stopLiveActivity" isEqualToString:call.method]) {
+        [[Pushwoosh sharedInstance] stopLiveActivityWithCompletion:^(NSError * _Nullable error) {
+            result(error.flutterError);
+        }];
     } else {
         result(FlutterMethodNotImplemented);
     }
