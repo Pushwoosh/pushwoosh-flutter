@@ -293,3 +293,16 @@
 
 * resolved the issue related to retrieving silent push notification.
  
+## 2.2.20
+### Added 
+
+* `startLiveActivityWithToken`, `stopLiveActivity` methods added
+
+### Fixed
+
+* crash on iOS in setDelegate method
+
+### Updated
+
+* Pushwoosh iOS SDK 6.5.8
+ 
