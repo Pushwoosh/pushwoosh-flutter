@@ -306,3 +306,9 @@
 
 * Pushwoosh iOS SDK 6.5.8
  
+## 2.2.21
+### Updated
+
+* Pushwoosh iOS SDK 6.5.9
+* Pushwoosh Android SDK 6.7.5
+ 
