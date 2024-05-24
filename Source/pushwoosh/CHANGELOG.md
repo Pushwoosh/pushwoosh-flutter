@@ -312,3 +312,11 @@
 * Pushwoosh iOS SDK 6.5.9
 * Pushwoosh Android SDK 6.7.5
  
+## 2.2.22
+### Updated
+* Pushwoosh Android SDK to 6.7.7
+* Pushwoosh iOS SDK to 6.5.11
+
+### Added
+* All `Result.success()` calls are now wrapped in try-catch blocks
+ 
