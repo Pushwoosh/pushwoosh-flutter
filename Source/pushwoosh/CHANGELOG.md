@@ -320,3 +320,7 @@
 ### Added
 * All `Result.success()` calls are now wrapped in try-catch blocks
  
+## 2.2.23
+### Updated
+* Pushwoosh Android SDK to 6.7.8
+ 
