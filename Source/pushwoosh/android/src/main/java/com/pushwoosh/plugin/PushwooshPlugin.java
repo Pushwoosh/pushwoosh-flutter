@@ -25,6 +25,7 @@ import com.pushwoosh.tags.TagsBundle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.IllegalStateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -276,10 +277,14 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         Pushwoosh.getInstance().registerForPushNotifications(new Callback<RegisterForPushNotificationsResultData, RegisterForPushNotificationsException>() {
             @Override
             public void process(com.pushwoosh.function.Result<RegisterForPushNotificationsResultData, RegisterForPushNotificationsException> resultRequest) {
-                if (resultRequest.isSuccess() && resultRequest.getData() != null) {
-                    result.success(resultRequest.getData().getToken());
-                } else {
-                    sendResultException(result, resultRequest.getException());
+                try {
+                    if (resultRequest.isSuccess() && resultRequest.getData() != null) {
+                        result.success(resultRequest.getData().getToken());
+                    } else {
+                        sendResultException(result, resultRequest.getException());
+                    }
+                } catch (IllegalStateException e) {
+                    sendResultException(result, e);
                 }
             }
         });
@@ -297,10 +302,14 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         Pushwoosh.getInstance().unregisterForPushNotifications(new Callback<String, UnregisterForPushNotificationException>() {
             @Override
             public void process(com.pushwoosh.function.Result<String, UnregisterForPushNotificationException> resultRequest) {
-                if (resultRequest.isSuccess()) {
-                    result.success(resultRequest.getData());
-                } else {
-                    sendResultException(result, resultRequest.getException());
+                try {
+                    if (resultRequest.isSuccess()) {
+                        result.success(resultRequest.getData());
+                    } else {
+                        sendResultException(result, resultRequest.getException());
+                    }
+                } catch (IllegalStateException e) {
+                    sendResultException(result, e);
                 }
             }
         });
@@ -310,27 +319,31 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         Pushwoosh.getInstance().getTags(new Callback<TagsBundle, GetTagsException>() {
             @Override
             public void process(com.pushwoosh.function.Result<TagsBundle, GetTagsException> resultRequest) {
-                if (resultRequest.isSuccess()) {
-                    TagsBundle data = resultRequest.getData();
-                    Map<String, Object> map = data != null ? data.getMap() : null;
-                    Map<String, Object> mapParsed = new HashMap<>();
-                    if (map != null) {
-                        Iterator it = map.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Map.Entry pair = (Map.Entry)it.next();
-                            if (pair.getValue() instanceof JSONArray) {
-                                Object value = data.getList((String) pair.getKey());
-                                if (value != null) {
-                                    mapParsed.put((String) pair.getKey(), value);
+                try {
+                    if (resultRequest.isSuccess()) {
+                        TagsBundle data = resultRequest.getData();
+                        Map<String, Object> map = data != null ? data.getMap() : null;
+                        Map<String, Object> mapParsed = new HashMap<>();
+                        if (map != null) {
+                            Iterator it = map.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Map.Entry pair = (Map.Entry)it.next();
+                                if (pair.getValue() instanceof JSONArray) {
+                                    Object value = data.getList((String) pair.getKey());
+                                    if (value != null) {
+                                        mapParsed.put((String) pair.getKey(), value);
+                                    }
+                                } else {
+                                    mapParsed.put((String) pair.getKey(), pair.getValue());
                                 }
-                            } else {
-                                mapParsed.put((String) pair.getKey(), pair.getValue());
                             }
+                            result.success(mapParsed);
                         }
-                        result.success(mapParsed);
+                    } else {
+                        sendResultException(result, resultRequest.getException());
                     }
-                } else {
-                    sendResultException(result, resultRequest.getException());
+                } catch (IllegalStateException e) {
+                    sendResultException(result, e);
                 }
             }
         });
@@ -345,10 +358,14 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         Pushwoosh.getInstance().setTags(Tags.fromJson(json), new Callback<Void, PushwooshException>() {
             @Override
             public void process(com.pushwoosh.function.Result<Void, PushwooshException> resultRequest) {
-                if (resultRequest.isSuccess()) {
-                    result.success(null);
-                } else {
-                    sendResultException(result, resultRequest.getException());
+                try {
+                    if (resultRequest.isSuccess()) {
+                        result.success(null);
+                    } else {
+                        sendResultException(result, resultRequest.getException());
+                    }
+                } catch (IllegalStateException e) {
+                    sendResultException(result, e);
                 }
             }
         });
