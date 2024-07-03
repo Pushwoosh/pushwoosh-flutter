@@ -324,3 +324,9 @@
 ### Updated
 * Pushwoosh Android SDK to 6.7.8
  
+## 2.2.24
+### Updated
+* Pushwoosh Android SDK updated to 6.7.10
+* Pushwoosh iOS SDK updated to 6.5.13
+
+ 

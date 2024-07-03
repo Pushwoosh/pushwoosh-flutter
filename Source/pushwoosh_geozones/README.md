@@ -4,7 +4,7 @@ Install the library from pub:
 
 ```yaml
 dependencies:
-pushwoosh_geozones: '^2.2.23'
+pushwoosh_geozones: '^2.2.24'
 ```
 
 ## Usage
