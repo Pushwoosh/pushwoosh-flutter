@@ -330,3 +330,8 @@
 * Pushwoosh iOS SDK updated to 6.5.13
 
  
+## 2.2.25
+### Fixed
+
+* No visible @interface for 'Pushwoosh' declares the selector `startLiveActivityWithToken:completion:`
+ 
