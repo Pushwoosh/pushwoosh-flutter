@@ -86,9 +86,11 @@ class Pushwoosh {
     return await _channel.invokeMethod("getTags") ?? {};
   }
 
-  /// Start Live Activity
-  Future<void>  startLiveActivityWithToken(String token) async {
-    await _channel.invokeMethod("startLiveActivityWithToken", {"token" : token});
+  /// Start Live Activity with ActivityId
+  /// [token] live activity token
+  /// [activityId] activity ID
+  Future<void>  startLiveActivityWithToken(String token, String activityId) async {
+    await _channel.invokeMethod("startLiveActivityWithToken", {"token" : token, "activityId" : activityId});
   }
 
   /// Stop Live Activity
