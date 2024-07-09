@@ -228,7 +228,8 @@ API_AVAILABLE(ios(10))
         result([NSNumber numberWithInteger:badge]);
     } else if ([@"startLiveActivityWithToken" isEqualToString:call.method]) {
         NSString *token = [call.arguments objectForKey:@"token"];
-        [[Pushwoosh sharedInstance] startLiveActivityWithToken:token completion:^(NSError * _Nullable error) {
+        NSString *activityId = [call.arguments objectForKey:@"activityId"];
+        [[Pushwoosh sharedInstance] startLiveActivityWithToken:token activityId:activityId completion:^(NSError * _Nullable error) {
             result(error.flutterError);
         }];
     } else if ([@"stopLiveActivity" isEqualToString:call.method]) {
