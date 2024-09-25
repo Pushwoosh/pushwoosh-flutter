@@ -9,19 +9,20 @@ Pushwoosh Flutter Plugin
 | [Guide](https://docs.pushwoosh.com/platform-docs/pushwoosh-sdk/cross-platform-frameworks/flutter) | [Pub.dev package](https://pub.dev/packages/pushwoosh_flutter) | [Documentation](docs/README.md) | [Sample](https://github.com/Pushwoosh/pushwoosh-flutter-sample) |
 | --- | --- | --- | --- |
 
-### Installation
+## Installation
 
-\1\. Install the library from pub:
+1\. Install the library from pub:
 
 ```yaml
 dependencies:
   pushwoosh_flutter: '^2.2.25'
 ```
 
-\2\. Configure Firebase Android project in [Firebase console](https://console.firebase.google.com).
-\3\. Place a `google-services.json` file into android/app folder in your project directory.
+2\. Configure Firebase Android project in [Firebase console](https://console.firebase.google.com).
 
-### Usage
+3\. Place a `google-services.json` file into android/app folder in your project directory.
+
+## Usage
 
 ```dart
 import 'package:pushwoosh_flutter/pushwoosh_flutter.dart';
@@ -36,19 +37,23 @@ Pushwoosh.getInstance.onPushAccepted.listen((event) {
 Pushwoosh.getInstance.registerForPushNotifications();
 ```
 
-### Important
+&nbsp;
 
-#### Migrating from 'pushwoosh' package 2.2.13 or lower to 'pushwoosh_flutter' [2.2.14](https://github.com/Pushwoosh/pushwoosh-flutter/releases/tag/2.2.14) or higher
+## Important
+
+### Migrating from 'pushwoosh' package 2.2.13 or lower to 'pushwoosh_flutter' [2.2.14](https://github.com/Pushwoosh/pushwoosh-flutter/releases/tag/2.2.14) or higher
 
 Since version 2.2.14, the package name has changed from 'pushwoosh' to 'pushwoosh_flutter'. Make sure to update your `pubspec.yaml` and change import lines to
 
 `import 'package:pushwoosh_flutter/pushwoosh_flutter.dart'`
 
-#### Migrating Pushwoosh Flutter Plugin to version 2.1.0 or higher
+&nbsp;
+
+### Migrating Pushwoosh Flutter Plugin to version 2.1.0 or higher
 
 If you are facing errors building your Android application after updating  Pushwoosh Flutter Plugin to version 2.1.0 or higher, please follow the guide below for troubleshooting
 
-##### Build error #1
+#### Build error #1
 
 ```
 In project 'app' a resolved Google Play services library dependency depends on another at an exact version (e.g. "[17.0.0, 18.0.99]", but isn't being resolved to that version. Behavior exhibited by the library will be unknown.
@@ -62,7 +67,7 @@ Add this line to your **app/build.gradle** file
 googleServices { disableVersionCheck = true }
 ```
 
-##### Build error #2
+#### Build error #2
 
 ```
 The minCompileSdk (30) specified in a dependency's AAR metadata (META-INF/com/android/build/gradle/aar-metadata.properties) is greater than this module's compileSdkVersion (android-29).
@@ -78,7 +83,7 @@ android {
     ...
 ```
 
-##### Build error #3
+#### Build error #3
 
 ```
 AAPT: error: unexpected element <queries> found in <manifest>.
@@ -90,7 +95,7 @@ Update gradle plugin in your project. To do this, open **PROJECT_DIR/build.gradl
 
 In **PROJECT_DIR/gradle/wrapper/gradle-wrapper.properties** update gradle wrapper version: `distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip`
 
-##### Build error #4 #
+#### Build error #4 #
 
 After updating gradle plugin to version 4 or higher you may also face known build error https://issuetracker.google.com/issues/158753935?pli=1
 
