@@ -342,4 +342,8 @@
 ## 2.2.26
 ### Updated
 * Pushwoosh Android SDK updated to 6.7.12
+
+## 2.2.27
+### Fixed
+* Resolved an issue on iOS 18 where push notifications were received twice.
  
