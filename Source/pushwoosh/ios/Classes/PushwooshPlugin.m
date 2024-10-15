@@ -1,8 +1,8 @@
 #import "PushwooshPlugin.h"
-#import <Pushwoosh/Pushwoosh.h>
-#import <Pushwoosh/PWGDPRManager.h>
-#import <Pushwoosh/PWInAppManager.h>
-#import <Pushwoosh/PushNotificationManager.h>
+#import <PushwooshFramework/PushwooshFramework.h>
+#import <PushwooshFramework/PWGDPRManager.h>
+#import <PushwooshFramework/PWInAppManager.h>
+#import <PushwooshFramework/PushNotificationManager.h>
 
 #import <UserNotifications/UserNotifications.h>
 #import <objc/runtime.h>
@@ -31,6 +31,7 @@
 @property (nonatomic) PushwooshStreamHandler *acceptHandler;
 @property (nonatomic) DeepLinkStreamHandler *openHandler;
 @property (nonatomic) NSString *cachedDeepLink;
+@property (nonatomic) NSString *lastHash;
 
 - (void) application:(UIApplication *)application pwplugin_didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 
@@ -261,7 +262,14 @@ API_AVAILABLE(ios(10.0)) {
     if ([self isRemoteNotification:notification] && [PWMessage isPushwooshMessage:notification.request.content.userInfo]) {
         completionHandler(UNNotificationPresentationOptionNone);
     } else if ([PushNotificationManager pushManager].showPushnotificationAlert || [notification.request.content.userInfo objectForKey:@"pw_push"] == nil) {
-        completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
+        UNMutableNotificationContent *content = notification.request.content.mutableCopy;
+
+        if ([_lastHash isEqualToString:content.userInfo[@"p"]]) {
+            completionHandler(UNNotificationPresentationOptionNone);
+        } else {
+            _lastHash = content.userInfo[@"p"];
+            completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
+        }
     } else {
         completionHandler(UNNotificationPresentationOptionNone);
     }

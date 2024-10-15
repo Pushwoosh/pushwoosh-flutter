@@ -14,7 +14,7 @@ dependencies:
 ## Usage
 
 ```dart
-import 'package:pushwoosh/pushwoosh.dart';
+import 'package:pushwoosh_flutter/pushwoosh_flutter.dart';
 ...
 Pushwoosh.initialize({"app_id": "YOUR_APP_ID", "sender_id": "FCM_SENDER_ID"});
 Pushwoosh.getInstance.onPushReceived.listen((event) {
