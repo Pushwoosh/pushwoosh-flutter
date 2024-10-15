@@ -1,7 +1,6 @@
 name: pushwoosh_flutter
 description: This plugin allows you to receive push notifications. Powered by Pushwoosh (www.pushwoosh.com).
-version: 2.2.26
-author: Pushwoosh <support@pushwoosh.com>
+version: 2.2.27
 homepage: https://www.pushwoosh.com/
 
 dependencies:
@@ -9,11 +8,15 @@ dependencies:
     sdk: flutter
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.12.0 <4.0.0'
+  flutter: '>=1.10.0'
 
 # The following section is specific to Flutter.
 flutter:
   plugin:
-    androidPackage: com.pushwoosh.plugin
-    pluginClass: PushwooshPlugin
-    
+    platforms:
+      android:
+        package: com.pushwoosh.plugin
+        pluginClass: PushwooshPlugin
+      ios:
+        pluginClass: PushwooshPlugin
