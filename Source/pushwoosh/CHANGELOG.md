@@ -346,4 +346,7 @@
 ## 2.2.27
 ### Fixed
 * Resolved an issue on iOS 18 where push notifications were received twice.
- 
+
+## 2.2.28
+### Fixed
+* Fixed the push notification appearance animation, which was displaying incorrectly due to a bug with duplicate notifications.
