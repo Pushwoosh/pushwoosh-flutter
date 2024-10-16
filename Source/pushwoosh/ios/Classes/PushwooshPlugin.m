@@ -134,7 +134,7 @@ API_AVAILABLE(ios(10))
             
             if (notificationCenter.delegate != nil) {
 #if !TARGET_OS_OSX
-                if ([notificationCenter.delegate conformsToProtocol:@protocol(FlutterAppLifeCycleProvider)] || [notificationCenter.delegate conformsToProtocol:@protocol(PushNotificationDelegate)]) {
+                if ([notificationCenter.delegate conformsToProtocol:@protocol(FlutterAppLifeCycleProvider)]) {
                     shouldReplaceDelegate = NO;
                 }
 #endif
@@ -259,26 +259,38 @@ void pwplugin_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication * ap
 (void (^)(UNNotificationPresentationOptions options))completionHandler
 API_AVAILABLE(ios(10.0)) {
     
-    if ([self isRemoteNotification:notification] && [PWMessage isPushwooshMessage:notification.request.content.userInfo]) {
-        completionHandler(UNNotificationPresentationOptionNone);
-    } else if ([PushNotificationManager pushManager].showPushnotificationAlert || [notification.request.content.userInfo objectForKey:@"pw_push"] == nil) {
-        UNMutableNotificationContent *content = notification.request.content.mutableCopy;
-
+    UNMutableNotificationContent *content = notification.request.content.mutableCopy;
+    
+    if ([PWMessage isPushwooshMessage:notification.request.content.userInfo]) {
         if ([_lastHash isEqualToString:content.userInfo[@"p"]]) {
-            completionHandler(UNNotificationPresentationOptionNone);
-        } else {
+            return;
+        }
+        
+        if ([PushNotificationManager pushManager].showPushnotificationAlert) {
             _lastHash = content.userInfo[@"p"];
             completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
+        } else {
+            completionHandler(UNNotificationPresentationOptionNone);
         }
     } else {
-        completionHandler(UNNotificationPresentationOptionNone);
+        completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
     }
     
     if (_originalNotificationCenterDelegate != nil &&
         _originalNotificationCenterDelegateResponds.willPresentNotification) {
-        [_originalNotificationCenterDelegate userNotificationCenter:center
-                                            willPresentNotification:notification
-                                              withCompletionHandler:completionHandler];
+        
+        BOOL isPushwooshMessage = [PWMessage isPushwooshMessage:notification.request.content.userInfo];
+        dispatch_block_t presentationBlock = ^{
+            [_originalNotificationCenterDelegate userNotificationCenter:center
+                                                willPresentNotification:notification
+                                                  withCompletionHandler:completionHandler];
+        };
+        
+        if (isPushwooshMessage) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.59 * NSEC_PER_SEC)), dispatch_get_main_queue(), presentationBlock);
+        } else {
+            presentationBlock();
+        }
     }
 }
 
