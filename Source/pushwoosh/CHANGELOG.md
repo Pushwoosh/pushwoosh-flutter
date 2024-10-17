@@ -350,3 +350,7 @@
 ## 2.2.28
 ### Fixed
 * Fixed the push notification appearance animation, which was displaying incorrectly due to a bug with duplicate notifications.
+
+### 2.2.29
+### Improved
+* Improved compatibility of the ```void setShowForegroundAlert(bool value)``` method with other push providers.

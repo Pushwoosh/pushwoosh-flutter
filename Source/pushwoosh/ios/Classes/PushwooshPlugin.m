@@ -32,6 +32,7 @@
 @property (nonatomic) DeepLinkStreamHandler *openHandler;
 @property (nonatomic) NSString *cachedDeepLink;
 @property (nonatomic) NSString *lastHash;
+@property (nonatomic) BOOL isForegroundDisabled;
 
 - (void) application:(UIApplication *)application pwplugin_didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 
@@ -260,8 +261,22 @@ void pwplugin_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication * ap
 API_AVAILABLE(ios(10.0)) {
     
     UNMutableNotificationContent *content = notification.request.content.mutableCopy;
-    
-    if ([PWMessage isPushwooshMessage:notification.request.content.userInfo]) {
+    BOOL isPushwooshMessage = [PWMessage isPushwooshMessage:notification.request.content.userInfo];
+    BOOL showPushAlert = [PushNotificationManager pushManager].showPushnotificationAlert;
+
+    if (!isPushwooshMessage) {
+        if (_isForegroundDisabled && !showPushAlert) {
+            _isForegroundDisabled = NO;
+            return;
+        }
+
+        _isForegroundDisabled = !showPushAlert;
+        UNNotificationPresentationOptions options = showPushAlert
+            ? (UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound)
+            : UNNotificationPresentationOptionNone;
+
+        completionHandler(options);
+    } else {
         if ([_lastHash isEqualToString:content.userInfo[@"p"]]) {
             return;
         }
@@ -270,10 +285,10 @@ API_AVAILABLE(ios(10.0)) {
             _lastHash = content.userInfo[@"p"];
             completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
         } else {
-            completionHandler(UNNotificationPresentationOptionNone);
+            if (!_isForegroundDisabled) {
+                completionHandler(UNNotificationPresentationOptionNone);
+            }
         }
-    } else {
-        completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionSound);
     }
     
     if (_originalNotificationCenterDelegate != nil &&
