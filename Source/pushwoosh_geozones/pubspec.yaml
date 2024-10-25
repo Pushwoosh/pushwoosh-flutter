@@ -1,12 +1,12 @@
 name: pushwoosh_geozones
 description: This plugin enables Pushwoosh Geozones feature.
-version: 2.2.29
+version: 2.2.30
 homepage: https://www.pushwoosh.com/v1.0/docs/geozones
 
 dependencies:
   flutter:
     sdk: flutter
-  pushwoosh_flutter: ^2.2.29
+  pushwoosh_flutter: ^2.2.30
 
 environment:
   sdk: '>=2.12.0 <4.0.0'

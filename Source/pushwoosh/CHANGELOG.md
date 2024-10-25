@@ -351,6 +351,12 @@
 ### Fixed
 * Fixed the push notification appearance animation, which was displaying incorrectly due to a bug with duplicate notifications.
 
-### 2.2.29
+## 2.2.29
 ### Improved
-* Improved compatibility of the ```void setShowForegroundAlert(bool value)``` method with other push providers.
+* Improved compatibility of the `void setShowForegroundAlert(bool value)` method with other push providers.
+
+## 2.2.30
+### Added
+* Plist Pushwoosh_PLUGIN_NOTIFICATION_HANDLER flag.
+### Updated
+* Pushwoosh iOS SDK updated to 6.7.8
