@@ -7,7 +7,7 @@
 #import <UserNotifications/UserNotifications.h>
 #import <objc/runtime.h>
 
-#define kPushwooshPluginImplementationInfoPlistKey @"Pushwoosh_PLUGIN_IMPLEMENTATION"
+#define kPushwooshPluginImplementationInfoPlistKey @"Pushwoosh_PLUGIN_NOTIFICATION_HANDLER"
 
 @interface NSError (FlutterError)
 

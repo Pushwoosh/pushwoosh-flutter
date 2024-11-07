@@ -360,3 +360,8 @@
 * Plist Pushwoosh_PLUGIN_NOTIFICATION_HANDLER flag.
 ### Updated
 * Pushwoosh iOS SDK updated to 6.7.8
+
+## 2.2.31
+### Updated
+* Pushwoosh Android SDK updated to 6.7.14
+* Pushwoosh iOS SDK updated to 6.7.9

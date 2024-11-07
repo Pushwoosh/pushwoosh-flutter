@@ -33,11 +33,15 @@ android {
     }
 }
 
+ext {
+    pushwoosh = "6.7.14"
+}
+
 dependencies {
-    implementation 'androidx.core:core:1.0.1'
-    implementation 'com.google.firebase:firebase-messaging:23.1.0'
-    implementation 'com.pushwoosh:pushwoosh:6.7.4'
-    implementation "com.pushwoosh:pushwoosh-firebase:6.7.4"
-    implementation "com.pushwoosh:pushwoosh-huawei:6.7.4"
-    implementation 'com.pushwoosh:pushwoosh-badge:6.7.4'
+    implementation "androidx.core:core:1.0.1"
+    implementation "com.google.firebase:firebase-messaging:23.1.0"
+    implementation "com.pushwoosh:pushwoosh:${pushwoosh}"
+    implementation "com.pushwoosh:pushwoosh-firebase:${pushwoosh}"
+    implementation "com.pushwoosh:pushwoosh-huawei:${pushwoosh}"
+    implementation "com.pushwoosh:pushwoosh-badge:${pushwoosh}"
 }
