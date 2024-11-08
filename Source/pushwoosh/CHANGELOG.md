@@ -365,3 +365,7 @@
 ### Updated
 * Pushwoosh Android SDK updated to 6.7.14
 * Pushwoosh iOS SDK updated to 6.7.9
+
+## 2.3.0
+### Added
+* ```registerSmsNumber```, ```registerWhatsappNumber``` methods added

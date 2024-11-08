@@ -241,6 +241,12 @@ void pushwoosh_swizzle(Class class, SEL fromChange, SEL toChange, IMP impl, cons
         [[Pushwoosh sharedInstance] stopLiveActivityWithCompletion:^(NSError * _Nullable error) {
             result(error.flutterError);
         }];
+    } else if ([@"registerSmsNumber" isEqualToString:call.method]) {
+        NSString *number = [call.arguments objectForKey:@"number"];
+        [[Pushwoosh sharedInstance] registerSmsNumber:number];
+    } else if ([@"registerWhatsappNumber" isEqualToString:call.method]) {
+        NSString *number = [call.arguments objectForKey:@"number"];
+        [[Pushwoosh sharedInstance] registerWhatsappNumber:number];
     } else {
         result(FlutterMethodNotImplemented);
     }

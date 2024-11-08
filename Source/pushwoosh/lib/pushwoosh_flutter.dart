@@ -126,6 +126,14 @@ class Pushwoosh {
   void setLanguage(String language) {
     _channel.invokeMethod("setLanguage", {"language" : language});
   }
+
+  void registerSmsNumber(String number) {
+    _channel.invokeMethod("registerSmsNumber", {"number": number});
+  }
+
+  void registerWhatsappNumber(String number) {
+    _channel.invokeMethod("registerWhatsappNumber", {"number": number});
+  }
 }
 
 class PushEvent{

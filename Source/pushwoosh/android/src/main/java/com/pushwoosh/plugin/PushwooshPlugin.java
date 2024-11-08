@@ -202,11 +202,18 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             case "getApplicationIconBadgeNumber":
                 result.success(PushwooshBadge.getBadgeNumber());
                 break;
+            case "registerSmsNumber":
+                registerSmsNumber(call, result);
+                break;
+            case "registerWhatsappNumber":
+                registerWhatsappNumber(call, result);
+                break;
             default:
                 result.notImplemented();
                 break;
         }
     }
+
 
     @Override
     public boolean onNewIntent(Intent intent) {
@@ -408,6 +415,24 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     private void setLanguage(MethodCall call, Result result) {
         try {
             Pushwoosh.getInstance().setLanguage((String) call.argument("language"));
+            result.success(null);
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+
+    private void registerSmsNumber(MethodCall call, Result result) {
+        try {
+            Pushwoosh.getInstance().registerSMSNumber((String) call.argument("number"));
+            result.success(null);
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+
+    private void registerWhatsappNumber(MethodCall call, Result result) {
+        try {
+            Pushwoosh.getInstance().registerWhatsappNumber((String) call.argument("number"));
             result.success(null);
         } catch (Exception e) {
             sendResultException(result, e);
