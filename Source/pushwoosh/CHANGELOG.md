@@ -374,3 +374,9 @@
 ### Added
 * ```defaultSetup()```, ```defaultStart(String activityId, Map<String, dynamic> attributes, Map<String, dynamic> content)``` methods added
 
+## 2.3.2
+### Fixed
+* No known class method for selector ```defaultSetup```, ```defaultStart:attributes:content:``` issue fixed
+### Updated
+* Pushwoosh Android SDK updated to 6.7.14
+* Pushwoosh iOS SDK updated to 6.7.11
