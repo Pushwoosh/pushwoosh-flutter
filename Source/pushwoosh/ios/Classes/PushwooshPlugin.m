@@ -3,6 +3,7 @@
 #import <PushwooshFramework/PWGDPRManager.h>
 #import <PushwooshFramework/PWInAppManager.h>
 #import <PushwooshFramework/PushNotificationManager.h>
+#import <PushwooshFramework/PushwooshFramework-Swift.h>
 
 #import <UserNotifications/UserNotifications.h>
 #import <objc/runtime.h>
@@ -247,9 +248,25 @@ void pushwoosh_swizzle(Class class, SEL fromChange, SEL toChange, IMP impl, cons
     } else if ([@"registerWhatsappNumber" isEqualToString:call.method]) {
         NSString *number = [call.arguments objectForKey:@"number"];
         [[Pushwoosh sharedInstance] registerWhatsappNumber:number];
+    } else if ([@"defaultSetup" isEqualToString:call.method]) {
+        if ([PushwooshPlugin isSystemVersionGreaterOrEqualTo:@"16.1"]) {
+            [PushwooshLiveActivities defaultSetup];
+        }
+    } else if ([@"defaultStart" isEqualToString:call.method]) {
+        if ([PushwooshPlugin isSystemVersionGreaterOrEqualTo:@"16.1"]) {
+            NSString *activityId = [call.arguments objectForKey:@"activityId"];
+            NSDictionary<NSString *, id> *attributes = [call.arguments objectForKey:@"attributes"];
+            NSDictionary<NSString *, id> *content = [call.arguments objectForKey:@"content"];
+
+            [PushwooshLiveActivities defaultStart:activityId attributes:attributes content:content];
+        }
     } else {
         result(FlutterMethodNotImplemented);
     }
+}
+
++ (BOOL)isSystemVersionGreaterOrEqualTo:(NSString *)systemVersion {
+    return ([[[UIDevice currentDevice] systemVersion] compare:systemVersion options:NSNumericSearch] != NSOrderedAscending);
 }
 
 void pwplugin_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication * application, NSDictionary * userInfo, void (^completionHandler)(UIBackgroundFetchResult)) {

@@ -98,6 +98,19 @@ class Pushwoosh {
     _channel.invokeMethod("stopLiveActivity");
   }
 
+  /// Default setup Live Activity
+  Future<void> defaultSetup() async {
+    await _channel.invokeMethod("defaultSetup");
+  }
+
+  /// Default start Live Activity
+  /// [activityId] activity ID
+  /// [attributes] attributes 
+  /// [content] content 
+  Future<void> defaultStart(String activityId, Map<String, dynamic> attributes, Map<String, dynamic> content) async {
+    await _channel.invokeMethod("defaultStart", {"activityId": activityId, "attributes": attributes, "content": content});
+  }
+
 	/// Allows multiple notifications to be displayed in notification center.
 	/// By default SDK uses single notification mode where each notification overrides previously displayed notification.
 	/// [on] enable multi/single notification mode

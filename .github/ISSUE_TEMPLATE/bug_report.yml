@@ -58,6 +58,7 @@ body:
       label: Your Pushwoosh Flutter plugin version
       description: Your version of the Flutter plugin integrated into the application. You may find it on the [releases page](https://github.com/Pushwoosh/pushwoosh-flutter/releases)
       options:
+        - 2.3.1
         - 2.3.0
         - 2.2.31
         - 2.2.30

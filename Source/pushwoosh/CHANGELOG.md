@@ -369,3 +369,8 @@
 ## 2.3.0
 ### Added
 * ```registerSmsNumber```, ```registerWhatsappNumber``` methods added
+
+## 2.3.1
+### Added
+* ```defaultSetup()```, ```defaultStart(String activityId, Map<String, dynamic> attributes, Map<String, dynamic> content)``` methods added
+
