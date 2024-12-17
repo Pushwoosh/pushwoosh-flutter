@@ -380,3 +380,9 @@
 ### Updated
 * Pushwoosh Android SDK updated to 6.7.14
 * Pushwoosh iOS SDK updated to 6.7.11
+
+## 2.3.3
+### Fixed
+* Fixed ```java.lang.IllegalStateException: Reply already submitted issue``` on Android.
+* Fixed ```NullPointerException``` occurring during ```onDetachedFromEngine```.
+### Pushwoosh Android SDK updated to 6.7.16

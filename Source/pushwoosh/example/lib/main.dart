@@ -215,7 +215,7 @@ class _MyAppState extends State<MyApp> {
     style.unreadImage = "assets/bubble-2.png";
     style.listErrorImage = "assets/alert-2.png";
     style.listEmptyImage = "assets/inbox-1.png";
-    
+
     style.listErrorMessage = "Custom error message";
     style.listEmptyMessage = "Custom empty message";
     style.barTitle = "Custom inbox title";
@@ -242,7 +242,7 @@ class _MyAppState extends State<MyApp> {
     style.barBackgroundColor = "#FF000F";
     style.barAccentColor = "#0000FF";
     style.barTextColor = "#00FF00";
-    
+
     PushwooshInbox.presentInboxUI(style: style);
   }
 

@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'com.android.tools.build:gradle:8.1.1'
     }
 }
 
@@ -22,6 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    namespace "com.pushwoosh.plugin"
     compileSdkVersion 33
 
     defaultConfig {
@@ -34,7 +35,7 @@ android {
 }
 
 ext {
-    pushwoosh = "6.7.15"
+    pushwoosh = "6.7.16"
 }
 
 dependencies {
@@ -42,6 +43,6 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:23.1.0"
     implementation "com.pushwoosh:pushwoosh:${pushwoosh}"
     implementation "com.pushwoosh:pushwoosh-firebase:${pushwoosh}"
-    implementation "com.pushwoosh:pushwoosh-huawei:${pushwoosh}"
+//    implementation "com.pushwoosh:pushwoosh-huawei:${pushwoosh}"
     implementation "com.pushwoosh:pushwoosh-badge:${pushwoosh}"
 }

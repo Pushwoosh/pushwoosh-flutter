@@ -3,6 +3,7 @@
 .idea/*
 .packages
 .pub/
+.flutter-plugins-dependencies
 pubspec.lock
 
 build/

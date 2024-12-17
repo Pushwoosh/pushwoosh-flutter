@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath 'com.android.tools.build:gradle:8.1.1'
     }
 }
 
@@ -22,6 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    namespace "com.pushwoosh.plugin"
     compileSdkVersion 33
 
     defaultConfig {
@@ -31,10 +32,19 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig = signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
 }
 
 ext {
-    pushwoosh = "6.7.15"
+    pushwoosh = "6.7.16"
 }
 
 dependencies {

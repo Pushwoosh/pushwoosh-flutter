@@ -26,7 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.IllegalStateException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -62,11 +61,13 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
 
     private void onAttachedToEngine(BinaryMessenger messenger) {
         PushwooshPlugin.messenger = messenger;
+
         PushwooshPlugin.channel = new MethodChannel(messenger, "pushwoosh");
+        PushwooshPlugin.channel.setMethodCallHandler(new PushwooshPlugin());
+
         PushwooshPlugin.receiveChannel = new EventChannel(messenger, "pushwoosh/receive");
         PushwooshPlugin.acceptChannel = new EventChannel(messenger, "pushwoosh/accept");
         PushwooshPlugin.openChannel = new EventChannel(messenger, "pushwoosh/deeplink");
-        PushwooshPlugin.channel.setMethodCallHandler(new PushwooshPlugin());
 
         PushwooshPlugin.receiveChannel.setStreamHandler(receiveHandler);
         PushwooshPlugin.acceptChannel.setStreamHandler(acceptHandler);
@@ -95,18 +96,27 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
 
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
-        PushwooshPlugin.channel.setMethodCallHandler(null);
-        PushwooshPlugin.receiveChannel.setStreamHandler(null);
-        PushwooshPlugin.openChannel.setStreamHandler(null);
-        PushwooshPlugin.acceptChannel.setStreamHandler(null);
+        if (PushwooshPlugin.channel != null) {
+            PushwooshPlugin.channel.setMethodCallHandler(null);
+            PushwooshPlugin.channel = null;
+        }
+        if (PushwooshPlugin.receiveChannel != null) {
+            PushwooshPlugin.receiveChannel.setStreamHandler(null);
+            PushwooshPlugin.receiveChannel = null;
+        }
+        if (PushwooshPlugin.acceptChannel != null) {
+            PushwooshPlugin.acceptChannel.setStreamHandler(null);
+            PushwooshPlugin.acceptChannel = null;
+        }
+        if (PushwooshPlugin.openChannel != null) {
+            PushwooshPlugin.openChannel.setStreamHandler(null);
+            PushwooshPlugin.openChannel = null;
+        }
 
         PushwooshPlugin.receiveHandler.onCancel(null);
         PushwooshPlugin.acceptHandler.onCancel(null);
         PushwooshPlugin.openHandler.onCancel(null);
-        PushwooshPlugin.channel = null;
-        PushwooshPlugin.receiveChannel = null;
-        PushwooshPlugin.acceptChannel = null;
-        PushwooshPlugin.openChannel = null;
+
         PushwooshPlugin.pluginInstance = null;
         PushwooshPlugin.messenger = null;
     }
@@ -281,24 +291,26 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     }
 
     private void registerForPushNotifications(MethodCall call, final Result result) {
+        final SafeResult safeResult = new SafeResult(result);
+
         Pushwoosh.getInstance().registerForPushNotifications(new Callback<RegisterForPushNotificationsResultData, RegisterForPushNotificationsException>() {
             @Override
             public void process(com.pushwoosh.function.Result<RegisterForPushNotificationsResultData, RegisterForPushNotificationsException> resultRequest) {
                 try {
                     if (resultRequest.isSuccess() && resultRequest.getData() != null) {
-                        result.success(resultRequest.getData().getToken());
+                        safeResult.success(resultRequest.getData().getToken());
                     } else {
-                        sendResultException(result, resultRequest.getException());
+                        sendResultException(safeResult, resultRequest.getException());
                     }
-                } catch (IllegalStateException e) {
-                    sendResultException(result, e);
+                } catch (Exception e) {
+                    sendResultException(safeResult, e);
                 }
             }
         });
     }
 
     private void sendResultException(Result result, Exception e) {
-        if (e == null) {
+        if (e == null || result == null) {
             return;
         }
         String message = e.getMessage();
@@ -306,23 +318,27 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     }
 
     private void unregisterForPushNotifications(MethodCall call, final Result result) {
+        final SafeResult safeResult = new SafeResult(result);
+
         Pushwoosh.getInstance().unregisterForPushNotifications(new Callback<String, UnregisterForPushNotificationException>() {
             @Override
             public void process(com.pushwoosh.function.Result<String, UnregisterForPushNotificationException> resultRequest) {
                 try {
                     if (resultRequest.isSuccess()) {
-                        result.success(resultRequest.getData());
+                        safeResult.success(resultRequest.getData());
                     } else {
-                        sendResultException(result, resultRequest.getException());
+                        sendResultException(safeResult, resultRequest.getException());
                     }
-                } catch (IllegalStateException e) {
-                    sendResultException(result, e);
+                } catch (Exception e) {
+                    sendResultException(safeResult, e);
                 }
             }
         });
     }
 
     private void getTags(MethodCall call, final Result result) {
+        final SafeResult safeResult = new SafeResult(result);
+
         Pushwoosh.getInstance().getTags(new Callback<TagsBundle, GetTagsException>() {
             @Override
             public void process(com.pushwoosh.function.Result<TagsBundle, GetTagsException> resultRequest) {
@@ -344,21 +360,26 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
                                     mapParsed.put((String) pair.getKey(), pair.getValue());
                                 }
                             }
-                            result.success(mapParsed);
+                            safeResult.success(mapParsed);
+                        } else {
+                            sendResultException(safeResult, new GetTagsException("No tags were received from server"));
                         }
                     } else {
-                        sendResultException(result, resultRequest.getException());
+                        sendResultException(safeResult, resultRequest.getException());
                     }
-                } catch (IllegalStateException e) {
-                    sendResultException(result, e);
+                } catch (Exception e) {
+                    sendResultException(safeResult, e);
                 }
             }
         });
     }
 
     private void setTags(MethodCall call, final Result result) {
+        final SafeResult safeResult = new SafeResult(result);
+
         Map<String, String> map = call.argument("tags");
         if (map == null) {
+            sendResultException(safeResult, new IllegalArgumentException("Tags argument is missing or invalid"));
             return;
         }
         JSONObject json = new JSONObject(map);
@@ -367,12 +388,12 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             public void process(com.pushwoosh.function.Result<Void, PushwooshException> resultRequest) {
                 try {
                     if (resultRequest.isSuccess()) {
-                        result.success(null);
+                        safeResult.success(null);
                     } else {
-                        sendResultException(result, resultRequest.getException());
+                        sendResultException(safeResult, resultRequest.getException());
                     }
                 } catch (IllegalStateException e) {
-                    sendResultException(result, e);
+                    sendResultException(safeResult, e);
                 }
             }
         });
@@ -388,12 +409,27 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
 
     @SuppressWarnings("unchecked")
     private void postEvent(MethodCall call, Result result) {
-        List<Object> args = call.arguments();
-        String method = (String) args.get(0);
-        Map<String, Object> map = (Map<String, Object>) args.get(1);
-        JSONObject jsonObject = new JSONObject(map);
-        InAppManager.getInstance().postEvent(method, Tags.fromJson(jsonObject));
-        result.success(null);
+        final SafeResult safeResult = new SafeResult(result);
+
+        try {
+            List<Object> args = call.arguments();
+            if (args == null || args.size() < 2) {
+                sendResultException(safeResult, new IllegalArgumentException("Invalid arguments for postEvent"));
+                return;
+            }
+            String method = (String) args.get(0);
+            Map<String, Object> map = (Map<String, Object>) args.get(1);
+            if (method == null || map == null) {
+                sendResultException(safeResult, new IllegalArgumentException("Method or event data missing"));
+                return;
+            }
+
+            JSONObject jsonObject = new JSONObject(map);
+            InAppManager.getInstance().postEvent(method, Tags.fromJson(jsonObject));
+            safeResult.success(null);
+        } catch (Exception e) {
+            sendResultException(safeResult, e);
+        }
     }
 
     private void setMultiNotificationMode(MethodCall call) {
@@ -547,6 +583,39 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             } else {
                 //flutter app is not initialized yet, caching deep link to send it later
                 cachedDeepLink = deepLink;
+            }
+        }
+    }
+
+    private class SafeResult implements MethodChannel.Result {
+        private boolean isSubmitted = false;
+        private final MethodChannel.Result delegate;
+
+        public SafeResult(MethodChannel.Result delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public synchronized void success(Object data) {
+            if (!isSubmitted) {
+                isSubmitted = true;
+                delegate.success(data);
+            }
+        }
+
+        @Override
+        public synchronized void error(String errorCode, String errorMessage, Object errorDetails) {
+            if (!isSubmitted) {
+                isSubmitted = true;
+                delegate.error(errorCode, errorMessage, errorDetails);
+            }
+        }
+
+        @Override
+        public synchronized void notImplemented() {
+            if (!isSubmitted) {
+                isSubmitted = true;
+                delegate.notImplemented();
             }
         }
     }
