@@ -1,212 +1,600 @@
-import 'dart:async';
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'live_activities.dart';
+import 'dart:async';
+
+/**
+* 1. import Pushwoosh package
+* 2. place the google-services.json file into android/app folder in your project directory.
+*/
 import 'package:pushwoosh_flutter/pushwoosh_flutter.dart';
 import 'package:pushwoosh_geozones/pushwoosh_geozones.dart';
 import 'package:pushwoosh_inbox/pushwoosh_inbox.dart';
 
-void main() => runApp(new MyApp());
+void main() {
+  runApp(const MyApp());
+/**
+* initialize Pushwoosh SDK.
+* Example params: {"app_id": "application id", "sender_id": "FCM sender id"}
+* 
+* 1. app_id - YOUR_APP_ID
+* 2. sender_id - FCM_SENDER_ID
+*/
+  Pushwoosh.initialize({"app_id": "XXXXX-XXXXX", "sender_id": "XXXXXXXXXXXX"});
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => new _MyAppState();
+/**
+ * Setup Default Live Activity
+ */
+  Pushwoosh.getInstance.defaultSetup();
+
+/**
+* To process various events, use the corresponding listeners as follows.
+* Push receipt:
+* **********************************************************
+* Pushwoosh.getInstance.onPushReceived.listen((event) {}); *
+* **********************************************************
+* 
+* Push open:
+* **********************************************************
+* Pushwoosh.getInstance.onPushAccepted.listen((event) {}); *
+* **********************************************************
+* 
+*      PUSHWOOSH CODE
+*          |   |
+*         _|   |_
+*         \     /
+*          \   /
+*           \_/
+*/
+  Pushwoosh.getInstance.onPushReceived.listen((event) {
+    if (kDebugMode) {
+      print(event.pushwooshMessage.payload);
+    }
+  });
+
+  Pushwoosh.getInstance.onPushAccepted.listen((event) {
+    if (kDebugMode) {
+      print(event.pushwooshMessage.payload);
+    }
+  });
 }
 
-class _MyAppState extends State<MyApp> {
-  String _message = "Waiting..";
-  String _log = "";
-  bool _showAlert = false;
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-  set showAlert(bool value) {
-    _showAlert = value;
-    Pushwoosh.getInstance.setShowForegroundAlert(value);
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      home: MyHomePage(title: 'PUSHWOOSH DEMO'),
+    );
   }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  bool notificationsEnabled = false;
+  bool foregroundAlertEnabled = true;
+  String userId = '';
+  String eventName = '';
+  String tagKey = '';
+  String tagValue = '';
+  String language = '';
+  int badges = 0;
+  int seconds = 0;
+  bool isRunning = false;
+  Timer? timer;
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    _tabController = TabController(length: 3, vsync: this);
   }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    Pushwoosh.initialize({"app_id": "11C10-EF18D", "sender_id": "562785984945"});
-
+  
+  void registerForRemoteNotification(bool value) {
     setState(() {
-      _message = "Ready";
-      addLog();
-    });
-
-    Pushwoosh pushwoosh = Pushwoosh.getInstance;
-    pushwoosh.enableHuaweiNotifications();
-
-    pushwoosh.onPushReceived.listen((PushEvent event) {
-      var message = event.pushwooshMessage;
-      print("onPushReceived" + message.payload.toString());
-
-      setState(() {
-        _message = "Push Received:\n" + message.payload.toString();
-        addLog();
-      });
-    });
-
-    pushwoosh.onPushAccepted.listen((event) {
-      var message = event.pushwooshMessage;
-      print("onPushAccepted" + message.payload.toString());
-
-      setState(() {
-        _message = "Push Accepted:\n" + message.payload.toString();
-        addLog();
-      });
-    });
-
-    pushwoosh.onDeepLinkOpened.listen((String link) {
-      var message = "Link opened:\n" + link;
-      print(message);
-
-      setState(() {
-        _message = "Link opened:\n" + link;
-        addLog();
-      });
-    });
-
-    _showAlert = await pushwoosh.showForegroundAlert;
-  }
-
-  void _registerForPushNotifications() async {
-    Pushwoosh pushwoosh = Pushwoosh.getInstance;
-
-    String token = "empty";
-    try {
-      token = await pushwoosh.registerForPushNotifications() ?? token;
-    } catch (e) {
-      token = e.toString();
-    }
-
-    setState(() {
-      _message = "Registered for pushes with token: " + token;
-      addLog();
-    });
-  }
-
-  void _unregisterForPushNotifications() async {
-    Pushwoosh pushwoosh = Pushwoosh.getInstance;
-
-    String result = "Unregistered from push notifications";
-
-    try {
-      await pushwoosh.unregisterForPushNotifications();
-    } catch (e) {
-      result = e.toString();
-    }
-
-    setState(() {
-      _message = result;
-      addLog();
-    });
-  }
-
-  void _getTags() async {
-    Pushwoosh pushwoosh = Pushwoosh.getInstance;
-
-    Map<dynamic, dynamic> tags = {};
-    try {
-      tags = await pushwoosh.getTags();
-    } catch (e) {
-      setState(() {
-        _message = "Get tags failed:\n" + e.toString();
-        addLog();
-      });
-    }
-
-    setState(() {
-      _message = "Tags:\n" + tags.toString();
-      addLog();
-    });
-  }
-
-  void _setTags() async {
-    Pushwoosh pushwoosh = Pushwoosh.getInstance;
-
-    Map<String, dynamic> tags = {"tag1": "value"};
-
-    String result = "setTags completed: " + tags.toString();
-
-    try {
-      await pushwoosh.setTags(tags);
-    } catch (e) {
-      result = "Set tags failed:\n" + e.toString();
-    }
-
-    setState(() {
-      _message = result;
-      addLog();
-    });
-  }
-
-  void _getHwid() async {
-    String hwid = await Pushwoosh.getInstance.getHWID;
-
-    setState(() {
-      _message = "HWID: " + hwid;
-      addLog();
-    });
-  }
-
-  void _getToken() async {
-    String? token = await Pushwoosh.getInstance.getPushToken;
-
-    setState(() {
-      if (token != null) {
-        _message = "Token: " + token;
+      notificationsEnabled = value;
+      if (value == false) {
+        /**
+        * To unregister for push notifications, call the following method:
+        * 
+        * PUSHWOOSH CODE
+        *    |   |
+        *   _|   |_
+        *   \     /
+        *    \   /
+        *     \_/
+        */
+        Pushwoosh.getInstance.unregisterForPushNotifications();
       } else {
-        _message = "No token";
+        /**
+        * To register for push notifications, call the following method:
+        * 
+        * PUSHWOOSH CODE
+        *    |   |
+        *   _|   |_
+        *   \     /
+        *    \   /
+        *     \_/
+        */
+        Pushwoosh.getInstance.registerForPushNotifications();
       }
-      addLog();
     });
   }
 
-  void _postEvent() async {
-    String result = "Event did sent";
-
-    try {
-      await Pushwoosh.getInstance.postEvent("appOpen", {"test": "test"});
-    } catch (e) {
-      result = e.toString();
-    }
-
+  void showForegroundAlert(bool value) {
     setState(() {
-      _message = result;
-      addLog();
+      foregroundAlertEnabled = value;
+      if (foregroundAlertEnabled == true) {
+        showAlert(context, 'INFO', "FOREGROUND ALERTS ENABLED");
+      } else {
+        showAlert(context, 'INFO', "FOREGROUND ALERTS DISABLED");
+      }
+      /**
+      * Show push notifications alert when push notification is received while the app is running, default is `true`
+      * 
+      * PUSHWOOSH CODE
+      *    |   |
+      *   _|   |_
+      *   \     /
+      *    \   /
+      *     \_/
+      */
+      Pushwoosh.getInstance.setShowForegroundAlert(value);
     });
   }
 
-  void _startLocationTracking() async {
-    try {
-      await PushwooshGeozones.startLocationTracking();
-    } catch(e){
-      _message = e.toString();
-      addLog();
-    }
-
-
-    setState(() {
-      _message = "Location tracking did start";
-      addLog();
-    });
+  void showAlert(BuildContext context, String title, String content) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  void _stopLocationTracking() {
-    PushwooshGeozones.stopLocationTracking();
-
-    setState(() {
-      _message = "Location tracking did stop";
-      addLog();
-    });
+  void showToken() async {
+    /**
+    * Push notification token or null if device is not registered yet.
+    * 
+    * PUSHWOOSH CODE 
+    *    |   |
+    *   _|   |_
+    *   \     /
+    *    \   /
+    *     \_/
+    */
+    String? token = await Pushwoosh.getInstance.getPushToken;
+    showAlert(context, "Push Token", token!);
   }
 
-  void _showInbox() {
+  void showHWID() async {
+    /**
+    * Pushwoosh HWID associated with current device
+    * 
+    * PUSHWOOSH CODE 
+    *    |   |
+    *   _|   |_
+    *   \     /
+    *    \   /
+    *     \_/
+    */
+    String hwid = await Pushwoosh.getInstance.getHWID;
+    showAlert(context, "HWID", hwid);
+  }
+
+  Widget buildButtonRow(
+    String buttonText,
+    void Function()? onPressed, {
+    double? buttonWidth,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        if (buttonWidth != null)
+          SizedBox(
+            width: buttonWidth,
+            child: ElevatedButton(
+              onPressed: onPressed,
+              child: Text(
+                buttonText,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 25, 14, 184)),
+              ),
+            ),
+          )
+        else
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.0),
+              child: ElevatedButton(
+                onPressed: onPressed,
+                child: Text(
+                  buttonText,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 25, 14, 184)),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 101, 240, 154),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 65,
+                          height: 65,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/logo.png'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      children: [
+                        buildButtonRow('SET USER ID', () async {
+                          /**
+                          * Set User indentifier. This could be Facebook ID, username or email, or any other user ID.
+                          * This allows data and events to be matched across multiple user devices.
+                          * 
+                          * PUSHWOOSH CODE 
+                          *    |   |
+                          *   _|   |_
+                          *   \     /
+                          *    \   /
+                          *     \_/
+                          */
+                          Pushwoosh.getInstance.setUserId(userId);
+                        }, buttonWidth: 170),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: CupertinoTextField(
+                            placeholder: 'USER ID',
+                            onChanged: (value) {
+                              setState(() {
+                                userId = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        buildButtonRow('POST EVENT', () async {
+                          /**
+                          * Post events for In-App Messages. This can trigger In-App message HTML as specified in Pushwoosh Control Panel.
+                          * [event] is string name of the event
+                          * [attributes] is map contains additional event attributes
+                          * 
+                          * PUSHWOOSH CODE 
+                          *    |   |
+                          *   _|   |_
+                          *   \     /
+                          *    \   /
+                          *     \_/
+                          */
+                          Pushwoosh.getInstance.postEvent(
+                              eventName, {"KEY1": "VALUE1", "KEY2": "VALUE2"});
+                        }, buttonWidth: 170),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: CupertinoTextField(
+                            placeholder: 'EVENT NAME',
+                            onChanged: (value) {
+                              setState(() {
+                                eventName = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        buildButtonRow('SET TAGS', () async {
+                          /**
+                          * Associates device with given [tags]. If setTags request fails tags will be resent on the next application launch.
+                          * 
+                          * PUSHWOOSH CODE 
+                          *    |   |
+                          *   _|   |_
+                          *   \     /
+                          *    \   /
+                          *     \_/
+                          */
+                          Pushwoosh.getInstance.setTags({tagKey: tagValue});
+                        }, buttonWidth: 170),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: CupertinoTextField(
+                            placeholder: 'KEY',
+                            onChanged: (value) {
+                              setState(() {
+                                tagKey = value;
+                              });
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: CupertinoTextField(
+                            placeholder: 'VALUE',
+                            onChanged: (value) {
+                              setState(() {
+                                tagValue = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        buildButtonRow('SET LANGUAGE', () {
+                          /**
+                          * 'setLanguage(String language)' method
+                          * 
+                          * PUSHWOOSH CODE 
+                          *    |   |
+                          *   _|   |_
+                          *   \     /
+                          *    \   /
+                          *     \_/
+                          */
+                          Pushwoosh.getInstance.setLanguage(language);
+                        }, buttonWidth: 170),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: CupertinoTextField(
+                            placeholder: 'en',
+                            onChanged: (value) {
+                              setState(() {
+                                language = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    buildButtonRow('GET HWID', () async {
+                      showHWID();
+                    }),
+                    buildButtonRow('GET PUSH TOKEN', () async {
+                      showToken();
+                    }),
+                    buildButtonRow('GET TAGS', () async {
+                      /**
+                      * Gets tags associated with current device
+
+                      * PUSHWOOSH CODE 
+                      *    |   |
+                      *   _|   |_
+                      *   \     /
+                      *    \   /
+                      *     \_/
+                      */
+                      Map<dynamic, dynamic> tags =
+                          await Pushwoosh.getInstance.getTags();
+                      String tagToString = tags.toString();
+                      showAlert(context, 'TAGS', tagToString);
+                    }),
+                    buildButtonRow('RESET BADGES', () async {
+                      /**
+                      * PUSHWOOSH CODE 
+                      *    |   |
+                      *   _|   |_
+                      *   \     /
+                      *    \   /
+                      *     \_/
+                      */
+                      Pushwoosh.getInstance.setApplicationIconBadgeNumber(0);
+                    }),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Text(
+                          'FOR HUAWEI DEVICES',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ],
+                    ),
+                    buildButtonRow('ENABLE HUAWEI NOTIFICATIONS', () async {
+                      /**
+                      * PUSHWOOSH CODE 
+                      *    |   |
+                      *   _|   |_
+                      *   \     /
+                      *    \   /
+                      *     \_/
+                      */
+                      Pushwoosh.getInstance.enableHuaweiNotifications();
+                    }),
+                    buildButtonRow('START LOCATION TRACKING', () async {
+                      /**
+                      * PUSHWOOSH CODE 
+                      *    |   |
+                      *   _|   |_
+                      *   \     /
+                      *    \   /
+                      *     \_/
+                      */
+                      PushwooshGeozones.startLocationTracking();
+                    }),
+                    buildButtonRow('STOP LOCATION TRACKING', () async {
+                      /**
+                      * PUSHWOOSH CODE 
+                      *    |   |
+                      *   _|   |_
+                      *   \     /
+                      *    \   /
+                      *     \_/
+                      */
+                      PushwooshGeozones.stopLocationTracking();
+                    }),
+                    buildButtonRow('SHOW INBOX', () async {
+                      /**
+                      * PUSHWOOSH CODE 
+                      *    |   |
+                      *   _|   |_
+                      *   \     /
+                      *    \   /
+                      *     \_/
+                      */
+                      _showInbox();
+                    }),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      notificationsEnabled
+                          ? 'UNREGISTER FOR PUSH NOTIFICATIONS'
+                          : 'REGISTER FOR PUSH NOTIFICATIONS',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Switch(
+                      value: notificationsEnabled,
+                      onChanged: registerForRemoteNotification,
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'SHOW FOREGROUND ALERT',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Switch(
+                      value: foregroundAlertEnabled,
+                      onChanged: showForegroundAlert,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: buildButtonRow('GO TO LIVE ACTIVITIES (iOS)', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => StopwatchApp()),
+                    );
+                  }),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.accessibility),
+            label: 'Actions',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.live_tv),
+            label: 'Live Activities',
+          ),
+        ],
+        currentIndex: _tabController.index,
+        selectedItemColor: Color.fromARGB(255, 25, 14, 184),
+        onTap: (index) {
+          setState(() {
+            _tabController.index = index;
+          });
+        },
+      ),
+    );
+  }
+}
+
+void _showInbox() {
     PWInboxStyle style = PWInboxStyle();
 
     style.dateFormat = "dd.MM.yyyy";
@@ -245,125 +633,3 @@ class _MyAppState extends State<MyApp> {
 
     PushwooshInbox.presentInboxUI(style: style);
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            bottom: TabBar(
-              tabs: [
-                Tab(icon: Icon(Icons.phone_android)),
-                Tab(icon: Icon(Icons.sms)),
-              ],
-            ),
-            title: Text('Pushwoosh'),
-          ),
-          body: TabBarView(
-            children: [
-              new Column(
-                children: <Widget>[
-                  new Container(
-                    child: Text('$_message'),
-                    padding: EdgeInsets.all(20.0),
-                    height: 100.0,
-                  ),
-                  new Expanded(
-                    child: new ListView(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.all(20.0),
-                      children: <Widget>[
-                        new CupertinoButton(
-                          child: Text('registerForPushNotifications'),
-                          onPressed: () => _registerForPushNotifications(),
-                        ),
-                        new CupertinoButton(
-                          child: Text('unregisterForPushNotifications'),
-                          onPressed: () => _unregisterForPushNotifications(),
-                        ),
-                         new CupertinoButton(
-                          child: Text('showInbox'),
-                          onPressed: () => _showInbox(),
-                        ),
-                        new CupertinoButton(
-                          child: Text('getTags'),
-                          onPressed: () => _getTags(),
-                        ),
-                        new CupertinoButton(
-                          child: Text('setTags'),
-                          onPressed: () => _setTags(),
-                        ),
-                        new CupertinoButton(
-                          child: Text('getHWID'),
-                          onPressed: () => _getHwid(),
-                        ),
-                        new CupertinoButton(
-                          child: Text('getPushToken'),
-                          onPressed: () => _getToken(),
-                        ),
-                        new CupertinoButton(
-                          child: Text('postEvent'),
-                          onPressed: () => _postEvent(),
-                        ),
-                        new CupertinoButton(
-                          child: Text('startLocationTracking'),
-                          onPressed: _startLocationTracking,
-                        ),
-                        new CupertinoButton(
-                          child: Text('stopLocationTracking'),
-                          onPressed: _stopLocationTracking,
-                        ),
-                        new MergeSemantics(
-                          child: new ListTile(
-                            title: new Text('showForegroundAlert'),
-                            trailing: new CupertinoSwitch(
-                              value: _showAlert,
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this.showAlert = value;
-                                  _message = "showForegroundAlert: " +
-                                      value.toString();
-                                });
-                              },
-                            ),
-                            onTap: null,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              new ListView(
-                  children: <Widget>[
-                    new CupertinoButton(onPressed: _clearLog,
-                      child: Text('Clear log')
-                    ),
-                    new Container(
-                  child: Text('$_log'),
-                  padding: EdgeInsets.all(5.0),
-                )
-                  ]
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _clearLog(){
-    setState(() {
-      _log = "";
-    });
-  }
-
-  void addLog() {
-    setState(() {
-      _log += "\n\n" + _message;
-    });
-  }
-
-}

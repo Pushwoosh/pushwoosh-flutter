@@ -386,3 +386,7 @@
 * Fixed ```java.lang.IllegalStateException: Reply already submitted issue``` on Android.
 * Fixed ```NullPointerException``` occurring during ```onDetachedFromEngine```.
 ### Pushwoosh Android SDK updated to 6.7.16
+
+## 2.3.4
+### Added
+* A new flutter example app

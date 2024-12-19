@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'pushwoosh_flutter'
-  s.version          = '2.3.3'
+  s.version          = '2.3.4'
   s.summary          = 'Pushwoosh Flutter plugin'
   s.homepage         = 'https://pushwoosh.com'
   s.license          = { :file => '../LICENSE' }
