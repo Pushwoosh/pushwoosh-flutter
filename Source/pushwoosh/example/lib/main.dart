@@ -93,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage>
   String tagKey = '';
   String tagValue = '';
   String language = '';
+  String email = '';
   int badges = 0;
   int seconds = 0;
   bool isRunning = false;
@@ -409,6 +410,34 @@ class _MyHomePageState extends State<MyHomePage>
                             onChanged: (value) {
                               setState(() {
                                 language = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        buildButtonRow('SET EMAIL', () {
+                          /**
+                          * 'setEmail(String email)' method
+                          * 
+                          * PUSHWOOSH CODE 
+                          *    |   |
+                          *   _|   |_
+                          *   \     /
+                          *    \   /
+                          *     \_/
+                          */
+                          Pushwoosh.getInstance.setEmail(email);
+                        }, buttonWidth: 170),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: CupertinoTextField(
+                            placeholder: 'en',
+                            onChanged: (value) {
+                              setState(() {
+                                email = value;
                               });
                             },
                           ),

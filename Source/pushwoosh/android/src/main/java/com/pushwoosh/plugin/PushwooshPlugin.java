@@ -15,6 +15,8 @@ import com.pushwoosh.RegisterForPushNotificationsResultData;
 import com.pushwoosh.exception.GetTagsException;
 import com.pushwoosh.exception.PushwooshException;
 import com.pushwoosh.exception.RegisterForPushNotificationsException;
+import com.pushwoosh.exception.SetUserException;
+import com.pushwoosh.exception.SetEmailException;
 import com.pushwoosh.exception.UnregisterForPushNotificationException;
 import com.pushwoosh.function.Callback;
 import com.pushwoosh.inapp.InAppManager;
@@ -202,6 +204,15 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
                 break;
             case "setLanguage":
                 setLanguage(call, result);
+                break;
+            case "setEmail":
+                setEmail(call, result);
+                break;
+            case "setEmails":
+                setEmails(call, result);
+                break;
+            case "setUserEmails":
+                setUserEmails(call, result);
                 break;
             case "addToApplicationIconBadgeNumber":
                 addToApplicationIconBadgeNumber(call, result);
@@ -452,6 +463,61 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         try {
             Pushwoosh.getInstance().setLanguage((String) call.argument("language"));
             result.success(null);
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+
+    private void setEmail(MethodCall call, Result result) {
+        try {
+            String email = (String) call.argument("email");
+            Pushwoosh.getInstance().setEmail(email, new Callback<Boolean, SetEmailException>() {
+                @Override
+                public void process(com.pushwoosh.function.Result<Boolean, SetEmailException> resultRequest) {
+                    if (resultRequest.isSuccess()) {
+                        result.success(null);
+                    } else {
+                        sendResultException(result, resultRequest.getException());
+                    }
+                }
+            });
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+
+    private void setEmails(MethodCall call, Result result) {
+        try {
+            List<String> emails = (List<String>) call.argument("emails");
+            Pushwoosh.getInstance().setEmail(emails, new Callback<Boolean, SetEmailException>() {
+                @Override
+                public void process(com.pushwoosh.function.Result<Boolean, SetEmailException> resultRequest) {
+                    if (resultRequest.isSuccess()) {
+                        result.success(null);
+                    } else {
+                        sendResultException(result, resultRequest.getException());
+                    }
+                }
+            });
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+
+    private void setUserEmails(MethodCall call, Result result) {
+        try {
+            String userId = (String) call.argument("userId");
+            List<String> emails = (List<String>) call.argument("emails");
+            Pushwoosh.getInstance().setUser(userId, emails, new Callback<Boolean, SetUserException>() {
+                @Override
+                public void process(com.pushwoosh.function.Result<Boolean, SetUserException> resultRequest) {
+                    if (resultRequest.isSuccess()) {
+                        result.success(null);
+                    } else {
+                        sendResultException(result, resultRequest.getException());
+                    }
+                }
+            });
         } catch (Exception e) {
             sendResultException(result, e);
         }

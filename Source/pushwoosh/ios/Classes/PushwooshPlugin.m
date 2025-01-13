@@ -196,7 +196,23 @@ void pushwoosh_swizzle(Class class, SEL fromChange, SEL toChange, IMP impl, cons
     } else if([@"setLanguage" isEqualToString:call.method]) {
         NSString *language = [call.arguments objectForKey:@"language"];
         [[PushNotificationManager pushManager] setLanguage:language];
-    } else if ([@"setTags" isEqualToString:call.method]) {
+    } else if([@"setEmail" isEqualToString:call.method]) {
+        NSString *email = [call.arguments objectForKey:@"email"];
+        [[Pushwoosh sharedInstance] setEmail:email completion:^(NSError *error) {
+            result(error.flutterError);
+        }];
+    } else if([@"setEmails" isEqualToString:call.method]) {
+        NSArray *emails = [call.arguments objectForKey:@"emails"];
+        [[Pushwoosh sharedInstance] setEmails:emails completion:^(NSError *error) {
+            result(error.flutterError);
+        }];
+    } else if([@"setUserEmails" isEqualToString:call.method]) {
+        NSString *userId = [call.arguments objectForKey:@"userId"];
+        NSArray *emailsArray = [call.arguments objectForKey:@"emails"];
+        [[Pushwoosh sharedInstance] setUser:userId emails:emailsArray completion:^(NSError *error) {
+            result(error.flutterError);
+        }];
+    } else if([@"setTags" isEqualToString:call.method]) {
         NSDictionary *tags = [call.arguments objectForKey:@"tags"];
         
         [[PushNotificationManager pushManager] setTags:tags withCompletion:^(NSError *error) {

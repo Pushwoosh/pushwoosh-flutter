@@ -140,6 +140,27 @@ class Pushwoosh {
     _channel.invokeMethod("setLanguage", {"language" : language});
   }
 
+  /// Register email associated to the current user.
+  /// Email should be a string and cannot be null or empty.
+  Future<void> setEmail(String email) async {
+    await _channel.invokeMethod("setEmail", {"email": email});
+  }
+
+  /// Register list of emails associated to the current user.
+  Future<void> setEmails(List<String> emails) async {
+    await _channel.invokeMethod("setEmails", {"emails": emails});
+  }
+
+  /// Set user identifier and register emails associated to the user.
+  /// userID can be Facebook ID or any other user ID.
+  /// This allows data and events to be matched across multiple user devices.
+  Future<void> setUserEmails(String userId, List<String> emails) async {
+    await _channel.invokeMethod("setUserEmails", {
+      "userId": userId,
+      "emails": emails
+    });
+  }
+
   void registerSmsNumber(String number) {
     _channel.invokeMethod("registerSmsNumber", {"number": number});
   }

@@ -390,3 +390,7 @@
 ## 2.3.4
 ### Added
 * A new flutter example app
+
+## 2.3.5
+### Added
+* ```setEmail```, ```setEmails```, ```setUserEmails``` methods added

@@ -15,7 +15,7 @@ Pushwoosh Flutter Plugin
 
 ```yaml
 dependencies:
-  pushwoosh_flutter: '^2.3.4'
+  pushwoosh_flutter: '^2.3.5'
 ```
 
 2\. Configure Firebase Android project in [Firebase console](https://console.firebase.google.com).
