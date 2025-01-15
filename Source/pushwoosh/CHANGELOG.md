@@ -394,3 +394,8 @@
 ## 2.3.5
 ### Added
 * ```setEmail```, ```setEmails```, ```setUserEmails``` methods added
+
+## 2.3.6
+### Fixed
+* Correctly implemented swizzling for ```application:didReceiveRemoteNotification:fetchCompletionHandler:``` method.
+

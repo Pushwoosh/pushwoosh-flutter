@@ -10,6 +10,8 @@
 
 #define kPushwooshPluginImplementationInfoPlistKey @"Pushwoosh_PLUGIN_NOTIFICATION_HANDLER"
 
+static IMP pw_original_didReceiveRemoteNotification_Imp;
+
 @interface NSError (FlutterError)
 
 @property(readonly, nonatomic) FlutterError *flutterError;
@@ -36,23 +38,7 @@
 @property (nonatomic) NSString *cachedDeepLink;
 @property (nonatomic) NSString *lastPushwooshHash;
 
-- (void) application:(UIApplication *)application pwplugin_didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
-
 @end
-
-void pushwoosh_swizzle(Class class, SEL fromChange, SEL toChange, IMP impl, const char * signature) {
-    Method method = nil;
-    method = class_getInstanceMethod(class, fromChange);
-    
-    if (method) {
-        //method exists add a new method and swap with original
-        class_addMethod(class, toChange, impl, signature);
-        method_exchangeImplementations(class_getInstanceMethod(class, fromChange), class_getInstanceMethod(class, toChange));
-    } else {
-        //just add as orignal method
-        class_addMethod(class, fromChange, impl, signature);
-    }
-}
 
 @implementation PushwooshPlugin {
     API_AVAILABLE(ios(10))
@@ -121,7 +107,15 @@ void pushwoosh_swizzle(Class class, SEL fromChange, SEL toChange, IMP impl, cons
         return;
     }
         
-    pushwoosh_swizzle([self class], @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:), @selector(application:pwplugin_didReceiveRemoteNotification:fetchCompletionHandler:), (IMP)pwplugin_didReceiveRemoteNotification, "v@::::");
+    Class delegateClass = [delegate class];
+    Method originalMethod = class_getInstanceMethod(delegateClass, @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:));
+    pw_original_didReceiveRemoteNotification_Imp = method_setImplementation(originalMethod, (IMP)_replacement_didReceiveRemoteNotification);
+}
+
+void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication * application, NSDictionary * userInfo, void (^completionHandler)(UIBackgroundFetchResult)) {
+    ((void(*)(id, SEL, UIApplication *, NSDictionary *, void(^)(UIBackgroundFetchResult)))pw_original_didReceiveRemoteNotification_Imp)(self, _cmd, application, userInfo, completionHandler);
+
+    [[PushNotificationManager pushManager] handlePushReceived:userInfo];
 }
 
 #pragma mark - FlutterPlugin
@@ -283,14 +277,6 @@ void pushwoosh_swizzle(Class class, SEL fromChange, SEL toChange, IMP impl, cons
 
 + (BOOL)isSystemVersionGreaterOrEqualTo:(NSString *)systemVersion {
     return ([[[UIDevice currentDevice] systemVersion] compare:systemVersion options:NSNumericSearch] != NSOrderedAscending);
-}
-
-void pwplugin_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication * application, NSDictionary * userInfo, void (^completionHandler)(UIBackgroundFetchResult)) {
-    if ([self respondsToSelector:@selector(application:pwplugin_didReceiveRemoteNotification:fetchCompletionHandler:)]) {
-        [self application:application pwplugin_didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
-    }
-    
-    [[Pushwoosh sharedInstance] handlePushReceived:userInfo];
 }
 
 #pragma mark - UNUserNotificationCenter Delegate Methods
