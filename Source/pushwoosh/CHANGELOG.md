@@ -399,3 +399,7 @@
 ### Fixed
 * Correctly implemented swizzling for ```application:didReceiveRemoteNotification:fetchCompletionHandler:``` method.
 
+## 2.3.7
+### Added
+* Added safeCompletionHandler to prevent multiple invocations of the completionHandler in ```_replacement_didReceiveRemoteNotification```, ensuring compatibility with other frameworks
+

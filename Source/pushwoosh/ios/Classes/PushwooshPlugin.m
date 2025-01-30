@@ -113,9 +113,43 @@ static IMP pw_original_didReceiveRemoteNotification_Imp;
 }
 
 void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication * application, NSDictionary * userInfo, void (^completionHandler)(UIBackgroundFetchResult)) {
-    ((void(*)(id, SEL, UIApplication *, NSDictionary *, void(^)(UIBackgroundFetchResult)))pw_original_didReceiveRemoteNotification_Imp)(self, _cmd, application, userInfo, completionHandler);
+    // Prevent duplicate calls to the completionHandler
+    __block BOOL completionHandlerCalled = NO;
+
+    // Define a safe completion handler to ensure it is called only once
+    void (^safeCompletionHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result) {
+        if (!completionHandlerCalled) {
+            completionHandlerCalled = YES;
+            completionHandler(result);
+        }
+    };
+
+    ((void(*)(id, SEL, UIApplication *, NSDictionary *, void(^)(UIBackgroundFetchResult)))pw_original_didReceiveRemoteNotification_Imp)(
+        self, _cmd, application, userInfo, safeCompletionHandler
+    );
 
     [[PushNotificationManager pushManager] handlePushReceived:userInfo];
+
+    // Determine the appropriate fetch result based on userInfo content
+    UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
+
+    if (userInfo) {
+        if (userInfo[@"data"]) {
+            NSDictionary *data = userInfo[@"data"];
+            if (data && data.count > 0) {
+                fetchResult = UIBackgroundFetchResultNewData;
+            } else {
+                fetchResult = UIBackgroundFetchResultNoData;
+            }
+        } else {
+            fetchResult = UIBackgroundFetchResultNoData;
+        }
+    } else {
+        fetchResult = UIBackgroundFetchResultFailed;
+    }
+
+    // Ensure the completion handler is called with the calculated fetch result
+    safeCompletionHandler(fetchResult);
 }
 
 #pragma mark - FlutterPlugin
