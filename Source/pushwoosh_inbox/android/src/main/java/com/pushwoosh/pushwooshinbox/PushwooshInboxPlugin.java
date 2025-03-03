@@ -89,6 +89,7 @@ public class PushwooshInboxPlugin implements MethodCallHandler, FlutterPlugin {
                 break;
             case "readMessages":
                 readMessages(call, result);
+                break;
             case "deleteMessage":
                 deleteMessage(call, result);
                 break;

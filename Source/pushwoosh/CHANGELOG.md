@@ -403,3 +403,9 @@
 ### Added
 * Added safeCompletionHandler to prevent multiple invocations of the completionHandler in ```_replacement_didReceiveRemoteNotification```, ensuring compatibility with other frameworks
 
+## 2.3.8
+### Fixed
+* Fixed the ```readMessages``` method, which caused a temporary suspension of push notifications.
+### Updated
+* Pushwoosh Android SDK updated to 6.7.17
+* Pushwoosh iOS SDK updated to 6.7.15
