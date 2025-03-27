@@ -51,6 +51,15 @@ static IMP pw_original_didReceiveRemoteNotification_Imp;
     } _originalNotificationCenterDelegateResponds;
 }
 
++ (instancetype)sharedInstance {
+    static PushwooshPlugin *sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
+
 - (BOOL)application:(UIApplication *)application
         openURL:(NSURL *)url
         options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
@@ -64,33 +73,39 @@ static IMP pw_original_didReceiveRemoteNotification_Imp;
 }
     
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-    PushwooshPlugin* instance = [[PushwooshPlugin alloc] init];
+    PushwooshPlugin* instance = [PushwooshPlugin sharedInstance];
     [PushwooshPlugin swizzleNotificationSettingsHandler];
-    
+
     if (![PushwooshPlugin getPluginImplementationInfoPlistKey]) {
         [PushNotificationManager pushManager].delegate = instance;
     }
-    
+
     FlutterMethodChannel* channel = [FlutterMethodChannel methodChannelWithName:@"pushwoosh" binaryMessenger:[registrar messenger]];
     [registrar addMethodCallDelegate:instance channel:channel];
-    
-    FlutterEventChannel *receiveEventChannel = [FlutterEventChannel eventChannelWithName:@"pushwoosh/receive" binaryMessenger:[registrar messenger]];
-    instance.receiveHandler = [PushwooshStreamHandler new];
-    [receiveEventChannel setStreamHandler:instance.receiveHandler];
-    
-    FlutterEventChannel *acceptEventChannel = [FlutterEventChannel eventChannelWithName:@"pushwoosh/accept" binaryMessenger:[registrar messenger]];
-    instance.acceptHandler = [PushwooshStreamHandler new];
-    [acceptEventChannel setStreamHandler:instance.acceptHandler];
-    
-    FlutterEventChannel *openEventChannel = [FlutterEventChannel eventChannelWithName:@"pushwoosh/deeplink" binaryMessenger:[registrar messenger]];
-    instance.openHandler = [DeepLinkStreamHandler new];
-    [openEventChannel setStreamHandler:instance.openHandler];
-    
+
+    if (!instance.receiveHandler) {
+        FlutterEventChannel *receiveEventChannel = [FlutterEventChannel eventChannelWithName:@"pushwoosh/receive" binaryMessenger:[registrar messenger]];
+        instance.receiveHandler = [PushwooshStreamHandler new];
+        [receiveEventChannel setStreamHandler:instance.receiveHandler];
+    }
+
+    if (!instance.acceptHandler) {
+        FlutterEventChannel *acceptEventChannel = [FlutterEventChannel eventChannelWithName:@"pushwoosh/accept" binaryMessenger:[registrar messenger]];
+        instance.acceptHandler = [PushwooshStreamHandler new];
+        [acceptEventChannel setStreamHandler:instance.acceptHandler];
+    }
+
+    if (!instance.openHandler) {
+        FlutterEventChannel *openEventChannel = [FlutterEventChannel eventChannelWithName:@"pushwoosh/deeplink" binaryMessenger:[registrar messenger]];
+        instance.openHandler = [DeepLinkStreamHandler new];
+        [openEventChannel setStreamHandler:instance.openHandler];
+    }
+
     if (instance.cachedDeepLink != nil) {
         [instance.openHandler sendDeepLink:instance.cachedDeepLink];
         instance.cachedDeepLink = nil;
     }
-    
+
     [registrar addApplicationDelegate:instance];
 }
 
