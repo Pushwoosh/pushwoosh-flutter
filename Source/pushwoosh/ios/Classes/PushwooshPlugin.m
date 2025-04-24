@@ -4,6 +4,7 @@
 #import <PushwooshFramework/PWInAppManager.h>
 #import <PushwooshFramework/PushNotificationManager.h>
 #import <PushwooshFramework/PushwooshFramework-Swift.h>
+#import <PushwooshLiveActivities/PushwooshLiveActivities.h>
 
 #import <UserNotifications/UserNotifications.h>
 #import <objc/runtime.h>
@@ -309,7 +310,7 @@ void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication 
         [[Pushwoosh sharedInstance] registerWhatsappNumber:number];
     } else if ([@"defaultSetup" isEqualToString:call.method]) {
         if ([PushwooshPlugin isSystemVersionGreaterOrEqualTo:@"16.1"]) {
-            [PushwooshLiveActivities defaultSetup];
+            [PushwooshLiveActivitiesImplementationSetup defaultSetup];
         }
     } else if ([@"defaultStart" isEqualToString:call.method]) {
         if ([PushwooshPlugin isSystemVersionGreaterOrEqualTo:@"16.1"]) {
@@ -317,7 +318,7 @@ void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication 
             NSDictionary<NSString *, id> *attributes = [call.arguments objectForKey:@"attributes"];
             NSDictionary<NSString *, id> *content = [call.arguments objectForKey:@"content"];
 
-            [PushwooshLiveActivities defaultStart:activityId attributes:attributes content:content];
+            [PushwooshLiveActivitiesImplementationSetup defaultStart:activityId attributes:attributes content:content];
         }
     } else {
         result(FlutterMethodNotImplemented);
