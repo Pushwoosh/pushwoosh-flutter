@@ -229,6 +229,12 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             case "registerWhatsappNumber":
                 registerWhatsappNumber(call, result);
                 break;
+            case "startServerCommunication":
+                startServerCommunication();
+                break;
+            case "stopServerCommunication":
+                stopServerCommunication();
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -539,6 +545,14 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         } catch (Exception e) {
             sendResultException(result, e);
         }
+    }
+
+    private void startServerCommunication() {
+        Pushwoosh.getInstance().startServerCommunication();
+    }
+
+    private void stopServerCommunication() {
+        Pushwoosh.getInstance().stopServerCommunication();
     }
 
     private void setApplicationIconBadgeNumber(MethodCall call, Result result) {

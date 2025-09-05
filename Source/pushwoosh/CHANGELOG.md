@@ -424,3 +424,10 @@
 ### Updated
 * Pushwoosh Android SDK updated to 6.7.24
 * Pushwoosh iOS SDK updated to 6.8.6
+
+## 2.3.14
+### Added
+* Added ```startServerCommunication```, ```stopServerCommunication``` methods
+### Updated
+* Pushwoosh Android SDK updated to 6.7.31
+* Pushwoosh iOS SDK updated to 6.10.2

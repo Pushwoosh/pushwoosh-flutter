@@ -320,6 +320,10 @@ void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication 
 
             [PushwooshLiveActivitiesImplementationSetup defaultStart:activityId attributes:attributes content:content];
         }
+    } else if ([@"startServerCommunication" isEqualToString:call.method]) {
+        [[Pushwoosh sharedInstance] startServerCommunication];
+    } else if ([@"stopServerCommunication" isEqualToString:call.method]) {
+        [[Pushwoosh sharedInstance] stopServerCommunication];
     } else {
         result(FlutterMethodNotImplemented);
     }

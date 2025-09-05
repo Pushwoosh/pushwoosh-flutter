@@ -168,6 +168,22 @@ class Pushwoosh {
   void registerWhatsappNumber(String number) {
     _channel.invokeMethod("registerWhatsappNumber", {"number": number});
   }
+
+  /// Starts server communication with Pushwoosh.
+  ///
+  /// Calls the native method `startServerCommunication` through MethodChannel.
+  /// Typically used to resume communication with the server after it was paused.
+  void startServerCommunication() {
+    _channel.invokeMethod("startServerCommunication");
+  }
+
+  /// Stops server communication with Pushwoosh.
+  ///
+  /// Calls the native method `stopServerCommunication` through MethodChannel.
+  /// Typically used to temporarily suspend communication with the server.
+  void stopServerCommunication() {
+    _channel.invokeMethod("stopServerCommunication");
+  }
 }
 
 class PushEvent{
