@@ -23,7 +23,7 @@ void main() {
 * 1. app_id - YOUR_APP_ID
 * 2. sender_id - FCM_SENDER_ID
 */
-  Pushwoosh.initialize({"app_id": "XXXXX-XXXXX", "sender_id": "XXXXXXXXXXXX"});
+  Pushwoosh.initialize({"app_id": "11C10-EF18D", "sender_id": "245850018966"});
 
 /**
  * Setup Default Live Activity
@@ -103,6 +103,41 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _setupJavaScriptInterface();
+  }
+
+  void _setupJavaScriptInterface() async {
+    try {
+      print("Setting up JavaScript interface...");
+      
+      await Future.delayed(Duration(seconds: 2));
+      await Pushwoosh.getInstance.addJavascriptInterface('flutter', {
+        'showToast': _showToast,
+      });
+      print("JavaScript interface 'flutter' registered successfully with methods: [showToast]");
+    } catch (e) {
+      print("Failed to register JavaScript interface: $e");
+    }
+  }
+
+  Future<Map<String, dynamic>> _showToast(Map<String, dynamic> args) async {
+    String message = args['message'] ?? 'Hello from JavaScript!';
+    
+    print("Toast shown: $message");
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+    
+    return {
+      'success': true,
+      'message': 'Toast displayed successfully',
+      'timestamp': DateTime.now().toIso8601String(),
+    };
   }
   
   void registerForRemoteNotification(bool value) {

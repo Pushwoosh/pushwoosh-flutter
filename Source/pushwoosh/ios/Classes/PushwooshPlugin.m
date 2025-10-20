@@ -1,10 +1,10 @@
 #import "PushwooshPlugin.h"
 #import <PushwooshFramework/PushwooshFramework.h>
-#import <PushwooshFramework/PWGDPRManager.h>
 #import <PushwooshFramework/PWInAppManager.h>
 #import <PushwooshFramework/PushNotificationManager.h>
 #import <PushwooshFramework/PushwooshFramework-Swift.h>
 #import <PushwooshLiveActivities/PushwooshLiveActivities.h>
+#import "FlutterJavaScriptInterface.h"
 
 #import <UserNotifications/UserNotifications.h>
 #import <objc/runtime.h>
@@ -30,12 +30,14 @@ static IMP pw_original_didReceiveRemoteNotification_Imp;
 @end
 
 
-@interface PushwooshPlugin () <PushNotificationDelegate>
+@interface PushwooshPlugin () <PushNotificationDelegate, FlutterStreamHandler>
 
 @property (nonatomic) FlutterResult registerResult;
 @property (nonatomic) PushwooshStreamHandler *receiveHandler;
 @property (nonatomic) PushwooshStreamHandler *acceptHandler;
 @property (nonatomic) DeepLinkStreamHandler *openHandler;
+@property (nonatomic) FlutterEventSink jsInterfaceEventSink;
+@property (nonatomic) NSMutableDictionary<NSString *, FlutterJavaScriptInterface *> *jsInterfaces;
 @property (nonatomic) NSString *cachedDeepLink;
 @property (nonatomic) NSString *lastPushwooshHash;
 
@@ -101,6 +103,11 @@ static IMP pw_original_didReceiveRemoteNotification_Imp;
         instance.openHandler = [DeepLinkStreamHandler new];
         [openEventChannel setStreamHandler:instance.openHandler];
     }
+
+    FlutterEventChannel *jsInterfaceEventChannel = [FlutterEventChannel eventChannelWithName:@"pushwoosh/jsinterface" binaryMessenger:[registrar messenger]];
+    [jsInterfaceEventChannel setStreamHandler:instance];
+    
+    instance.jsInterfaces = [[NSMutableDictionary alloc] init];
 
     if (instance.cachedDeepLink != nil) {
         [instance.openHandler sendDeepLink:instance.cachedDeepLink];
@@ -324,6 +331,12 @@ void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication 
         [[Pushwoosh sharedInstance] startServerCommunication];
     } else if ([@"stopServerCommunication" isEqualToString:call.method]) {
         [[Pushwoosh sharedInstance] stopServerCommunication];
+    } else if ([@"addJavascriptInterface" isEqualToString:call.method]) {
+        [self handleAddJavascriptInterface:call result:result];
+    } else if ([@"removeJavascriptInterface" isEqualToString:call.method]) {
+        [self handleRemoveJavascriptInterface:call result:result];
+    } else if ([@"sendJavaScriptResponse" isEqualToString:call.method]) {
+        [self handleSendJavaScriptResponse:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -486,6 +499,93 @@ API_AVAILABLE(ios(10.0)) {
 
 + (NSString *)getPluginImplementationInfoPlistKey {
     return [[NSBundle mainBundle] objectForInfoDictionaryKey:kPushwooshPluginImplementationInfoPlistKey];
+}
+
+#pragma mark - JavaScript Interface Methods
+
+- (void)handleAddJavascriptInterface:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSString *interfaceName = call.arguments[@"interfaceName"];
+    NSArray<NSString *> *methodNames = call.arguments[@"methodNames"];
+    
+    if (!interfaceName || !methodNames) {
+        result([FlutterError errorWithCode:@"INVALID_ARGUMENTS"
+                                   message:@"interfaceName and methodNames are required"
+                                   details:nil]);
+        return;
+    }
+    
+    __weak typeof(self) weakSelf = self;
+    FlutterJavaScriptInterface *interface = [[FlutterJavaScriptInterface alloc] 
+                                            initWithName:interfaceName 
+                                             methodNames:methodNames
+                                             callHandler:^(NSDictionary *callData) {
+        [weakSelf sendJavaScriptInterfaceCall:callData];
+    }];
+    
+    self.jsInterfaces[interfaceName] = interface;
+    
+    [[PWInAppManager sharedManager] addJavascriptInterface:interface withName:interfaceName];
+    
+    result(nil);
+}
+
+- (void)handleRemoveJavascriptInterface:(FlutterMethodCall *)call result:(FlutterResult)result {
+    // This is an Android-only feature. On iOS, JavaScript interfaces are managed
+    // differently through WKWebView and are automatically cleaned up when the
+    // WebView is dismissed. This stub exists for API compatibility.
+    
+    NSString *interfaceName = call.arguments[@"interfaceName"];
+    
+    if (!interfaceName) {
+        result([FlutterError errorWithCode:@"INVALID_ARGUMENTS"
+                                   message:@"interfaceName is required"
+                                   details:nil]);
+        return;
+    }
+    
+    // Remove from internal tracking for consistency
+    [self.jsInterfaces removeObjectForKey:interfaceName];
+    
+    result(nil);
+}
+
+- (void)handleSendJavaScriptResponse:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSString *callbackId = call.arguments[@"callbackId"];
+    BOOL success = [call.arguments[@"success"] boolValue];
+    id data = call.arguments[@"data"];
+    NSString *error = call.arguments[@"error"];
+    
+    if (!callbackId) {
+        result([FlutterError errorWithCode:@"INVALID_ARGUMENTS"
+                                   message:@"callbackId is required"
+                                   details:nil]);
+        return;
+    }
+    
+    [FlutterJavaScriptInterface sendResponse:callbackId 
+                                     success:success 
+                                        data:data 
+                                       error:error];
+    
+    result(nil);
+}
+
+- (void)sendJavaScriptInterfaceCall:(NSDictionary *)callData {
+    if (self.jsInterfaceEventSink) {
+        self.jsInterfaceEventSink(callData);
+    }
+}
+
+#pragma mark - FlutterStreamHandler (for JavaScript Interface)
+
+- (FlutterError *)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)eventSink {
+    self.jsInterfaceEventSink = eventSink;
+    return nil;
+}
+
+- (FlutterError *)onCancelWithArguments:(id)arguments {
+    self.jsInterfaceEventSink = nil;
+    return nil;
 }
 
 @end

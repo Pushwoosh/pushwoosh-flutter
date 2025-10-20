@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+import com.pushwoosh.internal.utils.PWLog;
 
 import androidx.annotation.NonNull;
 
@@ -28,10 +29,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.IllegalStateException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
@@ -61,6 +64,11 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
 
     public static String cachedDeepLink;
 
+    // JavaScript interface variables
+    private static final Map<String, FlutterJavaScriptInterface> jsInterfaces = new ConcurrentHashMap<>();
+    public static EventChannel jsInterfaceChannel;
+    public static EventChannel.EventSink jsInterfaceEventSink;
+
     private void onAttachedToEngine(BinaryMessenger messenger) {
         PushwooshPlugin.messenger = messenger;
 
@@ -70,10 +78,24 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         PushwooshPlugin.receiveChannel = new EventChannel(messenger, "pushwoosh/receive");
         PushwooshPlugin.acceptChannel = new EventChannel(messenger, "pushwoosh/accept");
         PushwooshPlugin.openChannel = new EventChannel(messenger, "pushwoosh/deeplink");
+        PushwooshPlugin.jsInterfaceChannel = new EventChannel(messenger, "pushwoosh/jsinterface");
 
         PushwooshPlugin.receiveChannel.setStreamHandler(receiveHandler);
         PushwooshPlugin.acceptChannel.setStreamHandler(acceptHandler);
         PushwooshPlugin.openChannel.setStreamHandler(openHandler);
+        
+        // Set JavaScript interface stream handler
+        PushwooshPlugin.jsInterfaceChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink events) {
+                jsInterfaceEventSink = events;
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                jsInterfaceEventSink = null;
+            }
+        });
     }
 
     private static void handleCachedLinkIntent(PushwooshPlugin instance, Activity activity) {
@@ -235,6 +257,19 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             case "stopServerCommunication":
                 stopServerCommunication();
                 break;
+            case "addJavascriptInterface":
+                handleAddJavascriptInterface(call, result);
+                break;
+            case "removeJavascriptInterface":
+                handleRemoveJavascriptInterface(call, result);
+                break;
+            case "sendJavaScriptResponse":
+                handleSendJavaScriptResponse(call, result);
+                break;
+            case "defaultSetup":
+                // iOS-only method for Live Activities setup, stub for Android
+                result.success(null);
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -331,6 +366,7 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             return;
         }
         String message = e.getMessage();
+        PWLog.error("PushwooshPlugin", "Error: " + message, e);
         result.error(e.getClass().getSimpleName(), message, Log.getStackTraceString(e));
     }
 
@@ -596,6 +632,76 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             PushwooshPlugin.showForegroundPush = false;
         }
     }
+
+    // JavaScript Interface Methods
+    private void handleAddJavascriptInterface(MethodCall call, Result result) {
+        try {
+            String interfaceName = call.argument("interfaceName");
+            List<String> methodNames = call.argument("methodNames");
+            
+            if (interfaceName == null || methodNames == null) {
+                result.error("INVALID_ARGUMENTS", "Interface name and method names are required", null);
+                return;
+            }
+
+            FlutterJavaScriptInterface jsInterface = new FlutterJavaScriptInterface(interfaceName, methodNames);
+            jsInterfaces.put(interfaceName, jsInterface);
+            
+            InAppManager.getInstance().addJavascriptInterface(jsInterface, interfaceName);
+            
+            result.success(null);
+        } catch (Exception e) {
+            result.error("ADD_JS_INTERFACE_ERROR", e.getMessage(), null);
+        }
+    }
+
+    private void handleRemoveJavascriptInterface(MethodCall call, Result result) {
+        try {
+            String interfaceName = call.argument("interfaceName");
+            
+            if (interfaceName == null) {
+                result.error("INVALID_ARGUMENTS", "Interface name is required", null);
+                return;
+            }
+
+            jsInterfaces.remove(interfaceName);
+            InAppManager.getInstance().removeJavascriptInterface(interfaceName);
+            
+            result.success(null);
+        } catch (Exception e) {
+            result.error("REMOVE_JS_INTERFACE_ERROR", e.getMessage(), null);
+        }
+    }
+
+    private void handleSendJavaScriptResponse(MethodCall call, Result result) {
+        try {
+            String callbackId = call.argument("callbackId");
+            Boolean success = call.argument("success");
+            Object data = call.argument("data");
+            String error = call.argument("error");
+            
+            if (callbackId == null || success == null) {
+                result.error("INVALID_ARGUMENTS", "Callback ID and success flag are required", null);
+                return;
+            }
+
+            FlutterJavaScriptInterface.sendResponse(callbackId, success, data, error);
+            
+            result.success(null);
+        } catch (Exception e) {
+            result.error("SEND_JS_RESPONSE_ERROR", e.getMessage(), null);
+        }
+    }
+
+    // Static method to send events to Flutter
+    public static void sendJavaScriptInterfaceCall(Map<String, Object> callData) {
+        if (jsInterfaceEventSink != null) {
+            new Handler(Looper.getMainLooper()).post(() -> {
+                jsInterfaceEventSink.success(callData);
+            });
+        }
+    }
+
 
     private static class StreamHandler implements EventChannel.StreamHandler {
         private EventChannel.EventSink events;

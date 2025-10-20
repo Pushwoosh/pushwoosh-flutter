@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter clean:*)",
+      "Bash(flutter pub:*)",
+      "Bash(flutter run:*)",
+      "Read(//Users/vromanychev/Desktop/projects/flutter/Sources/pushwoosh/**)",
+      "Bash(pod repo update:*)",
+      "Bash(pod install:*)",
+      "Bash(xcrun simctl list:*)",
+      "Bash(adb logcat:*)",
+      "Read(//Users/vromanychev/Desktop/projects/Android/**)",
+      "Bash(find:*)",
+      "Bash(git restore:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

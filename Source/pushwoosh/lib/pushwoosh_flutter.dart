@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
@@ -10,8 +11,11 @@ class Pushwoosh {
   static const EventChannel _receiveChannel = const EventChannel('pushwoosh/receive');
   static const EventChannel _acceptChannel = const EventChannel('pushwoosh/accept');
   static const EventChannel _openChannel = const EventChannel('pushwoosh/deeplink');
+  static const EventChannel _jsInterfaceChannel = const EventChannel('pushwoosh/jsinterface');
 
   static Pushwoosh _instance = new Pushwoosh();
+
+  static final Map<String, Map<String, Function>> _registeredInterfaces = {};
 
   /// Returns the default (first initialized) instance of the Pushwoosh.
   static Pushwoosh get getInstance => _instance;
@@ -183,6 +187,89 @@ class Pushwoosh {
   /// Typically used to temporarily suspend communication with the server.
   void stopServerCommunication() {
     _channel.invokeMethod("stopServerCommunication");
+  }
+
+  Stream<Map<String, dynamic>> get onJavascriptInterfaceCall =>
+      _jsInterfaceChannel.receiveBroadcastStream().map((event) => Map<String, dynamic>.from(event));
+
+  /// Register a JavaScript interface with Flutter method handlers
+  /// [interfaceName] - name that will be available in JavaScript as window.[interfaceName]
+  /// [methods] - map of method names to their Flutter implementations
+  Future<void> addJavascriptInterface(String interfaceName, Map<String, Function> methods) async {
+    try {
+      _registeredInterfaces[interfaceName] = methods;
+      
+      await _channel.invokeMethod("addJavascriptInterface", {
+        "interfaceName": interfaceName,
+        "methodNames": methods.keys.toList()
+      });
+      
+      if (_registeredInterfaces.length == 1) {
+        _startListeningToJavaScriptCalls();
+      }
+    } catch (e) {
+      throw Exception("Failed to add JavaScript interface: $e");
+    }
+  }
+
+  /// Remove a JavaScript interface
+  /// [interfaceName] - name of the interface to remove
+  Future<void> removeJavascriptInterface(String interfaceName) async {
+    try {
+      _registeredInterfaces.remove(interfaceName);
+      await _channel.invokeMethod("removeJavascriptInterface", {
+        "interfaceName": interfaceName
+      });
+    } catch (e) {
+      throw Exception("Failed to remove JavaScript interface: $e");
+    }
+  }
+  void _startListeningToJavaScriptCalls() {
+    onJavascriptInterfaceCall.listen((callData) async {
+      try {
+        String interfaceName = callData['interfaceName']?.toString() ?? '';
+        String methodName = callData['methodName']?.toString() ?? '';
+        String callbackId = callData['callbackId']?.toString() ?? '';
+        
+        Map<String, dynamic> arguments = {};
+        if (callData['arguments'] != null) {
+          try {
+            arguments = Map<String, dynamic>.from(callData['arguments'] as Map);
+          } catch (e) {
+          }
+        }
+        
+        if (_registeredInterfaces.containsKey(interfaceName) &&
+            _registeredInterfaces[interfaceName]!.containsKey(methodName)) {
+          
+          Function method = _registeredInterfaces[interfaceName]![methodName]!;
+          
+          try {
+            dynamic result = await method(arguments);
+            
+            await _channel.invokeMethod("sendJavaScriptResponse", {
+              "callbackId": callbackId,
+              "success": true,
+              "data": result
+            });
+          } catch (e) {
+            await _channel.invokeMethod("sendJavaScriptResponse", {
+              "callbackId": callbackId,
+              "success": false,
+              "error": e.toString()
+            });
+          }
+        } else {
+          await _channel.invokeMethod("sendJavaScriptResponse", {
+            "callbackId": callbackId,
+            "success": false,
+            "error": "Method $methodName not found in interface $interfaceName"
+          });
+        }
+      } catch (e) {
+          print("Pushwoosh JS Interface: Failed to parse arguments. Error: $e");
+      }
+    });
   }
 }
 

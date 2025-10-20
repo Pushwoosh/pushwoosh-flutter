@@ -23,7 +23,7 @@ apply plugin: 'com.android.library'
 
 android {
     namespace "com.pushwoosh.plugin"
-    compileSdkVersion 33
+    compileSdkVersion 35
 
     defaultConfig {
         minSdkVersion 21
@@ -44,7 +44,7 @@ android {
 }
 
 ext {
-    pushwoosh = "6.7.31"
+    pushwoosh = "6.7.38"
 }
 
 dependencies {
