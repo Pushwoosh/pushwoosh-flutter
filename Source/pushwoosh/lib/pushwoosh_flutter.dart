@@ -1,3 +1,162 @@
+/// Pushwoosh Flutter Plugin
+///
+/// Cross-platform push notifications, In-App messaging, and more for Flutter applications.
+///
+/// ## Installation
+///
+/// Add to your `pubspec.yaml`:
+///
+/// ```yaml
+/// dependencies:
+///   pushwoosh_flutter: ^2.3.15
+/// ```
+///
+/// ### Optional plugins
+///
+/// ```yaml
+/// dependencies:
+///   pushwoosh_geozones: ^2.3.15   # Location-based push notifications
+///   pushwoosh_inbox: ^2.3.15      # Message Inbox UI
+/// ```
+///
+/// ### iOS Setup
+///
+/// ```bash
+/// cd ios && pod install
+/// ```
+///
+/// ### Android Setup
+///
+/// 1. Configure Firebase project in Firebase Console
+/// 2. Place `google-services.json` into `android/app/` folder
+///
+/// ## Quick Start
+///
+/// ```dart
+/// import 'package:pushwoosh_flutter/pushwoosh_flutter.dart';
+///
+/// void main() {
+///   runApp(MyApp());
+///
+///   Pushwoosh.initialize({
+///     "app_id": "YOUR_PUSHWOOSH_APP_ID",
+///     "sender_id": "YOUR_FCM_SENDER_ID"
+///   });
+///
+///   Pushwoosh.getInstance.onPushReceived.listen((event) {
+///     print("Push received: ${event.pushwooshMessage.payload}");
+///   });
+///
+///   Pushwoosh.getInstance.onPushAccepted.listen((event) {
+///     print("Push opened: ${event.pushwooshMessage.payload}");
+///   });
+///
+///   Pushwoosh.getInstance.registerForPushNotifications();
+/// }
+/// ```
+///
+/// ## Common Use Cases
+///
+/// ### Set User Tags
+///
+/// ```dart
+/// await Pushwoosh.getInstance.setTags({
+///   "username": "john_doe",
+///   "age": 25,
+///   "interests": ["sports", "tech"]
+/// });
+///
+/// Map tags = await Pushwoosh.getInstance.getTags();
+/// ```
+///
+/// ### User Identification
+///
+/// ```dart
+/// Pushwoosh.getInstance.setUserId("user_12345");
+/// ```
+///
+/// ### Post Events for In-App Messages
+///
+/// ```dart
+/// await Pushwoosh.getInstance.postEvent("purchase_complete", {
+///   "productName": "Premium Plan",
+///   "amount": "9.99"
+/// });
+/// ```
+///
+/// ### Deep Link Handling
+///
+/// ```dart
+/// Pushwoosh.getInstance.onDeepLinkOpened.listen((String deepLink) {
+///   print("Deep link opened: $deepLink");
+/// });
+/// ```
+///
+/// ### Multi-channel Communication
+///
+/// ```dart
+/// await Pushwoosh.getInstance.setEmail("user@example.com");
+/// await Pushwoosh.getInstance.setEmails(["user@example.com", "work@example.com"]);
+/// Pushwoosh.getInstance.registerSmsNumber("+1234567890");
+/// Pushwoosh.getInstance.registerWhatsappNumber("+1234567890");
+/// ```
+///
+/// ### Badge Management
+///
+/// ```dart
+/// Pushwoosh.getInstance.setApplicationIconBadgeNumber(5);
+/// int badge = await Pushwoosh.getInstance.getApplicationIconBadgeNumber;
+/// Pushwoosh.getInstance.addToApplicationIconBadgeNumber(1);
+/// ```
+///
+/// ### Live Activities (iOS)
+///
+/// ```dart
+/// await Pushwoosh.getInstance.defaultSetup();
+/// await Pushwoosh.getInstance.defaultStart(
+///   "delivery_123",
+///   {"driverName": "John"},
+///   {"status": "On the way"}
+/// );
+/// await Pushwoosh.getInstance.stopLiveActivity();
+/// ```
+///
+/// ### JavaScript Interface for In-App Messages
+///
+/// ```dart
+/// await Pushwoosh.getInstance.addJavascriptInterface('flutter', {
+///   'onButtonTap': (Map<String, dynamic> args) {
+///     print("Button tapped: $args");
+///     return "OK";
+///   },
+///   'getUserData': (Map<String, dynamic> args) {
+///     return {"name": "John", "premium": true};
+///   }
+/// });
+/// ```
+///
+/// ## Configuration Parameters
+///
+/// | Parameter    | Description                                    |
+/// |------------- |------------------------------------------------|
+/// | `app_id`     | Your Pushwoosh Application ID (required)       |
+/// | `sender_id`  | FCM/GCM Sender ID for Android (required)       |
+///
+/// ## Push Events
+///
+/// | Stream             | Type        | Description                               |
+/// |--------------------|-------------|-------------------------------------------|
+/// | `onPushReceived`   | `PushEvent` | Fires when push notification is received  |
+/// | `onPushAccepted`   | `PushEvent` | Fires when push notification is opened    |
+/// | `onDeepLinkOpened` | `String`    | Fires when a deep link URL is opened      |
+///
+/// ## Links
+///
+/// - Documentation: https://docs.pushwoosh.com/platform-docs/pushwoosh-sdk/cross-platform-frameworks/flutter/integrating-flutter-plugin
+/// - GitHub: https://github.com/Pushwoosh/pushwoosh-flutter
+/// - Support: https://support.pushwoosh.com/
+library pushwoosh_flutter;
+
 import 'dart:async';
 import 'dart:convert';
 

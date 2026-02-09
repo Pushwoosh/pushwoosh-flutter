@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PushwooshFramework/PWInAppManager.h>
+#import <PushwooshCore/PWInAppManager.h>
 
 typedef void (^FlutterJSCallHandler)(NSDictionary *callData);
 

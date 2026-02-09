@@ -431,3 +431,26 @@
 ### Updated
 * Pushwoosh Android SDK updated to 6.7.31
 * Pushwoosh iOS SDK updated to 6.10.2
+
+## 2.3.15
+### Added
+* `addJavascriptInterface()` method. Use this method to call Dart functions from In-Apps
+
+### Fixed
+* Runtime errors when calling Live Activity-related methods on Android devices
+* Crash in Inbox UI when opening unread notifications
+
+### Updated
+* Pushwoosh Android SDK updated to 6.7.38
+* Pushwoosh iOS SDK updated to 6.11.3
+
+## 2.3.16
+### Added
+* Context7 MCP support for AI-assisted integration with Claude Code, Cursor, and other AI coding assistants
+
+### Changed
+* PushwooshLiveActivities is now included by default via CocoaPods subspec
+
+### Updated
+* Pushwoosh Android SDK updated to 6.7.54
+* Pushwoosh iOS SDK updated to 7.0.22

@@ -1,6 +1,6 @@
 #import "PushwooshPlugin.h"
 #import <PushwooshFramework/PushwooshFramework.h>
-#import <PushwooshFramework/PWInAppManager.h>
+#import <PushwooshCore/PWInAppManager.h>
 #import <PushwooshFramework/PushNotificationManager.h>
 #import <PushwooshFramework/PushwooshFramework-Swift.h>
 #import <PushwooshLiveActivities/PushwooshLiveActivities.h>

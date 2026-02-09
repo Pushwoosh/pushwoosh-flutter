@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'pushwoosh_flutter'
-  s.version          = '2.3.15'
+  s.version          = '2.3.16'
   s.summary          = 'Pushwoosh Flutter plugin'
   s.homepage         = 'https://pushwoosh.com'
   s.license          = { :file => '../LICENSE' }
@@ -12,7 +12,8 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'PushwooshXCFramework', '6.11.3'
+  s.dependency 'PushwooshXCFramework', '7.0.22'
+  s.dependency 'PushwooshXCFramework/PushwooshLiveActivities'
   s.static_framework = true
 
 
