@@ -2,9 +2,9 @@
 
 <p align="center">
   <a href="https://github.com/Pushwoosh/pushwoosh-flutter"><img src="https://img.shields.io/github/release/Pushwoosh/pushwoosh-flutter.svg?style=flat-square" alt="GitHub release"></a>
-  <a href="https://pub.dev/packages/pushwoosh_flutter"><img src="https://img.shields.io/pub/v/pushwoosh_flutter.svg?style=flat-square" alt="pub"></a>
-  <a href="https://pub.dev/packages/pushwoosh_flutter"><img src="https://img.shields.io/pub/l/pushwoosh_flutter.svg?style=flat-square" alt="license"></a>
-</p>
+  <a href="https://pub.dev/packages/pushwoosh_flutter"><img src="https://img.shields.io/pub/v/pushwoosh_flutter.svg?style=flat-square" alt="pub"></a></p>
+
+<p align="center">
 
 <p align="center">
   Cross-platform push notifications, In-App messaging, and more for Flutter applications.
