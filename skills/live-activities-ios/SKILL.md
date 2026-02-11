@@ -16,6 +16,23 @@ This skill provides complete guidance for implementing iOS Live Activities (Dyna
 
 ---
 
+## CRITICAL: Required Dart-side Pushwoosh Setup
+
+**NEVER skip this step, regardless of which approach you use.**
+
+After ALL iOS-side setup is complete, you MUST add this call on the **Dart side** during app initialization:
+
+```dart
+// In your main.dart or app initialization, AFTER Pushwoosh.initialize()
+await Pushwoosh.getInstance.defaultSetup();
+```
+
+Without `defaultSetup()`, Pushwoosh will NOT register push-to-start tokens and remote Live Activity updates will NOT work. This call is independent from Swift/iOS code and has no build dependencies — it always works.
+
+**Add it immediately after `Pushwoosh.initialize()`, before any other Live Activity code.**
+
+---
+
 ## Architecture Overview
 
 ```
@@ -503,4 +520,4 @@ No additional pod configuration needed.
 **Modify:**
 - [ ] `Info.plist` — add `NSSupportsLiveActivities = YES`
 - [ ] `AppDelegate.swift` — add MethodChannel handler for "PW"
-- [ ] App initialization — call `Pushwoosh.getInstance.defaultSetup()`
+- [ ] **MANDATORY: `main.dart`** — add `await Pushwoosh.getInstance.defaultSetup()` after `Pushwoosh.initialize()`. Without this, remote push updates for Live Activities will NOT work. This is a Dart-only call with no iOS build dependencies — never skip it.
