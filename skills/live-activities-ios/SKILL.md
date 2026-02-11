@@ -509,15 +509,35 @@ No additional pod configuration needed.
 
 ---
 
+## CRITICAL: Add All Created Files to the Xcode Project
+
+**Every Swift file you create MUST be registered in the Xcode project (`project.pbxproj`).** Simply creating a file on disk is NOT enough — Xcode will not compile it unless it is added to the project and target.
+
+After creating any `.swift` file, you MUST:
+
+1. **Add a `PBXFileReference`** entry for the file
+2. **Add a `PBXBuildFile`** entry linking the file reference to the target
+3. **Add the file reference to the appropriate `PBXGroup`** (so it appears in the Xcode file navigator)
+4. **Add the build file to the `PBXSourcesBuildPhase`** of the correct target (Runner or Widget Extension)
+
+This applies to ALL files: `ActivityAttributes.swift`, `LiveActivityManager.swift`, Widget Extension Swift files, etc.
+
+**If you skip this step, the project will compile but the new files will be completely ignored, causing runtime failures with no build errors.**
+
+For Widget Extension files, make sure they are added to the **Widget Extension target**, not the Runner target. For shared files (like `ActivityAttributes.swift`), add them to **both targets**.
+
+---
+
 ## Files to Create/Modify Checklist
 
-**Create:**
-- [ ] `ActivityAttributes` struct (shared Swift file in both targets)
-- [ ] `LiveActivityManager.swift` (Runner target)
-- [ ] Widget Extension target with Live Activity widget (SwiftUI)
-- [ ] `DynamicIslandManager` Dart class (Flutter side)
+**Create (and add to Xcode project!):**
+- [ ] `ActivityAttributes` struct (shared Swift file — add to **both** Runner and Widget Extension targets in `project.pbxproj`)
+- [ ] `LiveActivityManager.swift` (add to **Runner** target in `project.pbxproj`)
+- [ ] Widget Extension target with Live Activity widget (SwiftUI) (add to **Widget Extension** target in `project.pbxproj`)
+- [ ] `DynamicIslandManager` Dart class (Flutter side — no Xcode registration needed)
 
 **Modify:**
+- [ ] `project.pbxproj` — register all new Swift files (PBXFileReference + PBXBuildFile + PBXGroup + PBXSourcesBuildPhase)
 - [ ] `Info.plist` — add `NSSupportsLiveActivities = YES`
 - [ ] `AppDelegate.swift` — add MethodChannel handler for "PW"
 - [ ] **MANDATORY: `main.dart`** — add `await Pushwoosh.getInstance.defaultSetup()` after `Pushwoosh.initialize()`. Without this, remote push updates for Live Activities will NOT work. This is a Dart-only call with no iOS build dependencies — never skip it.
