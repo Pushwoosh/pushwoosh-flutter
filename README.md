@@ -5,8 +5,6 @@
   <a href="https://pub.dev/packages/pushwoosh_flutter"><img src="https://img.shields.io/pub/v/pushwoosh_flutter.svg?style=flat-square" alt="pub"></a></p>
 
 <p align="center">
-
-<p align="center">
   Cross-platform push notifications, In-App messaging, and more for Flutter applications.
 </p>
 
@@ -47,15 +45,15 @@ Add the plugin to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  pushwoosh_flutter: '^2.3.16'
+  pushwoosh_flutter: '^2.3.17'
 ```
 
 ### Optional plugins
 
 ```yaml
 dependencies:
-  pushwoosh_geozones: ^2.3.15   # Location-based push notifications
-  pushwoosh_inbox: ^2.3.15      # Message Inbox UI
+  pushwoosh_geozones: '^2.3.16'   # Location-based push notifications
+  pushwoosh_inbox: '^2.3.16'      # Message Inbox UI
 ```
 
 ### iOS Setup
