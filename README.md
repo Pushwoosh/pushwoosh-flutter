@@ -45,7 +45,7 @@ Add the plugin to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  pushwoosh_flutter: '^2.3.17'
+  pushwoosh_flutter: '^2.3.18'
 ```
 
 ### Optional plugins
@@ -130,8 +130,7 @@ void main() {
 
   // Initialize Pushwoosh
   Pushwoosh.initialize({
-    "app_id": "YOUR_PUSHWOOSH_APP_ID",
-    "sender_id": "YOUR_FCM_SENDER_ID"
+    "app_id": "YOUR_PUSHWOOSH_APP_ID"
   });
 
   // Listen for push events

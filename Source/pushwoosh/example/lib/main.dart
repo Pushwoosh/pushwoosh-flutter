@@ -18,12 +18,9 @@ void main() {
   runApp(const MyApp());
 /**
 * initialize Pushwoosh SDK.
-* Example params: {"app_id": "application id", "sender_id": "FCM sender id"}
-* 
-* 1. app_id - YOUR_APP_ID
-* 2. sender_id - FCM_SENDER_ID
+* Example params: {"app_id": "application id"}
 */
-  Pushwoosh.initialize({"app_id": "29A14-8102F", "sender_id": "245850018966"});
+  Pushwoosh.initialize({"app_id": "11C10-EF18D"});
 
 /**
  * Setup Default Live Activity

@@ -39,8 +39,7 @@
 ///   runApp(MyApp());
 ///
 ///   Pushwoosh.initialize({
-///     "app_id": "YOUR_PUSHWOOSH_APP_ID",
-///     "sender_id": "YOUR_FCM_SENDER_ID"
+///     "app_id": "YOUR_PUSHWOOSH_APP_ID"
 ///   });
 ///
 ///   Pushwoosh.getInstance.onPushReceived.listen((event) {
@@ -140,7 +139,6 @@
 /// | Parameter    | Description                                    |
 /// |------------- |------------------------------------------------|
 /// | `app_id`     | Your Pushwoosh Application ID (required)       |
-/// | `sender_id`  | FCM/GCM Sender ID for Android (required)       |
 ///
 /// ## Push Events
 ///
@@ -187,7 +185,7 @@ class Pushwoosh {
   }
 
   /// initialize Pushwoosh SDK.
-  /// Example params: {"app_id": "application id", "sender_id": "GCM/FCM sender id"}
+  /// Example params: {"app_id": "application id"}
   static void initialize(Map params) {
     _channel.invokeMethod('initialize', params);
   }

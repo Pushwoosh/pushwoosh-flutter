@@ -614,10 +614,6 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         if (appId != null) {
             pushwooshInstance.setAppId(appId);
         }
-        String sendId = call.argument("sender_id");
-        if (sendId != null) {
-            pushwooshInstance.setSenderId(sendId);
-        }
     }
 
     private void enableHuaweiNotifications() {
