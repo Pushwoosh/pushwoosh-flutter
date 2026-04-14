@@ -64,6 +64,20 @@ static IMP pw_original_didReceiveRemoteNotification_Imp;
 }
 
 - (BOOL)application:(UIApplication *)application
+    didReceiveRemoteNotification:(NSDictionary *)userInfo
+          fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    [[PushNotificationManager pushManager] handlePushReceived:userInfo];
+    [self.receiveHandler sendPushNotification:userInfo onStart:NO];
+    UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
+    if (userInfo && userInfo[@"data"]) {
+        NSDictionary *data = userInfo[@"data"];
+        if (data.count > 0) fetchResult = UIBackgroundFetchResultNewData;
+    }
+    if (completionHandler) completionHandler(fetchResult);
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application
         openURL:(NSURL *)url
         options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
     NSString *urlString = [url absoluteString];
@@ -121,17 +135,26 @@ static IMP pw_original_didReceiveRemoteNotification_Imp;
     if ([UIApplication sharedApplication].delegate == nil) {
         return;
     }
-    
+
     static Class appDelegateClass = nil;
-    
+
     //do not swizzle the same class twice
     id delegate = [UIApplication sharedApplication].delegate;
     if(appDelegateClass == [delegate class]) {
         return;
     }
-        
+
     Class delegateClass = [delegate class];
-    Method originalMethod = class_getInstanceMethod(delegateClass, @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:));
+    SEL selector = @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:);
+    Method originalMethod = class_getInstanceMethod(delegateClass, selector);
+    if (originalMethod == NULL) {
+        // AppDelegate (and its hierarchy) does not implement the method.
+        // Install our replacement directly on the AppDelegate class so Flutter's
+        // plugin forwarder (FlutterPluginAppLifeCycleDelegate) and UIKit can find it.
+        class_addMethod(delegateClass, selector, (IMP)_replacement_didReceiveRemoteNotification, "v@:@@@?");
+        pw_original_didReceiveRemoteNotification_Imp = NULL;
+        return;
+    }
     pw_original_didReceiveRemoteNotification_Imp = method_setImplementation(originalMethod, (IMP)_replacement_didReceiveRemoteNotification);
 }
 
@@ -147,9 +170,11 @@ void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication 
         }
     };
 
-    ((void(*)(id, SEL, UIApplication *, NSDictionary *, void(^)(UIBackgroundFetchResult)))pw_original_didReceiveRemoteNotification_Imp)(
-        self, _cmd, application, userInfo, safeCompletionHandler
-    );
+    if (pw_original_didReceiveRemoteNotification_Imp != NULL) {
+        ((void(*)(id, SEL, UIApplication *, NSDictionary *, void(^)(UIBackgroundFetchResult)))pw_original_didReceiveRemoteNotification_Imp)(
+            self, _cmd, application, userInfo, safeCompletionHandler
+        );
+    }
 
     [[PushNotificationManager pushManager] handlePushReceived:userInfo];
 

@@ -1,4 +1,8 @@
-<h1 align="center">Pushwoosh Flutter Plugin</h1>
+<p align="center">
+  <img src="pushwoosh.png" alt="Pushwoosh Flutter SDK">
+</p>
+
+<h1 align="center">Flutter Plugin</h1>
 
 <p align="center">
   <a href="https://github.com/Pushwoosh/pushwoosh-flutter"><img src="https://img.shields.io/github/release/Pushwoosh/pushwoosh-flutter.svg?style=flat-square" alt="GitHub release"></a>
@@ -45,7 +49,7 @@ Add the plugin to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  pushwoosh_flutter: '^2.3.18'
+  pushwoosh_flutter: '^2.3.19'
 ```
 
 ### Optional plugins

@@ -1,3 +1,12 @@
+## 2.3.19
+
+### Bug Fixes
+- Fixed silent push notifications not being delivered on Flutter 3.27+
+
+### Updated
+- Pushwoosh Android SDK updated to 6.7.63
+- Pushwoosh iOS SDK updated to 7.0.34
+
 ## 2.3.18
 
 ### Breaking Changes
