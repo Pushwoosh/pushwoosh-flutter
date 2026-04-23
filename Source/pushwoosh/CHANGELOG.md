@@ -1,3 +1,15 @@
+## 2.3.20
+
+### Breaking Changes
+- Minimum iOS deployment target raised to 13.0. Update your Podfile accordingly:
+  ```ruby
+  platform :ios, '13.0'
+  ```
+
+### Updated
+- Pushwoosh Android SDK updated to 6.7.64
+- Pushwoosh iOS SDK updated to 7.0.38
+
 ## 2.3.19
 
 ### Bug Fixes

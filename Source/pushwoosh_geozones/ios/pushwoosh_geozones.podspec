@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'pushwoosh_geozones'
-  s.version          = '2.3.19'
+  s.version          = '2.3.20'
   s.summary          = 'Pushwoosh Geozones Flutter plugin'
   s.homepage         = 'http://pushwoosh.com'
   s.license          = { :file => '../LICENSE' }
@@ -15,6 +15,6 @@ Pod::Spec.new do |s|
   s.dependency 'PushwooshXCFramework/Geozones'
   s.static_framework = true
 
-  s.ios.deployment_target = '11.0'
+  s.ios.deployment_target = '13.0'
 end
 
