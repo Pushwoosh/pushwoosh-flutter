@@ -49,7 +49,7 @@ Add the plugin to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  pushwoosh_flutter: '^2.3.20'
+  pushwoosh_flutter: '^2.3.21'
 ```
 
 ### Optional plugins
