@@ -1,3 +1,12 @@
+## 2.3.22
+
+### Bug Fixes
+- Fixed deep links not being delivered on iOS apps using the UIScene lifecycle
+
+### Updated
+- Pushwoosh Android SDK updated to 6.9.1
+- Pushwoosh iOS SDK updated to 7.1.2
+
 ## 2.3.21
 
 ### Updated

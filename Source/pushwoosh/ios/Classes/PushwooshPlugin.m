@@ -77,18 +77,50 @@ static IMP pw_original_didReceiveRemoteNotification_Imp;
     return YES;
 }
 
-- (BOOL)application:(UIApplication *)application
-        openURL:(NSURL *)url
-        options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
-    NSString *urlString = [url absoluteString];
+- (void)forwardDeepLink:(NSString *)urlString {
     if (self.openHandler != nil) {
         [self.openHandler sendDeepLink:urlString];
     } else {
         self.cachedDeepLink = urlString;
     }
+}
+
+- (BOOL)application:(UIApplication *)application
+        openURL:(NSURL *)url
+        options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
+    [self forwardDeepLink:[url absoluteString]];
     return YES;
 }
-    
+
+#if __has_include(<Flutter/FlutterSceneLifeCycle.h>)
+
+#pragma mark - FlutterSceneLifeCycleDelegate
+
+// On scene-based apps a URL that launches the app cold is delivered here, not in
+// scene:openURLContexts:. Forward it but return NO so the scene connection still
+// reaches other plugins.
+- (BOOL)scene:(UIScene *)scene
+    willConnectToSession:(UISceneSession *)session
+                 options:(UISceneConnectionOptions *)connectionOptions {
+    [self forwardDeepLinkFromURLContexts:connectionOptions.URLContexts];
+    return NO;
+}
+
+- (BOOL)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
+    return [self forwardDeepLinkFromURLContexts:URLContexts];
+}
+
+- (BOOL)forwardDeepLinkFromURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
+    BOOL handled = NO;
+    for (UIOpenURLContext *context in URLContexts) {
+        [self forwardDeepLink:[context.URL absoluteString]];
+        handled = YES;
+    }
+    return handled;
+}
+
+#endif
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     PushwooshPlugin* instance = [PushwooshPlugin sharedInstance];
     [PushwooshPlugin swizzleNotificationSettingsHandler];
@@ -129,6 +161,12 @@ static IMP pw_original_didReceiveRemoteNotification_Imp;
     }
 
     [registrar addApplicationDelegate:instance];
+
+#if __has_include(<Flutter/FlutterSceneLifeCycle.h>)
+    if ([registrar respondsToSelector:@selector(addSceneDelegate:)]) {
+        [registrar addSceneDelegate:instance];
+    }
+#endif
 }
 
 + (void) swizzleNotificationSettingsHandler {
