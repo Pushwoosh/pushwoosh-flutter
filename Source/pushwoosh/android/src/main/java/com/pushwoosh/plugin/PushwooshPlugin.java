@@ -21,6 +21,7 @@ import com.pushwoosh.exception.SetEmailException;
 import com.pushwoosh.exception.UnregisterForPushNotificationException;
 import com.pushwoosh.function.Callback;
 import com.pushwoosh.inapp.InAppManager;
+import com.pushwoosh.inapp.ui.PushwooshInAppUi;
 import com.pushwoosh.notification.PushwooshNotificationSettings;
 import com.pushwoosh.tags.Tags;
 import com.pushwoosh.tags.TagsBundle;
@@ -223,6 +224,15 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
                 break;
             case "setUserId":
                 setUserId(call, result);
+                break;
+            case "setAppCode":
+                setAppCode(call, result);
+                break;
+            case "getAppCode":
+                getAppCode(result);
+                break;
+            case "presentInApp":
+                presentInApp(call, result);
                 break;
             case "setLanguage":
                 setLanguage(call, result);
@@ -501,6 +511,46 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
         }
     }
 
+    private void setAppCode(MethodCall call, Result result) {
+        try {
+            Pushwoosh.getInstance().setAppId((String) call.argument("appCode"), (String) call.argument("baseUrl"));
+            result.success(null);
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+
+    private void getAppCode(Result result) {
+        try {
+            // Android returns "" when no app code is set, iOS returns nil: normalize to one contract.
+            String appCode = Pushwoosh.getInstance().getApplicationCode();
+            result.success(TextUtils.isEmpty(appCode) ? null : appCode);
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+
+    /**
+     * Presents a native in-app from a config map. The module handles threading and image
+     * prefetch itself, and swallows an unparseable config into a logged no-op — so a
+     * successful result here means "handed over", not "shown on screen".
+     */
+    private void presentInApp(MethodCall call, Result result) {
+        try {
+            Object arguments = call.arguments;
+            if (!(arguments instanceof Map)) {
+                result.error("presentInApp", "config must be a map", null);
+                return;
+            }
+            @SuppressWarnings("unchecked")
+            Map<String, Object> config = (Map<String, Object>) arguments;
+            PushwooshInAppUi.present(config);
+            result.success(null);
+        } catch (Exception e) {
+            sendResultException(result, e);
+        }
+    }
+
     private void setLanguage(MethodCall call, Result result) {
         try {
             Pushwoosh.getInstance().setLanguage((String) call.argument("language"));
@@ -611,7 +661,13 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
 
     private void initialize(MethodCall call, Pushwoosh pushwooshInstance) {
         String appId = call.argument("app_id");
-        if (appId != null) {
+        if (appId == null) {
+            return;
+        }
+        String baseUrl = call.argument("base_url");
+        if (baseUrl != null) {
+            pushwooshInstance.setAppId(appId, baseUrl);
+        } else {
             pushwooshInstance.setAppId(appId);
         }
     }

@@ -1,3 +1,14 @@
+## 2.3.23
+
+### Added
+- `setAppCode(appCode, baseUrl:)` and `getAppCode` to switch the Pushwoosh application at runtime, optionally together with the API endpoint serving it
+- Optional `base_url` parameter in `Pushwoosh.initialize()`
+- `presentInApp(config)` to render a native in-app message on device from a config map
+
+### Updated
+- Pushwoosh Android SDK updated to 6.10.2
+- Pushwoosh iOS SDK updated to 7.2.3
+
 ## 2.3.22
 
 ### Bug Fixes

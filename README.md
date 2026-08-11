@@ -49,7 +49,7 @@ Add the plugin to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  pushwoosh_flutter: '^2.3.22'
+  pushwoosh_flutter: '^2.3.23'
 ```
 
 ### Optional plugins
@@ -270,6 +270,42 @@ Pushwoosh.getInstance.onDeepLinkOpened.listen((String deepLink) {
 });
 ```
 
+The stream only fires for links your app is registered to open — declare the scheme yourself, the
+plugin cannot do it for you. Send the link in the push as `l=yourscheme://path`.
+
+**Android** — add a second intent filter to the activity in `android/app/src/main/AndroidManifest.xml`:
+
+```xml
+<intent-filter>
+    <action android:name="android.intent.action.VIEW"/>
+    <category android:name="android.intent.category.DEFAULT"/>
+    <category android:name="android.intent.category.BROWSABLE"/>
+    <data android:scheme="yourscheme"/>
+</intent-filter>
+```
+
+**iOS** — add the scheme to `ios/Runner/Info.plist`:
+
+```xml
+<key>CFBundleURLTypes</key>
+<array>
+    <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>yourscheme</string>
+        </array>
+    </dict>
+</array>
+```
+
+An `https://` link is **not** a deep link into your app unless you also own the domain and serve the
+Android App Links / iOS Universal Links verification file from it. Without that the system hands the
+link to the browser and the stream stays silent — that is the platform contract, not a plugin issue.
+A link that arrives while the app is cold-started is cached and replayed to the first subscriber, so
+subscribing from `initState` is enough.
+
 ### 9. JavaScript Interface for In-App Messages
 
 ```dart
@@ -297,6 +333,8 @@ await Pushwoosh.getInstance.removeJavascriptInterface('flutter');
 | Method | Description |
 |--------|-------------|
 | `Pushwoosh.initialize(params)` | Initialize the plugin. Call on every app launch |
+| `setAppCode(appCode, {baseUrl})` | Set the Application Code at runtime |
+| `getAppCode` | Get the Application Code the SDK currently uses (Future) |
 | `registerForPushNotifications()` | Register for push notifications, returns push token |
 | `unregisterForPushNotifications()` | Unregister from push notifications |
 | `getPushToken` | Get the push token (Future) |

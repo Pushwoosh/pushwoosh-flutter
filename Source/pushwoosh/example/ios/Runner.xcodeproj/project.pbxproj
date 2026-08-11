@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,10 @@
 		440E54B42CF484DA006555DD /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 440E54B32CF484DA006555DD /* WidgetKit.framework */; };
 		440E54B62CF484DA006555DD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 440E54B52CF484DA006555DD /* SwiftUI.framework */; };
 		440E54C32CF484DC006555DD /* StopwatchWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 440E54B22CF484DA006555DD /* StopwatchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		44FF00012CF484DA006555DD /* StopwatchWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FF00102CF484DA006555DD /* StopwatchWidgetBundle.swift */; };
+		44FF00022CF484DA006555DD /* StopwatchWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FF00112CF484DA006555DD /* StopwatchWidgetLiveActivity.swift */; };
+		44FF00032CF484DA006555DD /* StopwatchWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FF00112CF484DA006555DD /* StopwatchWidgetLiveActivity.swift */; };
+		44FF00042CF484DA006555DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44FF00122CF484DA006555DD /* Assets.xcassets */; };
 		440E54CD2CF48548006555DD /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440E54CC2CF48548006555DD /* LiveActivityManager.swift */; };
 		4445A9632DBA5AAA004DAB71 /* PushwooshBridge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4445A9602DBA5AAA004DAB71 /* PushwooshBridge.xcframework */; };
 		4445A9642DBA5AAA004DAB71 /* PushwooshBridge.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4445A9602DBA5AAA004DAB71 /* PushwooshBridge.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -107,6 +111,10 @@
 		440E54B32CF484DA006555DD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		440E54B52CF484DA006555DD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		440E54CC2CF48548006555DD /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
+		44FF00102CF484DA006555DD /* StopwatchWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopwatchWidgetBundle.swift; sourceTree = "<group>"; };
+		44FF00112CF484DA006555DD /* StopwatchWidgetLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopwatchWidgetLiveActivity.swift; sourceTree = "<group>"; };
+		44FF00122CF484DA006555DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		44FF00132CF484DA006555DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4445A9602DBA5AAA004DAB71 /* PushwooshBridge.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PushwooshBridge.xcframework; path = Pods/PushwooshXCFramework/XCFramework/PushwooshBridge.xcframework; sourceTree = "<group>"; };
 		4445A9612DBA5AAA004DAB71 /* PushwooshCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PushwooshCore.xcframework; path = Pods/PushwooshXCFramework/XCFramework/PushwooshCore.xcframework; sourceTree = "<group>"; };
 		4445A9622DBA5AAA004DAB71 /* PushwooshLiveActivities.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PushwooshLiveActivities.xcframework; path = Pods/PushwooshXCFramework/XCFramework/PushwooshLiveActivities.xcframework; sourceTree = "<group>"; };
@@ -133,35 +141,6 @@
 		CC3EDC098F6BD8FC57D592DD /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC373653A5F2B0F7C1E9901A /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		440E54C42CF484DC006555DD /* Exceptions for "StopwatchWidget" folder in "StopwatchWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 440E54B12CF484DA006555DD /* StopwatchWidgetExtension */;
-		};
-		440E54CA2CF48533006555DD /* Exceptions for "StopwatchWidget" folder in "Runner" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				StopwatchWidgetLiveActivity.swift,
-			);
-			target = 97C146ED1CF9000F007C117D /* Runner */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		440E54B72CF484DA006555DD /* StopwatchWidget */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				440E54CA2CF48533006555DD /* Exceptions for "StopwatchWidget" folder in "Runner" target */,
-				440E54C42CF484DC006555DD /* Exceptions for "StopwatchWidget" folder in "StopwatchWidgetExtension" target */,
-			);
-			path = StopwatchWidget;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		440E54AF2CF484DA006555DD /* Frameworks */ = {
@@ -219,6 +198,17 @@
 				4477FB672BCEA70B0066F7E7 /* Info.plist */,
 			);
 			path = NotificationService;
+			sourceTree = "<group>";
+		};
+		440E54B72CF484DA006555DD /* StopwatchWidget */ = {
+			isa = PBXGroup;
+			children = (
+				44FF00102CF484DA006555DD /* StopwatchWidgetBundle.swift */,
+				44FF00112CF484DA006555DD /* StopwatchWidgetLiveActivity.swift */,
+				44FF00122CF484DA006555DD /* Assets.xcassets */,
+				44FF00132CF484DA006555DD /* Info.plist */,
+			);
+			path = StopwatchWidget;
 			sourceTree = "<group>";
 		};
 		59E582D54E12762D21925953 /* Pods */ = {
@@ -336,9 +326,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				440E54B72CF484DA006555DD /* StopwatchWidget */,
-			);
 			name = StopwatchWidgetExtension;
 			productName = StopwatchWidgetExtension;
 			productReference = 440E54B22CF484DA006555DD /* StopwatchWidgetExtension.appex */;
@@ -423,7 +410,6 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -448,6 +434,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44FF00042CF484DA006555DD /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -596,6 +583,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44FF00012CF484DA006555DD /* StopwatchWidgetBundle.swift in Sources */,
+				44FF00022CF484DA006555DD /* StopwatchWidgetLiveActivity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -613,6 +602,7 @@
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				440E54CD2CF48548006555DD /* LiveActivityManager.swift in Sources */,
+				44FF00032CF484DA006555DD /* StopwatchWidgetLiveActivity.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -701,7 +691,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -721,7 +711,7 @@
 				DEVELOPMENT_TEAM = EZ696X67SZ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -807,7 +797,7 @@
 				INFOPLIST_FILE = StopwatchWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StopwatchWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -850,7 +840,7 @@
 				INFOPLIST_FILE = StopwatchWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StopwatchWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -890,7 +880,7 @@
 				INFOPLIST_FILE = StopwatchWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StopwatchWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -929,7 +919,7 @@
 				INFOPLIST_FILE = NotificationService/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NotificationService;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -972,7 +962,7 @@
 				INFOPLIST_FILE = NotificationService/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NotificationService;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1012,7 +1002,7 @@
 				INFOPLIST_FILE = NotificationService/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NotificationService;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1130,7 +1120,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1152,7 +1142,7 @@
 				DEVELOPMENT_TEAM = EZ696X67SZ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1181,7 +1171,7 @@
 				DEVELOPMENT_TEAM = EZ696X67SZ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

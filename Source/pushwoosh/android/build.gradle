@@ -26,7 +26,7 @@ android {
     compileSdkVersion 35
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
@@ -35,7 +35,7 @@ android {
 }
 
 ext {
-    pushwoosh = "6.9.1"
+    pushwoosh = "6.10.2"
 }
 
 dependencies {
@@ -45,4 +45,5 @@ dependencies {
     implementation "com.pushwoosh:pushwoosh-firebase:${pushwoosh}"
 //    implementation "com.pushwoosh:pushwoosh-huawei:${pushwoosh}"
     implementation "com.pushwoosh:pushwoosh-badge:${pushwoosh}"
+    implementation "com.pushwoosh:pushwoosh-inapp-ui:${pushwoosh}"
 }

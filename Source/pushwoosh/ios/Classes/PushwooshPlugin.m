@@ -243,7 +243,20 @@ void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"initialize" isEqualToString:call.method]) {
         NSString *appID = [call.arguments objectForKey:@"app_id"];
-        
+        NSString *baseUrl = [call.arguments objectForKey:@"base_url"];
+
+        // Trim once so both calls below see the exact same app code — stray
+        // whitespace otherwise makes the second call look like a different
+        // code and drops the endpoint the first call just set.
+        if ([appID isKindOfClass:[NSString class]]) {
+            appID = [appID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        }
+
+        // initializeWithAppCode: keeps the endpoint of the app code it is given, so it runs second.
+        if (appID.length > 0 && [baseUrl isKindOfClass:[NSString class]]) {
+            [PushwooshConfig setAppCode:appID baseUrl:baseUrl];
+        }
+
         [PushNotificationManager initializeWithAppCode:appID appName:nil];
                 
         if (@available(iOS 10, *)) {
@@ -306,6 +319,28 @@ void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication 
     } else if ([@"setUserId" isEqualToString:call.method]) {
         NSString *userID = [call.arguments objectForKey:@"userId"];
         [[PWInAppManager sharedManager] setUserId:userID];
+        result(nil);
+    } else if ([@"setAppCode" isEqualToString:call.method]) {
+        NSString *appCode = [call.arguments objectForKey:@"appCode"];
+        NSString *baseUrl = [call.arguments objectForKey:@"baseUrl"];
+        [PushwooshConfig setAppCode:appCode
+                            baseUrl:([baseUrl isKindOfClass:[NSString class]] ? baseUrl : nil)];
+        result(nil);
+    } else if ([@"getAppCode" isEqualToString:call.method]) {
+        // Android normalizes its native "" (unset) answer to nil; mirror that here
+        // so Dart sees one contract on both platforms.
+        NSString *appCode = [PushwooshConfig getAppCode];
+        result(appCode.length > 0 ? appCode : nil);
+    } else if ([@"presentInApp" isEqualToString:call.method]) {
+        // The module handles threading and image prefetch itself, and turns a config it
+        // cannot parse into a logged no-op — so result(nil) means "handed over", not "shown".
+        if (![call.arguments isKindOfClass:[NSDictionary class]]) {
+            result([FlutterError errorWithCode:@"presentInApp"
+                                       message:@"config must be a map"
+                                       details:nil]);
+            return;
+        }
+        [[Pushwoosh inApp] present:call.arguments];
         result(nil);
     } else if([@"setLanguage" isEqualToString:call.method]) {
         NSString *language = [call.arguments objectForKey:@"language"];

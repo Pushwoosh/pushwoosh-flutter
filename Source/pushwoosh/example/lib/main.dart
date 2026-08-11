@@ -3,7 +3,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'deep_link_screen.dart';
 import 'live_activities.dart';
+import 'in_app_presets.dart' as in_app_presets;
 import 'dart:async';
 
 /**
@@ -14,13 +17,25 @@ import 'package:pushwoosh_flutter/pushwoosh_flutter.dart';
 import 'package:pushwoosh_geozones/pushwoosh_geozones.dart';
 import 'package:pushwoosh_inbox/pushwoosh_inbox.dart';
 
+/// iOS and Android demo apps live in separate Pushwoosh projects, so the app code differs per platform.
+final String _demoAppCode =
+    defaultTargetPlatform == TargetPlatform.iOS ? "7401E-DFDC6" : "11C10-EF18D";
+
+/// Both endpoints serve the demo application: the shared one every app reaches by default, and the
+/// per-application host the SDK composes from the app code. Switching between them exercises an
+/// endpoint-only move, the case that must not re-register the device.
+final List<(String, String)> _regions = [
+  ('REGION: SHARED HOST', 'https://api.pushwoosh.com/json/1.3/'),
+  ('REGION: PER-APP HOST', 'https://$_demoAppCode.api.pushwoosh.com/json/1.3/'),
+];
+
 void main() {
   runApp(const MyApp());
 /**
 * initialize Pushwoosh SDK.
 * Example params: {"app_id": "application id"}
 */
-  Pushwoosh.initialize({"app_id": "11C10-EF18D"});
+  Pushwoosh.initialize({"app_id": _demoAppCode});
 
 /**
  * Setup Default Live Activity
@@ -84,6 +99,10 @@ class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool notificationsEnabled = false;
+  // Guards registerForRemoteNotification against overlapping calls: a
+  // double-tap (or tap-then-untap) before the first await resolves would
+  // otherwise fire two native calls whose results race each other.
+  bool _isRegistering = false;
   bool foregroundAlertEnabled = true;
   String userId = '';
   String eventName = '';
@@ -95,32 +114,43 @@ class _MyHomePageState extends State<MyHomePage>
   int seconds = 0;
   bool isRunning = false;
   Timer? timer;
+  StreamSubscription<String>? _deepLinkSubscription;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _setupJavaScriptInterface();
+    _subscribeToDeepLinks();
+    _syncRegistrationState();
+  }
+
+  @override
+  void dispose() {
+    // The subscription is tied to the life of this State, unlike the
+    // onPushReceived/onPushAccepted listeners in main().
+    _deepLinkSubscription?.cancel();
+    super.dispose();
   }
 
   void _setupJavaScriptInterface() async {
     try {
-      print("Setting up JavaScript interface...");
+      debugPrint("Setting up JavaScript interface...");
       
       await Future.delayed(Duration(seconds: 2));
       await Pushwoosh.getInstance.addJavascriptInterface('flutter', {
         'showToast': _showToast,
       });
-      print("JavaScript interface 'flutter' registered successfully with methods: [showToast]");
+      debugPrint("JavaScript interface 'flutter' registered successfully with methods: [showToast]");
     } catch (e) {
-      print("Failed to register JavaScript interface: $e");
+      debugPrint("Failed to register JavaScript interface: $e");
     }
   }
 
   Future<Map<String, dynamic>> _showToast(Map<String, dynamic> args) async {
     String message = args['message'] ?? 'Hello from JavaScript!';
     
-    print("Toast shown: $message");
+    debugPrint("Toast shown: $message");
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -136,14 +166,77 @@ class _MyHomePageState extends State<MyHomePage>
       'timestamp': DateTime.now().toIso8601String(),
     };
   }
-  
-  void registerForRemoteNotification(bool value) {
+
+  void _subscribeToDeepLinks() {
+    /**
+    * A deep link from a push notification arrives on this stream. The plugin
+    * caches a link that arrived before this listener existed and replays it to
+    * the first subscriber, so a cold start is covered too.
+    *
+    * PUSHWOOSH CODE
+    *    |   |
+    *   _|   |_
+    *   \     /
+    *    \   /
+    *     \_/
+    */
+    _deepLinkSubscription =
+        Pushwoosh.getInstance.onDeepLinkOpened.listen((String link) {
+      debugPrint('Pushwoosh deep link opened: $link');
+      if (!mounted) return;
+      Navigator.of(context).push(MaterialPageRoute<void>(
+        builder: (BuildContext context) => DeepLinkScreen(deepLinkData: link),
+      ));
+    }, onError: (Object error) {
+      debugPrint('Pushwoosh deep link stream error: $error');
+    });
+  }
+
+  Future<void> _syncRegistrationState() async {
+    /**
+    * Push notification token or null if the device is not registered yet.
+    * Read on start so the switch shows the real state after a cold launch:
+    * the token is restored from platform storage before any call in this
+    * process, so this is reliable even on the very first frame.
+    *
+    * PUSHWOOSH CODE
+    *    |   |
+    *   _|   |_
+    *   \     /
+    *    \   /
+    *     \_/
+    */
+    try {
+      final String? token = await Pushwoosh.getInstance.getPushToken;
+      if (!mounted) return;
+      setState(() {
+        notificationsEnabled = token != null && token.isNotEmpty;
+      });
+    } catch (e) {
+      // A failed read just leaves the state unknown for this run; the switch
+      // stays at its default (OFF) rather than popping an alert on cold start.
+      debugPrint('Failed to read push registration state: $e');
+    }
+  }
+
+  Future<void> registerForRemoteNotification(bool value) async {
+    // The switch is bound to notificationsEnabled, and that flag is only ever
+    // written after a call succeeds — so a failure leaves the switch showing
+    // its previous value with nothing to roll back. While the await is in
+    // flight the switch keeps the old position: no intermediate state, no
+    // spinner, one change and only by fact.
+    //
+    // _isRegistering additionally disables the switch for the duration of the
+    // call, so a double-tap can't fire two overlapping native calls that race
+    // each other's setState.
     setState(() {
-      notificationsEnabled = value;
+      _isRegistering = true;
+    });
+    try {
       if (value == false) {
         /**
         * To unregister for push notifications, call the following method:
-        * 
+        *
         * PUSHWOOSH CODE
         *    |   |
         *   _|   |_
@@ -151,11 +244,15 @@ class _MyHomePageState extends State<MyHomePage>
         *    \   /
         *     \_/
         */
-        Pushwoosh.getInstance.unregisterForPushNotifications();
+        await Pushwoosh.getInstance.unregisterForPushNotifications();
+        if (!mounted) return;
+        setState(() {
+          notificationsEnabled = false;
+        });
       } else {
         /**
         * To register for push notifications, call the following method:
-        * 
+        *
         * PUSHWOOSH CODE
         *    |   |
         *   _|   |_
@@ -163,9 +260,23 @@ class _MyHomePageState extends State<MyHomePage>
         *    \   /
         *     \_/
         */
-        Pushwoosh.getInstance.registerForPushNotifications();
+        final String? token =
+            await Pushwoosh.getInstance.registerForPushNotifications();
+        if (!mounted) return;
+        setState(() {
+          notificationsEnabled = token != null && token.isNotEmpty;
+        });
       }
-    });
+    } on PlatformException catch (e) {
+      if (!mounted) return;
+      showAlert(context, 'ERROR', e.message ?? e.code);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isRegistering = false;
+        });
+      }
+    }
   }
 
   void showForegroundAlert(bool value) {
@@ -213,8 +324,8 @@ class _MyHomePageState extends State<MyHomePage>
   void showToken() async {
     /**
     * Push notification token or null if device is not registered yet.
-    * 
-    * PUSHWOOSH CODE 
+    *
+    * PUSHWOOSH CODE
     *    |   |
     *   _|   |_
     *   \     /
@@ -222,7 +333,9 @@ class _MyHomePageState extends State<MyHomePage>
     *     \_/
     */
     String? token = await Pushwoosh.getInstance.getPushToken;
-    showAlert(context, "Push Token", token!);
+    if (!mounted) return;
+    showAlert(context, "Push Token",
+        (token == null || token.isEmpty) ? "NOT REGISTERED" : token);
   }
 
   void showHWID() async {
@@ -509,6 +622,90 @@ class _MyHomePageState extends State<MyHomePage>
                       */
                       Pushwoosh.getInstance.setApplicationIconBadgeNumber(0);
                     }),
+                    buildButtonRow('GET APP CODE', () async {
+                      /**
+                      * PUSHWOOSH CODE
+                      *    |   |
+                      *   _|   |_
+                      *   \     /
+                      *    \   /
+                      *     \_/
+                      */
+                      String? appCode = await Pushwoosh.getInstance.getAppCode;
+                      showAlert(context, 'APP CODE', appCode ?? '(not set)');
+                    }),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Text(
+                          'REGION',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ],
+                    ),
+                    Text(
+                      'Each button moves the application to another endpoint. The endpoint itself '
+                      'shows up in the native SDK log ("Update base URL"), not here.',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    SizedBox(height: 8),
+                    for (final (String label, String host) in _regions)
+                      buildButtonRow(label, () async {
+                        /**
+                        * PUSHWOOSH CODE
+                        *    |   |
+                        *   _|   |_
+                        *   \     /
+                        *    \   /
+                        *     \_/
+                        */
+                        try {
+                          await Pushwoosh.getInstance
+                              .setAppCode(_demoAppCode, baseUrl: host);
+                        } on ArgumentError catch (error) {
+                          if (!mounted) return;
+                          showAlert(context, label, 'rejected: ${error.message}');
+                          return;
+                        } catch (error) {
+                          if (!mounted) return;
+                          showAlert(context, label, 'failed: $error');
+                          return;
+                        }
+                        debugPrint('PW_REGION requested=$host appCode=$_demoAppCode');
+                        if (!mounted) return;
+                        showAlert(context, label, 'requested\n$_demoAppCode\n$host');
+                      }),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Text(
+                          'NATIVE IN-APP',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ],
+                    ),
+                    Text(
+                      'Rendered locally via presentInApp() — no server needed.',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    SizedBox(height: 8),
+                    for (final (String label, Map<String, dynamic> config)
+                        in in_app_presets.all)
+                      buildButtonRow(label, () {
+                        /**
+                        * PUSHWOOSH CODE
+                        *    |   |
+                        *   _|   |_
+                        *   \     /
+                        *    \   /
+                        *     \_/
+                        */
+                        Pushwoosh.getInstance.presentInApp(config);
+                      }),
                     SizedBox(height: 16),
                     Row(
                       children: [
@@ -587,7 +784,8 @@ class _MyHomePageState extends State<MyHomePage>
                     ),
                     Switch(
                       value: notificationsEnabled,
-                      onChanged: registerForRemoteNotification,
+                      onChanged:
+                          _isRegistering ? null : registerForRemoteNotification,
                     ),
                   ],
                 ),
@@ -656,41 +854,7 @@ class _MyHomePageState extends State<MyHomePage>
 }
 
 void _showInbox() {
-    PWInboxStyle style = PWInboxStyle();
-
-    style.dateFormat = "dd.MM.yyyy";
-
-    style.defaultImage = "assets/inbox-1.png";
-    style.unreadImage = "assets/bubble-2.png";
-    style.listErrorImage = "assets/alert-2.png";
-    style.listEmptyImage = "assets/inbox-1.png";
-
-    style.listErrorMessage = "Custom error message";
-    style.listEmptyMessage = "Custom empty message";
-    style.barTitle = "Custom inbox title";
-
-    style.accentColor = "#FF00FF";
-    style.backgroundColor = "#FFFF00";
-    style.highlightColor = "#FF0FFF";
-
-    style.imageTypeColor = "#00F0FF";
-    style.readImageTypeColor = "#FF000F";
-
-    style.titleColor = "#00F0FF";
-    style.readTitleColor = "#00FF0F";
-    style.defaultTextColor = "#FF00FF";
-
-    style.descriptionColor = "#FF000F";
-    style.readDescriptionColor = "#00FF0F";
-
-    style.dateColor = "#00F0FF";
-    style.readDateColor = "#F0FF0F";
-
-    style.dividerColor = "#FF000F";
-
-    style.barBackgroundColor = "#FF000F";
-    style.barAccentColor = "#0000FF";
-    style.barTextColor = "#00FF00";
-
-    PushwooshInbox.presentInboxUI(style: style);
-  }
+  // Presented with the SDK's default appearance. To customize colors, images
+  // and texts, pass a PWInboxStyle — see the pushwoosh_inbox README.
+  PushwooshInbox.presentInboxUI();
+}

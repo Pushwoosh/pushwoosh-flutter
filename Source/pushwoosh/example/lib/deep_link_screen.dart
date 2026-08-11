@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class DeepLinkScreen extends StatelessWidget {
   final String? deepLinkData;
 
-  const DeepLinkScreen({Key? key, this.deepLinkData}) : super(key: key);
+  const DeepLinkScreen({super.key, this.deepLinkData});
 
   @override
   Widget build(BuildContext context) {

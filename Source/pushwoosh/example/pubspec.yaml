@@ -10,6 +10,10 @@ dependencies:
 
   cupertino_icons: ^1.0.3
 
+  pushwoosh_flutter: any
+  pushwoosh_geozones: any
+  pushwoosh_inbox: any
+
 dependency_overrides:
   pushwoosh_flutter:
     path: ../
@@ -23,6 +27,7 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true

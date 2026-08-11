@@ -187,6 +187,13 @@ class Pushwoosh {
   /// initialize Pushwoosh SDK.
   /// Example params: {"app_id": "application id"}
   static void initialize(Map params) {
+    if (params.containsKey("base_url")) {
+      final dynamic baseUrl = params["base_url"];
+      if (baseUrl != null && baseUrl is! String) {
+        throw ArgumentError.value(baseUrl, 'base_url', 'must be a String');
+      }
+      _validateBaseUrl(baseUrl as String?);
+    }
     _channel.invokeMethod('initialize', params);
   }
 
@@ -228,6 +235,60 @@ class Pushwoosh {
   /// This allows data and events to be matched across multiple user devices.
   void setUserId(String userId){
      _channel.invokeMethod("setUserId", {"userId" : userId});
+  }
+
+  /// Sets the Pushwoosh Application Code at runtime.
+  /// Throws [ArgumentError] on a blank [appCode] or a malformed [baseUrl]. Awaiting the future only
+  /// tells you the call was delivered: a native SDK that refuses the pair logs it and stays silent,
+  /// so the future still completes normally.
+  Future<void> setAppCode(String appCode, {String? baseUrl}) {
+    _validateAppCode(appCode);
+    _validateBaseUrl(baseUrl);
+    return _channel
+        .invokeMethod("setAppCode", {"appCode": appCode, "baseUrl": baseUrl});
+  }
+
+  /// Pushwoosh Application Code the SDK currently uses, or null if none is set.
+  Future<String?> get getAppCode async => await _channel.invokeMethod("getAppCode");
+
+  static void _validateAppCode(String appCode) {
+    if (appCode.trim().isEmpty) {
+      throw ArgumentError.value(appCode, 'appCode', 'must not be blank');
+    }
+  }
+
+  static void _validateBaseUrl(String? baseUrl) {
+    if (baseUrl == null) {
+      return;
+    }
+    final String trimmed = baseUrl.trim();
+    if (trimmed.isEmpty) {
+      throw ArgumentError.value(baseUrl, 'baseUrl', 'must not be blank');
+    }
+    if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+      throw ArgumentError.value(
+          baseUrl, 'baseUrl', 'must start with http:// or https://');
+    }
+  }
+
+  /// Presents a native in-app message from a raw [config] map, without a server round-trip.
+  /// `displayType` picks the template and the block named after it carries the content.
+  /// A config the native SDK cannot parse is a logged no-op — nothing comes back over the channel.
+  /// Throws [ArgumentError] on an empty [config] or a missing, non-String or blank `displayType`.
+  Future<void> presentInApp(Map<String, dynamic> config) async {
+    if (config.isEmpty) {
+      throw ArgumentError.value(config, 'config', 'must not be empty');
+    }
+    final dynamic displayType = config['displayType'];
+    if (displayType is! String) {
+      throw ArgumentError.value(displayType, 'config["displayType"]',
+          'must be a String naming the in-app template');
+    }
+    if (displayType.trim().isEmpty) {
+      throw ArgumentError.value(
+          displayType, 'config["displayType"]', 'must not be blank');
+    }
+    await _channel.invokeMethod('presentInApp', config);
   }
 
   /// Post events for In-App Messages. This can trigger In-App message HTML as specified in Pushwoosh Control Panel.

@@ -45,7 +45,10 @@ android {
         applicationId "com.pushwoosh.demoapp"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 23
+        // Keep the parentheses: the Flutter tool rewrites bare `minSdkVersion 23`
+        // to flutter.minSdkVersion (24) on every build, which drops Android 6.0
+        // devices the native SDK still supports.
+        minSdkVersion(23)
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
