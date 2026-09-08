@@ -1,3 +1,26 @@
+## 2.3.24
+
+### Added
+- iOS: the push payload now carries the `foreground` and `onStart` keys, as it already did on Android
+
+### Fixed
+- iOS: `PushEvent.fromBackground` was always `false`; it now reports whether the app was in the background when the push was received or opened
+- iOS: fixed a crash on receiving a push in apps that register the plugin more than once, such as add-to-app hosts with several Flutter engines
+- iOS: fixed crashes on push payloads with unexpected value types
+- Android: push open and deep link events were lost in apps running several Flutter engines
+- Android: fixed a crash on startup in add-to-app hosts whose activity has no intent
+- Android: fixed a crash when a Rich Media page called into Dart after the Flutter engine was detached
+- Inbox: loading no longer fails when a message carries malformed `actionParams` or `customData`
+- `Pushwoosh.initialize()` now throws `ArgumentError` for a non-string `app_id` instead of crashing the app
+
+### Changed
+- Hardened the Rich Media JavaScript bridge against malformed calls from the page
+- Android: Rich Media JavaScript bridge calls and their arguments are no longer written to the log
+
+### Updated
+- Pushwoosh Android SDK updated to 6.12.0
+- Pushwoosh iOS SDK updated to 7.2.5
+
 ## 2.3.23
 
 ### Added

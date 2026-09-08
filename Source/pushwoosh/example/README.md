@@ -11,9 +11,11 @@ cd ios && pod install && cd ..     # iOS only
 flutter run
 ```
 
-The app code is set from Dart, in `lib/main.dart` (`_demoAppCode`) — iOS and Android demos live in
-separate Pushwoosh projects, so it differs per platform. Info.plist carries no `Pushwoosh_APPID`,
-which is why the SDK's integration check reports it as "set at runtime".
+The app code is set from Dart, in `lib/main.dart` (`_demoAppCode`), and one Pushwoosh
+application serves both platforms. `Pushwoosh_APPID` is present in Info.plist but left blank,
+which is why the SDK's integration check reports it as "set at runtime" - a blank value is
+read as absent. Filling it in would also override the app code the notification service
+extension reads from the App Group, so it is left as a template slot.
 
 ## Deep links
 

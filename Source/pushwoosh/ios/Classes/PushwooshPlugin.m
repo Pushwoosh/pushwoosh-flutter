@@ -67,11 +67,12 @@ static IMP pw_original_didReceiveRemoteNotification_Imp;
     didReceiveRemoteNotification:(NSDictionary *)userInfo
           fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     [[PushNotificationManager pushManager] handlePushReceived:userInfo];
-    [self.receiveHandler sendPushNotification:userInfo onStart:NO];
+    [self.receiveHandler sendPushNotification:userInfo onStart:[self isApplicationNotActive]];
     UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
     if (userInfo && userInfo[@"data"]) {
-        NSDictionary *data = userInfo[@"data"];
-        if (data.count > 0) fetchResult = UIBackgroundFetchResultNewData;
+        // Nothing constrains the root `data` on the wire, so it need not be a collection.
+        id data = userInfo[@"data"];
+        if ([data respondsToSelector:@selector(count)] && [data count] > 0) fetchResult = UIBackgroundFetchResultNewData;
     }
     if (completionHandler) completionHandler(fetchResult);
     return YES;
@@ -191,9 +192,12 @@ static IMP pw_original_didReceiveRemoteNotification_Imp;
         // plugin forwarder (FlutterPluginAppLifeCycleDelegate) and UIKit can find it.
         class_addMethod(delegateClass, selector, (IMP)_replacement_didReceiveRemoteNotification, "v@:@@@?");
         pw_original_didReceiveRemoteNotification_Imp = NULL;
-        return;
+    // Skipped for a class that already carries our replacement: storing it as the original is a call to itself.
+    } else if (method_getImplementation(originalMethod) != (IMP)_replacement_didReceiveRemoteNotification) {
+        pw_original_didReceiveRemoteNotification_Imp = method_setImplementation(originalMethod, (IMP)_replacement_didReceiveRemoteNotification);
     }
-    pw_original_didReceiveRemoteNotification_Imp = method_setImplementation(originalMethod, (IMP)_replacement_didReceiveRemoteNotification);
+    // Arms the guard above: unassigned, it never fires and every registration swizzles this class again.
+    appDelegateClass = delegateClass;
 }
 
 void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication * application, NSDictionary * userInfo, void (^completionHandler)(UIBackgroundFetchResult)) {
@@ -221,8 +225,9 @@ void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication 
 
     if (userInfo) {
         if (userInfo[@"data"]) {
-            NSDictionary *data = userInfo[@"data"];
-            if (data && data.count > 0) {
+            // Nothing constrains the root `data` on the wire, so it need not be a collection.
+            id data = userInfo[@"data"];
+            if ([data respondsToSelector:@selector(count)] && [data count] > 0) {
                 fetchResult = UIBackgroundFetchResultNewData;
             } else {
                 fetchResult = UIBackgroundFetchResultNoData;
@@ -250,6 +255,9 @@ void _replacement_didReceiveRemoteNotification(id self, SEL _cmd, UIApplication 
         // code and drops the endpoint the first call just set.
         if ([appID isKindOfClass:[NSString class]]) {
             appID = [appID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        } else {
+            // A Dart null arrives as NSNull, not nil, and would kill the app on -length below.
+            appID = nil;
         }
 
         // initializeWithAppCode: keeps the endpoint of the app code it is given, so it runs second.
@@ -455,7 +463,8 @@ API_AVAILABLE(ios(10.0)) {
     
     UNMutableNotificationContent *content = notification.request.content.mutableCopy;
     BOOL isPushwooshMessage = [PWMessage isPushwooshMessage:notification.request.content.userInfo];
-    NSString *currentHash = content.userInfo[@"p"];
+    // A non-string `p` would be stored and then messaged with isEqualToString: on the next push.
+    NSString *currentHash = [content.userInfo[@"p"] isKindOfClass:[NSString class]] ? content.userInfo[@"p"] : nil;
     BOOL isNeedToImplementInPlugin = [[PushwooshPlugin getPluginImplementationInfoPlistKey] boolValue];
 
     if (isPushwooshMessage && isNeedToImplementInPlugin && ![[self lastPushwooshHash] isEqualToString:currentHash]) {
@@ -467,7 +476,7 @@ API_AVAILABLE(ios(10.0)) {
             [[PushNotificationManager pushManager] handlePushReceived:content.userInfo];
         }
         
-        [_receiveHandler sendPushNotification:content.userInfo onStart:[self isOnStart:content.userInfo]];
+        [_receiveHandler sendPushNotification:content.userInfo onStart:[self isApplicationNotActive]];
     }
         
     if (_originalNotificationCenterDelegate != nil &&
@@ -506,7 +515,7 @@ API_AVAILABLE(ios(10.0)) {
         
         if (isNeedToImplementInPlugin) {
             [[PushNotificationManager pushManager] handlePushAccepted:userInfo onStart:[self isOnStart:userInfo]];
-            [_acceptHandler sendPushNotification:userInfo onStart:[self isOnStart:userInfo]];
+            [_acceptHandler sendPushNotification:userInfo onStart:[self isApplicationNotActive]];
         }
         
         handlePushAcceptanceBlock();
@@ -582,9 +591,25 @@ API_AVAILABLE(ios(10.0)) {
     return pushDict;
 }
 
+/// Only the native `handlePushAccepted:onStart:` call is left on this: there `onStart` decides
+/// whether the SDK records the push as the one that launched the app, which is not the same
+/// question as "was the app on the foreground". It answers NO for every push, because the plugin
+/// never sees a `launchOptions` dictionary to pass in - it does not implement
+/// `application:didFinishLaunchingWithOptions:` at all. Left as it was: what reaches Dart no longer
+/// depends on it, and changing what the native SDK records is a separate change.
 - (BOOL)isOnStart:(NSDictionary *)userInfo {
     NSDictionary *pushStartDictionary = [self startPushInfoFromInfoDictionary:userInfo];
     return pushStartDictionary != nil;
+}
+
++ (BOOL)isNotActiveApplicationState:(UIApplicationState)state {
+    return state != UIApplicationStateActive;
+}
+
+/// The state Dart is told about. Read on the delegate callbacks' own thread, which UIKit runs on the
+/// main queue - the same read the native SDK does in `PWPushNotificationsManager.isAppInBackground`.
+- (BOOL)isApplicationNotActive {
+    return [PushwooshPlugin isNotActiveApplicationState:[UIApplication sharedApplication].applicationState];
 }
 
 - (NSDictionary *)pushPayloadFromContent:(UNNotificationContent *)content {
@@ -700,7 +725,9 @@ API_AVAILABLE(ios(10.0)) {
         return;
     }
     
-    NSDictionary *pushDict = pushNotification[@"aps"];
+    // nothing constrains `aps` on the wire, so it need not be a dictionary
+    id aps = pushNotification[@"aps"];
+    NSDictionary *pushDict = [aps isKindOfClass:[NSDictionary class]] ? aps : nil;
     NSString *title = nil;
     NSString *message = nil;
     id alertMsg = pushDict[@"alert"];
@@ -729,10 +756,34 @@ API_AVAILABLE(ios(10.0)) {
     }
     
     messageDict[@"fromBackground"] = @(onStart);
-    
-    messageDict[@"payload"] = pushNotification;
-    
+
+    messageDict[@"payload"] = [self payloadWithApplicationState:pushNotification onStart:onStart];
+
     _eventSink(messageDict);
+}
+
+/// Android reads its payload from the push bundle, into which the native SDK writes the state the
+/// app was in when the push arrived - `foreground` and its inverse `onStart`
+/// (PushBundleDataProvider.setForeground). On iOS the payload is the APNs dictionary off the wire
+/// and carries no such keys, so Dart code reading `payload['foreground']` found nothing here. Both
+/// keys are added, so the key exists on both platforms.
+///
+/// The sampling moment still differs, and the Dart docs say so: these keys carry the state at
+/// delivery, while Android's come from arrival time and can therefore disagree with its own
+/// `fromBackground` on the accept path. `fromBackground` is the signal to branch on.
+- (NSDictionary *)payloadWithApplicationState:(NSDictionary *)pushNotification onStart:(BOOL)onStart {
+    if (![pushNotification isKindOfClass:[NSDictionary class]]) {
+        return pushNotification;
+    }
+
+    /// Both boxed from a BOOL lvalue, never from the `!` expression directly: `!` yields an `int` in
+    /// C, so `@(!onStart)` would box an NSNumber that the Flutter codec sends to Dart as the number
+    /// 1 instead of `true` - and `payload['foreground'] == true` would be false on iOS only.
+    BOOL foreground = !onStart;
+    NSMutableDictionary *payload = [pushNotification mutableCopy];
+    payload[@"foreground"] = @(foreground);
+    payload[@"onStart"] = @(onStart);
+    return payload;
 }
 
 - (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events {

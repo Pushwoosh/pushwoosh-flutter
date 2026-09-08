@@ -26,6 +26,13 @@ import PushwooshFramework
  5.  Add App Groups capability to both Runner and NotificationService targets and add a new group with the same name for both targets
  6. Add PW_APP_GROUPS_NAME info.plist flag to both Runner and NotificationService targets with the group name as its string value
  7. Add code
+
+ In this sample steps 5 and 6 are wired through a single project-level build setting,
+ PW_APP_GROUP: the two Info.plist files and the two .entitlements files all reference
+ $(PW_APP_GROUP), so the group is renamed in one place (Runner project build settings)
+ instead of four. The App Group is also how the extension learns the application code
+ passed to Pushwoosh.initialize() in lib/main.dart - without it the delivery event has no
+ app code and is dropped.
  */
 
 class NotificationService: UNNotificationServiceExtension {

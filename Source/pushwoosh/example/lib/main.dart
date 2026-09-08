@@ -17,9 +17,8 @@ import 'package:pushwoosh_flutter/pushwoosh_flutter.dart';
 import 'package:pushwoosh_geozones/pushwoosh_geozones.dart';
 import 'package:pushwoosh_inbox/pushwoosh_inbox.dart';
 
-/// iOS and Android demo apps live in separate Pushwoosh projects, so the app code differs per platform.
-final String _demoAppCode =
-    defaultTargetPlatform == TargetPlatform.iOS ? "7401E-DFDC6" : "11C10-EF18D";
+/// One Pushwoosh application serves both demos, so the app code is the same per platform.
+final String _demoAppCode = "XXXXX-XXXXX";
 
 /// Both endpoints serve the demo application: the shared one every app reaches by default, and the
 /// per-application host the SDK composes from the app code. Switching between them exercises an

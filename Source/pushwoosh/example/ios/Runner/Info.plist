@@ -24,7 +24,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.pushwoosh.demo.deeplink</string>
+			<string>com.example.demo.deeplink</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>pwdemo</string>
@@ -48,7 +48,12 @@
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>PW_APP_GROUPS_NAME</key>
-	<string>group.com.example.your_demo_group</string>
+	<string>$(PW_APP_GROUP)</string>
+	<!-- Left blank on purpose: this demo passes its application code to
+	     Pushwoosh.initialize() in lib/main.dart. A non-empty value here would seed the SDK
+	     and, more importantly, override the code the extension reads from the App Group. -->
+	<key>Pushwoosh_APPID</key>
+	<string></string>
 	<key>Pushwoosh_LOG_LEVEL</key>
 	<string>DEBUG</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

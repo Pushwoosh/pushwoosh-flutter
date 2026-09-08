@@ -49,9 +49,7 @@ public class FlutterJavaScriptInterface {
             }
             
             String callbackId = interfaceName + "_" + callbackIdCounter.incrementAndGet();
-            
-            PWLog.debug(TAG, "JavaScript calling Flutter method: " + methodName + " with arguments: " + argumentsJson);
-            
+
             if (successCallback != null || errorCallback != null) {
                 responseHandlers.put(callbackId, new ResponseHandler(successCallback, errorCallback));
             }
@@ -114,8 +112,7 @@ public class FlutterJavaScriptInterface {
                 } else {
                     return true;
                 }
-                
-                PWLog.debug(TAG, "Executing JavaScript callback: " + jsCode);
+
                 executeJavaScript(jsCode);
                 return true;
             } else {

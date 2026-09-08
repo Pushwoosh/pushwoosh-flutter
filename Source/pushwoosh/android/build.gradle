@@ -32,10 +32,13 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
 }
 
 ext {
-    pushwoosh = "6.10.2"
+    pushwoosh = "6.12.0"
 }
 
 dependencies {
@@ -46,4 +49,8 @@ dependencies {
 //    implementation "com.pushwoosh:pushwoosh-huawei:${pushwoosh}"
     implementation "com.pushwoosh:pushwoosh-badge:${pushwoosh}"
     implementation "com.pushwoosh:pushwoosh-inapp-ui:${pushwoosh}"
+
+    // Test-only, run with `make android-test`.
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "org.robolectric:robolectric:4.14.1"
 }

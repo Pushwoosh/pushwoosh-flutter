@@ -138,6 +138,49 @@ void main() {
       expect(log.single.arguments, <String, dynamic>{'app_id': 'AAAAA-BBBBB'});
     });
 
+    test('still works with no app_id key at all', () async {
+      Pushwoosh.initialize(<String, dynamic>{});
+      await pumpEventQueue();
+
+      expect(log.single.arguments, <String, dynamic>{});
+    });
+
+    test('still forwards an empty app_id', () async {
+      Pushwoosh.initialize(<String, dynamic>{'app_id': ''});
+      await pumpEventQueue();
+
+      expect(log.single.arguments, <String, dynamic>{'app_id': ''});
+    });
+
+    // A null here used to reach ObjC as NSNull and abort the app on -[NSNull length].
+    test('rejects a null app_id without touching the channel', () {
+      expect(() => Pushwoosh.initialize(<String, dynamic>{'app_id': null}),
+          throwsArgumentError);
+      expect(log, isEmpty);
+    });
+
+    test('rejects a non-String app_id without touching the channel', () {
+      expect(() => Pushwoosh.initialize(<String, dynamic>{'app_id': 12345}),
+          throwsArgumentError);
+      expect(
+          () => Pushwoosh.initialize(<String, dynamic>{
+                'app_id': <String>['AAAAA-BBBBB'],
+              }),
+          throwsArgumentError);
+      expect(log, isEmpty);
+    });
+
+    test('reports app_id, not base_url, when both are invalid', () {
+      expect(
+          () => Pushwoosh.initialize(<String, dynamic>{
+                'app_id': null,
+                'base_url': 'api.example.com',
+              }),
+          throwsA(isArgumentError.having(
+              (ArgumentError e) => e.name, 'name', 'app_id')));
+      expect(log, isEmpty);
+    });
+
     test('rejects a schemeless base_url without touching the channel', () {
       expect(
           () => Pushwoosh.initialize(<String, dynamic>{

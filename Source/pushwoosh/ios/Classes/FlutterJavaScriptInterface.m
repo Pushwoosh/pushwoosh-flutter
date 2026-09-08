@@ -17,14 +17,27 @@ static NSMutableDictionary<NSString *, NSDictionary *> *storedCallbacks;
     }
 }
 
-- (instancetype)initWithName:(NSString *)name 
+// the page can name any selector, and NSObject's KVC would write the ivars through readonly
++ (BOOL)accessInstanceVariablesDirectly {
+    return NO;
+}
+
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key {
+    NSLog(@"[FlutterJSInterface] Security error: refusing to set '%@' on interface '%@'", key, self.interfaceName);
+}
+
+- (instancetype)initWithName:(NSString *)name
                  methodNames:(NSArray<NSString *> *)methodNames
                  callHandler:(FlutterJSCallHandler)handler {
     self = [super init];
-    if (self) {
+    // the rich media page can call this initialiser too, so the arguments are untrusted input
+    if (self && [name isKindOfClass:[NSString class]] && [methodNames isKindOfClass:[NSArray class]]
+        && [(id)handler isKindOfClass:NSClassFromString(@"NSBlock")]) {
         _interfaceName = name;
         _allowedMethodNames = methodNames;
         _callHandler = handler;
+    } else if (self) {
+        NSLog(@"[FlutterJSInterface] Security error: ignoring initialisation with unexpected argument types");
     }
     return self;
 }
@@ -38,7 +51,7 @@ static NSMutableDictionary<NSString *, NSDictionary *> *storedCallbacks;
         if (errorCallback && [errorCallback isKindOfClass:[PWJavaScriptCallback class]]) {
             PWJavaScriptCallback *callback = (PWJavaScriptCallback *)errorCallback;
             NSDictionary *errorData = @{@"error": errorMessage};
-            NSError *error;
+            NSError *error = nil;
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:errorData options:0 error:&error];
             if (!error) {
                 NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -51,8 +64,16 @@ static NSMutableDictionary<NSString *, NSDictionary *> *storedCallbacks;
     NSString *callbackId = [NSString stringWithFormat:@"%@_%@_%lf", 
                            self.interfaceName, methodName, [[NSDate date] timeIntervalSince1970]];
     
-    NSData *jsonData = [argumentsJson dataUsingEncoding:NSUTF8StringEncoding];
-    NSError *error;
+    // EasyJS fills the argument slots by position without type checks: a JS function can land here.
+    NSData *jsonData = nil;
+    if ([argumentsJson isKindOfClass:[NSString class]]) {
+        jsonData = [argumentsJson dataUsingEncoding:NSUTF8StringEncoding];
+    } else if (argumentsJson) {
+        NSLog(@"[FlutterJSInterface] Ignoring non-string arguments (%@) for method '%@'",
+              NSStringFromClass([argumentsJson class]), methodName);
+    }
+
+    NSError *error = nil;
     NSDictionary *arguments = @{};
     
     if (jsonData) {
@@ -127,11 +148,17 @@ static NSMutableDictionary<NSString *, NSDictionary *> *storedCallbacks;
         response = @{@"error": errorMessage ?: @"Unknown error"};
     }
     
-    NSError *jsonError;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:response 
-                                                        options:0 
+    // dataWithJSONObject: raises instead of filling the error out-param, so the check below never sees this.
+    if (![NSJSONSerialization isValidJSONObject:response]) {
+        NSLog(@"[FlutterJS] Dropping a response that is not JSON-serializable: %@", response);
+        return;
+    }
+
+    NSError *jsonError = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:response
+                                                        options:0
                                                           error:&jsonError];
-    
+
     if (jsonError) {
         return;
     }

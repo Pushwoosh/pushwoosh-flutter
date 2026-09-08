@@ -12,9 +12,10 @@ typedef void (^FlutterJSCallHandler)(NSDictionary *callData);
 
 @interface FlutterJavaScriptInterface : NSObject <PWJavaScriptInterface>
 
-@property (nonatomic, strong) NSString *interfaceName;
-@property (nonatomic, strong) NSArray<NSString *> *allowedMethodNames;
-@property (nonatomic, copy) FlutterJSCallHandler callHandler;
+// readonly: every method of this class is callable from the rich media page, setters included.
+@property (nonatomic, strong, readonly) NSString *interfaceName;
+@property (nonatomic, strong, readonly) NSArray<NSString *> *allowedMethodNames;
+@property (nonatomic, copy, readonly) FlutterJSCallHandler callHandler;
 
 - (instancetype)initWithName:(NSString *)name 
                  methodNames:(NSArray<NSString *> *)methodNames

@@ -186,7 +186,16 @@ class Pushwoosh {
 
   /// initialize Pushwoosh SDK.
   /// Example params: {"app_id": "application id"}
+  ///
+  /// Throws [ArgumentError] if "app_id" is present and is not a String, or if
+  /// "base_url" is present, non-null and is not a valid http(s) endpoint.
   static void initialize(Map params) {
+    if (params.containsKey("app_id")) {
+      final dynamic appId = params["app_id"];
+      if (appId is! String) {
+        throw ArgumentError.value(appId, 'app_id', 'must be a String');
+      }
+    }
     if (params.containsKey("base_url")) {
       final dynamic baseUrl = params["base_url"];
       if (baseUrl != null && baseUrl is! String) {
@@ -493,6 +502,12 @@ class Pushwoosh {
 
 class PushEvent{
   final PushwooshMessage pushwooshMessage;
+
+  /// Whether the app was not on the foreground when this event was delivered - it was in the
+  /// background or inactive, or the push itself started the app.
+  ///
+  /// Sampled when the event is delivered, on both platforms, and the signal to branch on. The
+  /// `foreground` key inside [PushwooshMessage.payload] is not always its inverse - see there.
   final bool? fromBackground;
 
   PushEvent(this.pushwooshMessage, this.fromBackground);
@@ -501,7 +516,21 @@ class PushEvent{
 class PushwooshMessage {
   final String? title;
   final String? message;
+
+  /// The raw notification payload.
+  ///
+  /// On top of what the server sent, it carries `foreground` (`true` when the app was on the
+  /// foreground) and its inverse `onStart`. Both are booleans on both platforms - on Android they
+  /// come from the native push bundle, on iOS the plugin adds them.
+  ///
+  /// The two platforms sample them at different moments, so do not read them as a copy of
+  /// [PushEvent.fromBackground]: iOS samples them when the event is delivered, Android when the
+  /// push arrives. A push that arrives while the app is on the foreground and is tapped after the
+  /// app is backgrounded therefore reports `foreground: true` on Android next to
+  /// `fromBackground: true`, while iOS reports `foreground: false`. Branch on
+  /// [PushEvent.fromBackground] when the app's state at delivery is what matters.
   final Map<dynamic, dynamic> payload;
+
   final Map<dynamic, dynamic>? customData;
 
   PushwooshMessage(this.title, this.message, this.payload, this.customData);

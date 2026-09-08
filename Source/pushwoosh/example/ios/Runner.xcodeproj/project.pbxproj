@@ -10,14 +10,17 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1BD456FE682E2C1785DC208C /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 403E2C9CA908BA7FEC5183AD /* Pods_RunnerTests.framework */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
+		331C808C294A63AB00263BE5 /* FlutterJavaScriptInterfaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 331C807C294A618700263BE5 /* FlutterJavaScriptInterfaceTests.m */; };
+		331C808D294A63AB00263BE5 /* FlutterJavaScriptResponseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 331C807D294A618700263BE5 /* FlutterJavaScriptResponseTests.m */; };
+		331C808E294A63AB00263BE5 /* PushwooshNotificationHashTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 331C807E294A618700263BE5 /* PushwooshNotificationHashTests.m */; };
+		331C808F294A63AB00263BE5 /* PushwooshRemoteNotificationDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 331C807F294A618700263BE5 /* PushwooshRemoteNotificationDataTests.m */; };
+		331C8090294A63AB00263BE5 /* PushwooshSwizzleGuardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 331C8079294A618700263BE5 /* PushwooshSwizzleGuardTests.m */; };
+		331C8091294A63AB00263BE5 /* PushwooshApsPayloadTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 331C807A294A618700263BE5 /* PushwooshApsPayloadTests.m */; };
+		331C8092294A63AB00263BE5 /* FlutterJavaScriptInterfacePoisoningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 331C8078294A618700263BE5 /* FlutterJavaScriptInterfacePoisoningTests.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		440E54B42CF484DA006555DD /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 440E54B32CF484DA006555DD /* WidgetKit.framework */; };
 		440E54B62CF484DA006555DD /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 440E54B52CF484DA006555DD /* SwiftUI.framework */; };
 		440E54C32CF484DC006555DD /* StopwatchWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 440E54B22CF484DA006555DD /* StopwatchWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		44FF00012CF484DA006555DD /* StopwatchWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FF00102CF484DA006555DD /* StopwatchWidgetBundle.swift */; };
-		44FF00022CF484DA006555DD /* StopwatchWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FF00112CF484DA006555DD /* StopwatchWidgetLiveActivity.swift */; };
-		44FF00032CF484DA006555DD /* StopwatchWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FF00112CF484DA006555DD /* StopwatchWidgetLiveActivity.swift */; };
-		44FF00042CF484DA006555DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44FF00122CF484DA006555DD /* Assets.xcassets */; };
 		440E54CD2CF48548006555DD /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440E54CC2CF48548006555DD /* LiveActivityManager.swift */; };
 		4445A9632DBA5AAA004DAB71 /* PushwooshBridge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4445A9602DBA5AAA004DAB71 /* PushwooshBridge.xcframework */; };
 		4445A9642DBA5AAA004DAB71 /* PushwooshBridge.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4445A9602DBA5AAA004DAB71 /* PushwooshBridge.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -29,6 +32,10 @@
 		4445A96A2DBA5AAA004DAB71 /* PushwooshLiveActivities.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4445A9622DBA5AAA004DAB71 /* PushwooshLiveActivities.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4477FB662BCEA70B0066F7E7 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4477FB652BCEA70B0066F7E7 /* NotificationService.swift */; };
 		4477FB6A2BCEA70B0066F7E7 /* NotificationService.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4477FB632BCEA70B0066F7E7 /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		44FF00012CF484DA006555DD /* StopwatchWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FF00102CF484DA006555DD /* StopwatchWidgetBundle.swift */; };
+		44FF00022CF484DA006555DD /* StopwatchWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FF00112CF484DA006555DD /* StopwatchWidgetLiveActivity.swift */; };
+		44FF00032CF484DA006555DD /* StopwatchWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FF00112CF484DA006555DD /* StopwatchWidgetLiveActivity.swift */; };
+		44FF00042CF484DA006555DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44FF00122CF484DA006555DD /* Assets.xcassets */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
@@ -102,7 +109,14 @@
 /* Begin PBXFileReference section */
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		331C8078294A618700263BE5 /* FlutterJavaScriptInterfacePoisoningTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlutterJavaScriptInterfacePoisoningTests.m; sourceTree = "<group>"; };
+		331C8079294A618700263BE5 /* PushwooshSwizzleGuardTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushwooshSwizzleGuardTests.m; sourceTree = "<group>"; };
+		331C807A294A618700263BE5 /* PushwooshApsPayloadTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushwooshApsPayloadTests.m; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
+		331C807C294A618700263BE5 /* FlutterJavaScriptInterfaceTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlutterJavaScriptInterfaceTests.m; sourceTree = "<group>"; };
+		331C807D294A618700263BE5 /* FlutterJavaScriptResponseTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlutterJavaScriptResponseTests.m; sourceTree = "<group>"; };
+		331C807E294A618700263BE5 /* PushwooshNotificationHashTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushwooshNotificationHashTests.m; sourceTree = "<group>"; };
+		331C807F294A618700263BE5 /* PushwooshRemoteNotificationDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushwooshRemoteNotificationDataTests.m; sourceTree = "<group>"; };
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		403E2C9CA908BA7FEC5183AD /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -111,10 +125,6 @@
 		440E54B32CF484DA006555DD /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		440E54B52CF484DA006555DD /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		440E54CC2CF48548006555DD /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
-		44FF00102CF484DA006555DD /* StopwatchWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopwatchWidgetBundle.swift; sourceTree = "<group>"; };
-		44FF00112CF484DA006555DD /* StopwatchWidgetLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopwatchWidgetLiveActivity.swift; sourceTree = "<group>"; };
-		44FF00122CF484DA006555DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		44FF00132CF484DA006555DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4445A9602DBA5AAA004DAB71 /* PushwooshBridge.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PushwooshBridge.xcframework; path = Pods/PushwooshXCFramework/XCFramework/PushwooshBridge.xcframework; sourceTree = "<group>"; };
 		4445A9612DBA5AAA004DAB71 /* PushwooshCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PushwooshCore.xcframework; path = Pods/PushwooshXCFramework/XCFramework/PushwooshCore.xcframework; sourceTree = "<group>"; };
 		4445A9622DBA5AAA004DAB71 /* PushwooshLiveActivities.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PushwooshLiveActivities.xcframework; path = Pods/PushwooshXCFramework/XCFramework/PushwooshLiveActivities.xcframework; sourceTree = "<group>"; };
@@ -123,6 +133,10 @@
 		4477FB672BCEA70B0066F7E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4477FB742BCEA7F50066F7E7 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		4477FB752BCEA9460066F7E7 /* NotificationService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NotificationService.entitlements; sourceTree = "<group>"; };
+		44FF00102CF484DA006555DD /* StopwatchWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopwatchWidgetBundle.swift; sourceTree = "<group>"; };
+		44FF00112CF484DA006555DD /* StopwatchWidgetLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopwatchWidgetLiveActivity.swift; sourceTree = "<group>"; };
+		44FF00122CF484DA006555DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		44FF00132CF484DA006555DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		58AF5C08C51D08EBA06BEADD /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		70F6714D7A25A29E18F775C3 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -186,18 +200,15 @@
 			isa = PBXGroup;
 			children = (
 				331C807B294A618700263BE5 /* RunnerTests.swift */,
+				331C807C294A618700263BE5 /* FlutterJavaScriptInterfaceTests.m */,
+				331C807D294A618700263BE5 /* FlutterJavaScriptResponseTests.m */,
+				331C807E294A618700263BE5 /* PushwooshNotificationHashTests.m */,
+				331C807F294A618700263BE5 /* PushwooshRemoteNotificationDataTests.m */,
+				331C8079294A618700263BE5 /* PushwooshSwizzleGuardTests.m */,
+				331C807A294A618700263BE5 /* PushwooshApsPayloadTests.m */,
+				331C8078294A618700263BE5 /* FlutterJavaScriptInterfacePoisoningTests.m */,
 			);
 			path = RunnerTests;
-			sourceTree = "<group>";
-		};
-		4477FB642BCEA70B0066F7E7 /* NotificationService */ = {
-			isa = PBXGroup;
-			children = (
-				4477FB752BCEA9460066F7E7 /* NotificationService.entitlements */,
-				4477FB652BCEA70B0066F7E7 /* NotificationService.swift */,
-				4477FB672BCEA70B0066F7E7 /* Info.plist */,
-			);
-			path = NotificationService;
 			sourceTree = "<group>";
 		};
 		440E54B72CF484DA006555DD /* StopwatchWidget */ = {
@@ -209,6 +220,16 @@
 				44FF00132CF484DA006555DD /* Info.plist */,
 			);
 			path = StopwatchWidget;
+			sourceTree = "<group>";
+		};
+		4477FB642BCEA70B0066F7E7 /* NotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				4477FB752BCEA9460066F7E7 /* NotificationService.entitlements */,
+				4477FB652BCEA70B0066F7E7 /* NotificationService.swift */,
+				4477FB672BCEA70B0066F7E7 /* Info.plist */,
+			);
+			path = NotificationService;
 			sourceTree = "<group>";
 		};
 		59E582D54E12762D21925953 /* Pods */ = {
@@ -576,6 +597,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */,
+				331C808C294A63AB00263BE5 /* FlutterJavaScriptInterfaceTests.m in Sources */,
+				331C808D294A63AB00263BE5 /* FlutterJavaScriptResponseTests.m in Sources */,
+				331C808E294A63AB00263BE5 /* PushwooshNotificationHashTests.m in Sources */,
+				331C808F294A63AB00263BE5 /* PushwooshRemoteNotificationDataTests.m in Sources */,
+				331C8090294A63AB00263BE5 /* PushwooshSwizzleGuardTests.m in Sources */,
+				331C8091294A63AB00263BE5 /* PushwooshApsPayloadTests.m in Sources */,
+				331C8092294A63AB00263BE5 /* FlutterJavaScriptInterfacePoisoningTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -690,6 +718,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PW_APP_GROUP = group.com.example.PushwooshSampleApp;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -708,7 +737,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = EZ696X67SZ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -716,7 +745,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pushwoosh.PushwooshSampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.PushwooshSampleApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -790,7 +819,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EZ696X67SZ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -807,7 +836,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pushwoosh.PushwooshSampleApp.StopwatchWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.PushwooshSampleApp.StopwatchWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -833,7 +862,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EZ696X67SZ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -849,7 +878,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pushwoosh.PushwooshSampleApp.StopwatchWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.PushwooshSampleApp.StopwatchWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -873,7 +902,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EZ696X67SZ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -889,7 +918,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pushwoosh.PushwooshSampleApp.StopwatchWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.PushwooshSampleApp.StopwatchWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -912,7 +941,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EZ696X67SZ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -929,7 +958,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pushwoosh.PushwooshSampleApp.NotificationService;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.PushwooshSampleApp.NotificationService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -955,7 +984,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EZ696X67SZ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -971,7 +1000,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pushwoosh.PushwooshSampleApp.NotificationService;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.PushwooshSampleApp.NotificationService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -995,7 +1024,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EZ696X67SZ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1011,7 +1040,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pushwoosh.PushwooshSampleApp.NotificationService;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.PushwooshSampleApp.NotificationService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1071,6 +1100,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PW_APP_GROUP = group.com.example.PushwooshSampleApp;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1119,6 +1149,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PW_APP_GROUP = group.com.example.PushwooshSampleApp;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1139,7 +1170,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = EZ696X67SZ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1147,7 +1178,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pushwoosh.PushwooshSampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.PushwooshSampleApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -1168,7 +1199,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = EZ696X67SZ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1176,7 +1207,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.pushwoosh.PushwooshSampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.PushwooshSampleApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";

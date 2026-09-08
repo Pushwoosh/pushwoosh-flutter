@@ -273,8 +273,21 @@ class InboxMessage {
       messageType = json['messageType'],
       bannerUrl = json['bannerUrl'],
       isRead = json['isRead'],
-      actionParams = json['actionParams'] != null ? json['actionParams'] is String ? jsonDecode(json['actionParams']) : json['actionParams'] : null,
+      actionParams = _jsonObjectOrNull(json['actionParams']),
 
       isActionPerformed = json['isActionPerformed'],
-      customData = json['customData'] != null ? jsonDecode(json['customData']) : null;
+      customData = _jsonObjectOrNull(json['customData']);
+
+  // A malformed slot must degrade, not throw out of the load into the host app.
+  static Map<String,dynamic>? _jsonObjectOrNull(Object? value) {
+    Object? decoded = value;
+    if (value is String) {
+      try {
+        decoded = jsonDecode(value);
+      } on FormatException {
+        return null;
+      }
+    }
+    return decoded is Map<String,dynamic> ? decoded : null;
+  }
 }

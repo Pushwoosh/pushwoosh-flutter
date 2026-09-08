@@ -63,12 +63,16 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     public static ActivityPluginBinding activityPluginBinding;
     public static PushwooshPlugin pluginInstance;
 
+    // Per instance: the static above is whatever engine attached last, not the one this engine has.
+    private ActivityPluginBinding ownActivityPluginBinding;
+
     public static String cachedDeepLink;
 
     // JavaScript interface variables
     private static final Map<String, FlutterJavaScriptInterface> jsInterfaces = new ConcurrentHashMap<>();
     public static EventChannel jsInterfaceChannel;
-    public static EventChannel.EventSink jsInterfaceEventSink;
+    // volatile: sendJavaScriptInterfaceCall reads this off the main looper.
+    public static volatile EventChannel.EventSink jsInterfaceEventSink;
 
     private void onAttachedToEngine(BinaryMessenger messenger) {
         PushwooshPlugin.messenger = messenger;
@@ -137,10 +141,16 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
             PushwooshPlugin.openChannel.setStreamHandler(null);
             PushwooshPlugin.openChannel = null;
         }
+        if (PushwooshPlugin.jsInterfaceChannel != null) {
+            PushwooshPlugin.jsInterfaceChannel.setStreamHandler(null);
+            PushwooshPlugin.jsInterfaceChannel = null;
+        }
 
         PushwooshPlugin.receiveHandler.onCancel(null);
         PushwooshPlugin.acceptHandler.onCancel(null);
         PushwooshPlugin.openHandler.onCancel(null);
+        // The js interface stream handler is anonymous, so its onCancel is unreachable from here.
+        PushwooshPlugin.jsInterfaceEventSink = null;
 
         PushwooshPlugin.pluginInstance = null;
         PushwooshPlugin.messenger = null;
@@ -149,7 +159,9 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
         activityPluginBinding = binding;
-        activityPluginBinding.addOnNewIntentListener(pluginInstance);
+        ownActivityPluginBinding = binding;
+        // Neither the listener nor the binding may come from a static: another engine nulls or retargets those.
+        binding.addOnNewIntentListener(this);
         handleIntent(binding.getActivity().getIntent());
     }
 
@@ -165,11 +177,13 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
 
     @Override
     public void onDetachedFromActivity() {
-        if (activityPluginBinding != null) {
-            if (pluginInstance != null) {
-                activityPluginBinding.removeOnNewIntentListener(pluginInstance);
+        if (ownActivityPluginBinding != null) {
+            ownActivityPluginBinding.removeOnNewIntentListener(this);
+            // Only our own binding may be cleared from the static; another engine's is still live.
+            if (activityPluginBinding == ownActivityPluginBinding) {
+                activityPluginBinding = null;
             }
-            activityPluginBinding = null;
+            ownActivityPluginBinding = null;
         }
     }
 
@@ -294,6 +308,10 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     }
 
     private void handleIntent(Intent intent) {
+        // An add-to-app host may hand the plugin an activity whose getIntent() is null.
+        if (intent == null) {
+            return;
+        }
         String action = intent.getAction();
         String url = intent.getDataString();
 
@@ -749,7 +767,11 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
     public static void sendJavaScriptInterfaceCall(Map<String, Object> callData) {
         if (jsInterfaceEventSink != null) {
             new Handler(Looper.getMainLooper()).post(() -> {
-                jsInterfaceEventSink.success(callData);
+                // Re-read: the check above ran on another thread, onCancel may have nulled it since.
+                EventChannel.EventSink sink = jsInterfaceEventSink;
+                if (sink != null) {
+                    sink.success(callData);
+                }
             });
         }
     }
