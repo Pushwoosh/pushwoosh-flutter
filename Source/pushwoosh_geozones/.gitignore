@@ -8,3 +8,9 @@ pubspec.lock
 build/
 
 .idea
+
+# Swift Package Manager state, created when Xcode or SourceKit opens ios/<package>/Package.swift.
+# A library package does not ship its Package.resolved: the app resolves the graph.
+.build/
+.swiftpm/
+/ios/*/Package.resolved

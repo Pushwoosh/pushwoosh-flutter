@@ -49,7 +49,7 @@ Add the plugin to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  pushwoosh_flutter: '^2.3.24'
+  pushwoosh_flutter: '^2.3.25'
 ```
 
 ### Optional plugins
@@ -62,9 +62,71 @@ dependencies:
 
 ### iOS Setup
 
+The iOS part of the plugins ships both as a Swift package and as a CocoaPods pod, and Flutter picks one:
+
+| Flutter | Native SDK comes through |
+|---|---|
+| 3.44 and newer | Swift Package Manager, on by default. Nothing to install: `flutter run` and `flutter build ios` fetch the SDK. |
+| 3.27 - 3.43 | CocoaPods by default (`cd ios && pod install`). Run `flutter config --enable-swift-package-manager` once to switch to Swift Package Manager. |
+| older than 3.27 | CocoaPods only: `cd ios && pod install`. |
+
+Keep `pushwoosh_flutter`, `pushwoosh_inbox` and `pushwoosh_geozones` on the same version and upgrade them together:
+
 ```bash
-cd ios && pod install
+flutter pub upgrade pushwoosh_flutter pushwoosh_inbox pushwoosh_geozones
 ```
+
+Swift Package Manager downloads the SDK from GitHub: the package repositories `github.com/Pushwoosh/Pushwoosh-XCFramework`, `github.com/Pushwoosh/PushwooshInboxUI-XCFramework` (with `pushwoosh_inbox`) and `github.com/Pushwoosh/PushwooshGeozones-XCFramework` (with `pushwoosh_geozones`), and the frameworks from the release assets of `github.com/Pushwoosh/pushwoosh-ios-sdk`. So the build machine and CI need access to github.com. Without it the build stops at package resolution; stay on CocoaPods in that case.
+
+#### Staying on CocoaPods
+
+To keep a project on CocoaPods under Flutter 3.44+, add this to the app's `pubspec.yaml` (Flutter 3.35+):
+
+```yaml
+flutter:
+  config:
+    enable-swift-package-manager: false
+```
+
+or set `FLUTTER_SWIFT_PACKAGE_MANAGER=false` for the build (Flutter 3.29+). The pubspec key and a global `flutter config --enable-swift-package-manager` both take precedence over the variable.
+
+In a project on CocoaPods, run `cd ios && pod update PushwooshXCFramework` once after upgrading `pushwoosh_flutter`, and once after switching back from Swift Package Manager. The plugin pins an exact `PushwooshXCFramework` version, `Podfile.lock` still holds the one from the previous build, and `pod install` fails with `CocoaPods could not find compatible versions for pod "PushwooshXCFramework"` (`flutter build` and `flutter run` end its output with `Error: CocoaPods's specs repository is too out-of-date to satisfy dependencies`); the `pod repo update` that Flutter suggests does not fix it.
+
+#### Notification Service Extension
+
+The extension has to get the native SDK the same way as the app.
+
+**Swift Package Manager** (Flutter 3.44+, or 3.27 - 3.43 with Swift Package Manager on):
+
+1. Remove `pod 'PushwooshXCFramework'` and its extension target from `ios/Podfile`.
+2. In Xcode choose **File > Add Package Dependencies...**, enter `https://github.com/Pushwoosh/Pushwoosh-XCFramework` and set the Dependency Rule to **Up to Next Major Version**, starting from the native SDK version the plugin pins (the `exact:` version of `Pushwoosh-XCFramework` in the plugin's `ios/pushwoosh_flutter/Package.swift`). Swift Package Manager then resolves the extension to the plugin's version, and upgrading the plugin moves the extension along. Only a new major version of the native SDK needs the rule changed.
+3. Add the products `PushwooshFramework`, `PushwooshCore` and `PushwooshBridge` to the **NotificationService** target only, not to Runner.
+4. Subclass the Pushwoosh extension:
+
+   ```swift
+   import PushwooshFramework
+
+   class NotificationService: PushwooshNotificationServiceExtension {}
+   ```
+
+5. Give the extension the application code: through an App Group shared with the app, or `Pushwoosh_APPID` in the extension's `Info.plist`.
+
+**CocoaPods** (Swift Package Manager off for the project): do not list the extension in `ios/Podfile`. A `target 'NotificationService'` block with `pod 'PushwooshXCFramework'` does not build with `pushwoosh_flutter` 2.3.24 and newer. Link the frameworks installed for the app instead:
+
+1. In the **NotificationService** target, **General > Frameworks and Libraries**, add `PushwooshFramework.xcframework`, `PushwooshCore.xcframework` and `PushwooshBridge.xcframework` from `ios/Pods/PushwooshXCFramework/XCFramework/`.
+2. Set **Embed** to **Do Not Embed** for all three: the app already embeds them, and a second copy breaks the build.
+3. Keep `@executable_path/../../Frameworks` in the extension's **Runpath Search Paths** (Xcode adds it to new extension targets).
+
+#### Build fails with `Multiple commands produce '.../Runner.app/Frameworks/PushwooshFramework.framework'` or `'.../Debug-iphonesimulator/PushwooshBridge.framework/_CodeSignature'`
+
+The native SDK reached the app twice: through Swift Package Manager and through CocoaPods. Flutter 3.44+ builds the plugins with Swift Package Manager, so anything that still brings `PushwooshXCFramework` from CocoaPods collides with it:
+
+- **The Notification Service Extension has `pod 'PushwooshXCFramework'`.** Move the extension to the Swift package (see above), or stay on CocoaPods.
+- **`ios/Podfile` has its own `pod 'PushwooshXCFramework'`** (directly or through another pod). Remove it, the plugin brings the SDK, or stay on CocoaPods.
+- **`pushwoosh_inbox` or `pushwoosh_geozones` is 2.3.24 or older** while `pushwoosh_flutter` is newer. Those versions have no Swift package and pull the SDK from CocoaPods. Upgrade all three to the same version.
+- **The Notification Service Extension links the frameworks from `ios/Pods/PushwooshXCFramework/XCFramework/`** in **General > Frameworks and Libraries** (the CocoaPods setup above, with no `pod` in the extension's target). The error then names `PushwooshFramework.framework`, `PushwooshCore.framework` and `PushwooshBridge.framework` right in the build products directory, such as `.../Debug-iphonesimulator/PushwooshBridge.framework/_CodeSignature`, not in `Runner.app/Frameworks`. Remove these three from the extension's **Frameworks and Libraries** and add the Swift package products to it (steps 2 and 3 of the Swift Package Manager setup above), or stay on CocoaPods.
+
+If you stay on CocoaPods after this error, run `cd ios && pod update PushwooshXCFramework` once (see [Staying on CocoaPods](#staying-on-cocoapods)).
 
 ### Android Setup
 

@@ -3,19 +3,19 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'pushwoosh_inbox'
-  s.version          = '2.3.24'
+  s.version          = '2.3.25'
   s.summary          = 'Pushwoosh Inbox Flutter plugin'
   s.homepage         = 'http://pushwoosh.com'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Pushwoosh' => 'support@pushwoosh.com'  }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
+  s.source_files = 'pushwoosh_inbox/Sources/pushwoosh_inbox/**/*'
+  s.public_header_files = 'pushwoosh_inbox/Sources/pushwoosh_inbox/include/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'PushwooshInboxUIXCFramework'
   s.static_framework = true
 
   
-  s.ios.deployment_target = '13.0'
+  s.ios.deployment_target = '15.0'
 end
 

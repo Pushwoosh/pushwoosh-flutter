@@ -316,6 +316,7 @@
 
 - (NSString*)dateToString:(NSDate*)date {
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
     [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
     return [formatter stringFromDate:date];
 }

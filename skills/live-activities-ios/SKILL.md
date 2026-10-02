@@ -12,7 +12,7 @@ This skill provides complete guidance for implementing iOS Live Activities (Dyna
 - iOS 16.1+ deployment target
 - Pushwoosh Flutter SDK v2.3.1+
 - Xcode 14.1+
-- `PushwooshXCFramework/PushwooshLiveActivities` pod (included by default since v2.3.16)
+- Pushwoosh Live Activities module, included by default since v2.3.16: the `PushwooshXCFramework/PushwooshLiveActivities` pod on CocoaPods, the `PushwooshLiveActivities` product of `Pushwoosh-XCFramework` on Swift Package Manager (Flutter 3.44+ by default). A Widget Extension that uses Pushwoosh types links it itself, see [Native Dependency](#native-dependency)
 
 ---
 
@@ -492,20 +492,24 @@ Always guard Live Activity code with `@available(iOS 16.1, *)`.
 ### Widget Extension build errors
 - Add `ActivityAttributes` file to **both** targets (Runner + Widget Extension)
 - Import `ActivityKit` in all files that use Activity types
-- Pod dependency `PushwooshXCFramework/PushwooshLiveActivities` must be in Podfile
+- `No such module 'PushwooshLiveActivities'` or `Unable to resolve module dependency: 'PushwooshCore'` in the Widget Extension: the extension target links the Pushwoosh frameworks itself, see [Native Dependency](#native-dependency)
 
 ---
 
-## Podspec Dependency
+## Native Dependency
 
-The Pushwoosh Flutter SDK podspec (`v2.3.16`) includes Live Activities by default:
+The plugin brings the Live Activities module to the Runner target on both channels, no extra setup:
 
-```ruby
-s.dependency 'PushwooshXCFramework', '7.0.22'
-s.dependency 'PushwooshXCFramework/PushwooshLiveActivities'
-```
+- **CocoaPods:** the podspec depends on `PushwooshXCFramework/PushwooshLiveActivities`.
+- **Swift Package Manager** (Flutter 3.44+ by default, 3.27 - 3.43 after `flutter config --enable-swift-package-manager`): the plugin's Swift package links the `PushwooshLiveActivities` product of `Pushwoosh-XCFramework`.
 
-No additional pod configuration needed.
+Runner code (`AppDelegate.swift`, `LiveActivityManager.swift`) can `import PushwooshFramework` and `import PushwooshLiveActivities` on both channels without adding anything to Runner.
+
+A Widget Extension that uses Pushwoosh types (for example attributes conforming to `PushwooshLiveActivityAttributes` in Approach 2) needs the module linked to the extension target. The app already embeds the frameworks, so the extension must not get a copy of its own:
+
+- **Swift Package Manager:** **File > Add Package Dependencies...**, enter `https://github.com/Pushwoosh/Pushwoosh-XCFramework`, Dependency Rule **Up to Next Major Version** starting from the native SDK version the plugin pins (the `exact:` version in the plugin's `ios/pushwoosh_flutter/Package.swift`), and add the `PushwooshLiveActivities` product to the Widget Extension target only. Swift Package Manager resolves it to the plugin's version.
+- **CocoaPods:** do not add a Podfile target for the extension. In the Widget Extension's **General > Frameworks and Libraries**, add `PushwooshLiveActivities.xcframework`, `PushwooshCore.xcframework` and `PushwooshBridge.xcframework` from `ios/Pods/PushwooshXCFramework/XCFramework/` with **Embed: Do Not Embed**.
+- Either way keep `@executable_path/../../Frameworks` in the extension's **Runpath Search Paths** (Xcode adds it to new extension targets).
 
 ---
 

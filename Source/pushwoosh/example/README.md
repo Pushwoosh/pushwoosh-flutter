@@ -6,10 +6,22 @@ native in-app messages, Live Activities, runtime region switching and deep links
 ## Run
 
 ```bash
+export FLUTTER_SWIFT_PACKAGE_MANAGER=false   # Flutter 3.44+ only, see below
 flutter pub get
 cd ios && pod install && cd ..     # iOS only
 flutter run
 ```
+
+The demo builds with CocoaPods: `Runner.xcodeproj` links the native SDK from `ios/Pods` directly,
+for the app and for the notification service extension. Flutter 3.44+ uses Swift Package Manager by
+default and would migrate the project off CocoaPods, which is why the variable above turns it off.
+The `enable-swift-package-manager: false` key under `flutter: config:` in `pubspec.yaml` would do the
+same, but Flutter older than 3.35 rejects a pubspec that has it, and CI runs an older Flutter.
+
+The variable is the weakest of the switches: the pubspec key and a global
+`flutter config --enable-swift-package-manager` both win over it. If you turned Swift Package Manager on
+globally, the demo migrates anyway and fails to build; run `flutter config --no-enable-swift-package-manager`
+first.
 
 The app code is set from Dart, in `lib/main.dart` (`_demoAppCode`), and one Pushwoosh
 application serves both platforms. `Pushwoosh_APPID` is present in Info.plist but left blank,

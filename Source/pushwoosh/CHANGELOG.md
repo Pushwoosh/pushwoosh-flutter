@@ -1,3 +1,23 @@
+## 2.3.25
+
+### Breaking Changes
+- iOS: the minimum deployment target is now iOS 15.0 for `pushwoosh_flutter`, `pushwoosh_inbox` and `pushwoosh_geozones`
+
+### New Features
+- iOS: the three plugins now ship as Swift packages in addition to CocoaPods pods; Flutter 3.44+ uses Swift Package Manager by default, Flutter 3.27 - 3.43 after `flutter config --enable-swift-package-manager`
+
+### Bug Fixes
+- Android: `addToApplicationIconBadgeNumber` now adds to the current badge number instead of replacing it
+- iOS: Inbox message send dates are formatted the same way regardless of the device locale and calendar
+
+### Native SDKs
+- Android SDK: 6.15.1 (was 6.12.0)
+- iOS SDK: 7.2.8 (was 7.2.5)
+- https://github.com/Pushwoosh/pushwoosh-android-sdk/releases
+- https://github.com/Pushwoosh/pushwoosh-ios-sdk/releases
+
+---
+
 ## 2.3.24
 
 ### Added

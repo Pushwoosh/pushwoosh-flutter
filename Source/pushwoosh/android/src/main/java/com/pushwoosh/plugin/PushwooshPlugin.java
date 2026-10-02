@@ -670,7 +670,7 @@ public class PushwooshPlugin implements MethodCallHandler, PluginRegistry.NewInt
 
     private void addToApplicationIconBadgeNumber(MethodCall call, Result result) {
         try {
-            PushwooshBadge.setBadgeNumber((int) call.argument("badges"));
+            PushwooshBadge.addBadgeNumber((int) call.argument("badges"));
             result.success(null);
         } catch (Exception e) {
             sendResultException(result, e);
